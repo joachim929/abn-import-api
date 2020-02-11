@@ -1,4 +1,5 @@
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm';
+import { Category } from '../category/category.entity';
 
 @Entity()
 export class CategoryGroup {
@@ -16,4 +17,7 @@ export class CategoryGroup {
 
   @UpdateDateColumn()
   editedAt: Date;
+
+  @OneToMany(type => Category, category => category.categoryGroup)
+  categories: Category[];
 }

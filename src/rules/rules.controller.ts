@@ -9,17 +9,17 @@ export class RulesController {
 
   @Get(':id')
   get(@Param() params) {
-    return this.service.getRule(params.id);
+    return this.service.getRule(params.id).catch(reason => console.warn(reason));
   }
 
   @Get()
   getAll() {
-    return this.service.getAll();
+    return this.service.getAll().catch(reason => console.warn(reason));
   }
 
   @Patch(':id')
   patch(@Body() rule: Rule) {
-    return this.service.patchRule(rule);
+    return this.service.patchRule(rule).catch(reason => console.warn(reason));
   }
 
   @Delete(':id')

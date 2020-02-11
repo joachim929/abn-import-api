@@ -14,9 +14,9 @@ export class RulesRepositoryService {
     return await this.ruleRepository.find();
   }
 
-  async getRuleById(_id: number): Promise<Rule[]> {
+  async getRuleById(id: number): Promise<Rule[]> {
     return await this.ruleRepository.find({
-      where: [{ id: _id }],
+      where: [{ id }],
     });
   }
 
