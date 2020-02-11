@@ -9,8 +9,12 @@ export class RulesController {
 
   @Get(':id')
   get(@Param() params) {
-    return 'WIP';
-    // return this.service.getRule(params.id);
+    return this.service.getRule(params.id);
+  }
+
+  @Get()
+  getAll() {
+    return this.service.getAll();
   }
 
   @Patch(':id')
@@ -20,11 +24,11 @@ export class RulesController {
 
   @Delete(':id')
   delete(@Param() params) {
-    return 'WIP';
+    return this.service.deleteRule(params.id).catch(reason => console.warn(reason));
   }
 
   @Post()
   create(@Body() rule: Rule) {
-    return 'WIP';
+    return this.service.createRule(rule).catch(reason => console.warn(reason));
   }
 }

@@ -1,4 +1,4 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 
 @Entity()
 export class Rule {
@@ -11,6 +11,15 @@ export class Rule {
   @Column()
   categoryId: number;
 
-  @Column()
+  @Column({default: false})
   autoAssign: boolean;
+
+  @Column()
+  isActive: boolean;
+
+  @CreateDateColumn()
+  createdAt: Date;
+
+  @UpdateDateColumn()
+  editedAt: Date;
 }
