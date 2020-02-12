@@ -10,7 +10,6 @@ export class CategoryGroupService {
   getCategoryGroup(id: number) {
     return new Promise((resolve, reject) => {
       this.categoryGroupRepositoryService.getGroupsById(id).then((response) => {
-        console.log(response);
         resolve(response);
       }).catch(reason => reject(reason));
     });
@@ -19,7 +18,6 @@ export class CategoryGroupService {
   getAll() {
     return new Promise((resolve, reject) => {
       this.categoryGroupRepositoryService.getGroups().then((response) => {
-        console.log(response);
         resolve(response);
       }).catch(reason => reject(reason));
     });
@@ -28,7 +26,6 @@ export class CategoryGroupService {
   getAllWithCategories() {
     return new Promise((resolve, reject) => {
       this.categoryGroupRepositoryService.getGroupsWithCategories().then((response) => {
-        console.log(response);
         resolve(response);
       }).catch(reason => reject(reason));
     });
@@ -37,7 +34,6 @@ export class CategoryGroupService {
   patchCategoryGroup(categoryGroup: CategoryGroup) {
     return new Promise((resolve, reject) => {
       this.categoryGroupRepositoryService.updateGroup(categoryGroup.id, categoryGroup).then((response) => {
-        console.log(response);
         resolve(response);
       }).catch(reason => reject(reason));
     });
@@ -46,7 +42,6 @@ export class CategoryGroupService {
   deleteCategoryGroup(id: number) {
     return new Promise((resolve, reject) => {
       this.categoryGroupRepositoryService.deleteGroup(id).then((response) => {
-        console.log(response);
         resolve(response);
       }).catch(reason => reject(reason));
     });
@@ -55,7 +50,6 @@ export class CategoryGroupService {
   createCategoryGroup(categoryGroup: CategoryGroup) {
     return new Promise((resolve, reject) => {
       this.categoryGroupRepositoryService.createGroup(categoryGroup).then((response) => {
-        console.log(response);
         resolve(response);
       }).catch(reason => reject(reason));
     });

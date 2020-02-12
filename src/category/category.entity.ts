@@ -9,8 +9,9 @@ export class Category {
   @Column()
   name: string;
 
+  // todo ManyToOne
   @Column()
-  groupId: number;
+  userId: number;
 
   @CreateDateColumn()
   createdAt: Date;

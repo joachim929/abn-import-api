@@ -9,6 +9,7 @@ export class CategoryGroup {
   @Column()
   name: string;
 
+  // todo ManyToOne
   @Column()
   userId: number;
 

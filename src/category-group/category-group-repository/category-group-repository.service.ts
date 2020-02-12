@@ -11,7 +11,6 @@ export class CategoryGroupRepositoryService {
   }
 
   async getGroups(): Promise<CategoryGroup[]> {
-    console.log('all, repo');
     return await this.repository.find({});
   }
 
