@@ -9,7 +9,6 @@ export class Category {
   @Column()
   name: string;
 
-  // todo ManyToOne
   @Column()
   userId: number;
 

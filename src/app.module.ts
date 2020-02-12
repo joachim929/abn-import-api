@@ -6,6 +6,7 @@ import { RulesModule } from './rules/rules.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Connection } from 'typeorm';
 import { CategoryGroupModule } from './category-group/category-group.module';
+import { UserModule } from './user/user.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { CategoryGroupModule } from './category-group/category-group.module';
     CategoryModule,
     RulesModule,
     CategoryGroupModule,
+    UserModule,
   ],
   controllers: [AppController],
   providers: [AppService],

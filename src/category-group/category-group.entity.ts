@@ -1,4 +1,11 @@
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  CreateDateColumn,
+  UpdateDateColumn,
+  OneToMany
+} from 'typeorm';
 import { Category } from '../category/category.entity';
 
 @Entity()
@@ -9,7 +16,6 @@ export class CategoryGroup {
   @Column()
   name: string;
 
-  // todo ManyToOne
   @Column()
   userId: number;
 
