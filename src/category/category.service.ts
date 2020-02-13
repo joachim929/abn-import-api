@@ -28,7 +28,7 @@ export class CategoryService {
         if (response.length > 0) {
           resolve(response);
         } else {
-          reject(`Found categories`);
+          reject(`Found no categories`);
         }
       }).catch(reason => reject(reason));
     });

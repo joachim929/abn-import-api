@@ -1,5 +1,14 @@
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, ManyToOne } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  CreateDateColumn,
+  UpdateDateColumn,
+  ManyToOne,
+  JoinColumn,
+} from 'typeorm';
 import { CategoryGroup } from '../category-group/category-group.entity';
+import { User } from '../user/user.entity';
 
 @Entity()
 export class Category {
@@ -9,8 +18,8 @@ export class Category {
   @Column()
   name: string;
 
-  @Column()
-  userId: number;
+  @Column({ nullable: true })
+  description: string;
 
   @CreateDateColumn()
   createdAt: Date;
@@ -18,6 +27,10 @@ export class Category {
   @UpdateDateColumn()
   editedAt: Date;
 
-  @ManyToOne(type => CategoryGroup, categoryGroup => categoryGroup.categories)
-  categoryGroup: CategoryGroup
+  @Column()
+  categoryGroupId: number;
+
+  @ManyToOne(type => CategoryGroup)
+  @JoinColumn({name: 'categoryGroupId', referencedColumnName: 'id'})
+  categoryGroup: CategoryGroup;
 }

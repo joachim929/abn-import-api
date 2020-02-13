@@ -1,4 +1,38 @@
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { DeepPartial, DeleteResult, Repository, SaveOptions, UpdateResult } from 'typeorm';
+import { User } from '../user.entity';
 
 @Injectable()
-export class UserRepositoryService {}
+export class UserRepositoryService {
+  constructor(
+    @InjectRepository(User) private repository: Repository<User>,
+  ) {
+  }
+
+  async getUsers(): Promise<User[]> {
+    return await this.repository.find({
+      relations: ['categoryGroups', 'categoryGroups.categories'],
+    });
+  }
+
+  async getUser(id: number): Promise<User[]> {
+    return await this.repository.find({
+      relations: ['categoryGroups', 'categoryGroups.categories'],
+      where: { user: { id: id } },
+    });
+  }
+
+  async createUser<T extends DeepPartial<User>>(entity: T, options?: SaveOptions): Promise<User>
+  async createUser(user: User) {
+    return await this.repository.save(user);
+  }
+
+  async updateUser(id: number, user: User): Promise<UpdateResult> {
+    return await this.repository.update(id, user);
+  }
+
+  async deleteUser(id: number): Promise<DeleteResult> {
+    return await this.repository.delete(id);
+  }
+}
