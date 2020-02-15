@@ -24,6 +24,13 @@ export class UserRepositoryService {
     });
   }
 
+  async getUserByName(userName: string): Promise<User[]> {
+    return await this.repository.find({
+      relations: ['invoices', 'categoryGroups', 'categoryGroups.categories'],
+      where: { userName },
+    });
+  }
+
   async createUser<T extends DeepPartial<User>>(entity: T, options?: SaveOptions): Promise<User>
   async createUser(user: User) {
     return await this.repository.save(user);

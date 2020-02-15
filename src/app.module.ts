@@ -8,6 +8,7 @@ import { Connection } from 'typeorm';
 import { CategoryGroupModule } from './category-group/category-group.module';
 import { UserModule } from './user/user.module';
 import { InvoiceModule } from './invoice/invoice.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { InvoiceModule } from './invoice/invoice.module';
     CategoryGroupModule,
     UserModule,
     InvoiceModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],

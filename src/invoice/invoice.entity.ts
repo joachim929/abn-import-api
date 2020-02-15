@@ -41,6 +41,9 @@ export class Invoice {
   @Column({nullable: true})
   comment: string;
 
+  @Column({nullable: true})
+  categoryId: number;
+
   @Column()
   userId: number;
 

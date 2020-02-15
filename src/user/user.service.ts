@@ -1,26 +1,38 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { UserRepositoryService } from './user-repository/user-repository.service';
 import { User } from './user.entity';
 import { DeleteResult, UpdateResult } from 'typeorm';
+import { UserValidationService } from './user-validation/user-validation.service';
 
 @Injectable()
 export class UserService {
   constructor(
     private userRepository: UserRepositoryService,
+    private validationService: UserValidationService,
   ) {
   }
 
   getUser(id: number): Promise<User> {
     return new Promise<User>((resolve, reject) => {
       this.userRepository.getUser(id).then((response: User[]) => {
-        if (response.length === 1) {
+        if (this.validationService.validResponseLength(response)) {
           resolve(response[0]);
-        } else if (response.length < 0) {
-          reject(`No user with id: ${id}`);
         } else {
-          reject(`Found unexpected amount of entries of user.id ${id}`);
+          throw new HttpException('Bad request', HttpStatus.BAD_REQUEST);
         }
       }).catch(reason => reject(reason));
+    });
+  }
+
+  getUserByUserName(userName: string): Promise<User> {
+    return new Promise<User>((resolve, reject) => {
+      this.userRepository.getUserByName(userName).then((response: User[]) => {
+        if (this.validationService.validResponseLength(response)) {
+          resolve(response[0]);
+        } else {
+          throw new HttpException('Bad request', HttpStatus.BAD_REQUEST);
+        }
+      });
     });
   }
 
@@ -30,35 +42,35 @@ export class UserService {
         if (response.length > 0) {
           resolve(response);
         } else {
-          reject(`Found no users`);
+          throw new HttpException('Bad request', HttpStatus.BAD_REQUEST);
         }
       }).catch(reason => reject(reason));
     });
   }
 
 
-  patchUser(user: User) {
+  patchUser(user: User): Promise<void> {
     return new Promise((resolve, reject) => {
       this.userRepository.updateUser(user.id, user).then((response: UpdateResult) => {
-        resolve(response);
+        resolve();
       }).catch(reason => reject(reason));
     });
   }
 
 
-  deleteUser(id: number) {
+  deleteUser(id: number): Promise<void> {
     return new Promise((resolve, reject) => {
       this.userRepository.deleteUser(id).then((response: DeleteResult) => {
         if (response.raw.length === 0) {
           resolve();
         } else {
-          reject(response.raw);
+          throw new HttpException('Bad request', HttpStatus.BAD_REQUEST);
         }
       }).catch(reason => reject(reason));
     });
   }
 
-  createUser(user: User) {
+  createUser(user: User): Promise<User> {
     return new Promise((resolve, reject) => {
       this.hashPassword(user).then(_user => {
         this.userRepository.createUser(_user).then((response: User) => {
@@ -69,7 +81,7 @@ export class UserService {
   }
 
   private hashPassword(user: User) {
-    return new Promise((resolve, reject) => {
+    return new Promise(resolve => {
       if (user.password) {
         // eslint-disable-next-line @typescript-eslint/no-var-requires
         const bcrypt = require('bcrypt');
@@ -79,7 +91,9 @@ export class UserService {
           resolve(user);
           console.log(user.password);
         });
-      } else reject('No password');
+      } else {
+        throw new HttpException('Bad request', HttpStatus.BAD_REQUEST);
+      }
     });
 
   }
