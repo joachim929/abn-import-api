@@ -60,9 +60,27 @@ export class UserService {
 
   createUser(user: User) {
     return new Promise((resolve, reject) => {
-      this.userRepository.createUser(user).then((response: User) => {
-        resolve(response);
-      }).catch(reason => reject(reason));
+      this.hashPassword(user).then(_user => {
+        this.userRepository.createUser(_user).then((response: User) => {
+          resolve(response);
+        }).catch(reason => reject(reason));
+      });
     });
+  }
+
+  private hashPassword(user: User) {
+    return new Promise((resolve, reject) => {
+      if (user.password) {
+        // eslint-disable-next-line @typescript-eslint/no-var-requires
+        const bcrypt = require('bcrypt');
+        const saltRounds = 10;
+        bcrypt.hash(user.password, saltRounds).then(hash => {
+          user.password = hash;
+          resolve(user);
+          console.log(user.password);
+        });
+      } else reject('No password');
+    });
+
   }
 }

@@ -10,6 +10,7 @@ export class UserRepositoryService {
   ) {
   }
 
+  // Expensive call, should only be used for GDPR reasons
   async getUsers(): Promise<User[]> {
     return await this.repository.find({
       relations: ['categoryGroups', 'categoryGroups.categories'],
