@@ -13,14 +13,14 @@ export class UserRepositoryService {
   // Expensive call, should only be used for GDPR reasons
   async getUsers(): Promise<User[]> {
     return await this.repository.find({
-      relations: ['categoryGroups', 'categoryGroups.categories'],
+      relations: ['invoices', 'categoryGroups', 'categoryGroups.categories'],
     });
   }
 
   async getUser(id: number): Promise<User[]> {
     return await this.repository.find({
-      relations: ['categoryGroups', 'categoryGroups.categories'],
-      where: { user: { id: id } },
+      relations: ['invoices', 'categoryGroups', 'categoryGroups.categories'],
+      where: { id },
     });
   }
 

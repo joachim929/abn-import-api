@@ -2,7 +2,7 @@ import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/commo
 import { CategoryGroupService } from './category-group.service';
 import { CategoryGroup } from './category-group.entity';
 
-@Controller('api/category-group')
+@Controller('category-group')
 export class CategoryGroupController {
   constructor(private service: CategoryGroupService) {
   }

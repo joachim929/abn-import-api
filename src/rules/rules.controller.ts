@@ -2,7 +2,7 @@ import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/commo
 import { RulesService } from './rules.service';
 import { Rule } from './rule.entity';
 
-@Controller('api/rules')
+@Controller('rules')
 export class RulesController {
   constructor(private service: RulesService) {
   }
