@@ -28,7 +28,7 @@ export class RulesController {
   }
 
   @Post()
-  create(@Body() rule: Rule) {
-    return this.service.createRule(rule).catch(reason => console.warn(reason));
+  create(@Body() rules: Rule[]) {
+    return this.service.createRules(rules).catch(reason => console.warn(reason));
   }
 }

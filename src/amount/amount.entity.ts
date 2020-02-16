@@ -15,6 +15,9 @@ export class Amount {
   ruleId: number;
 
   @Column()
+  amount: number;
+
+  @Column()
   logic: 'lessThan' | 'greaterThan' | 'equalTo';
 
   @Column({ nullable: true })

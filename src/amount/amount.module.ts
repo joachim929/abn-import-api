@@ -7,7 +7,7 @@ import { AmountRepositoryService } from './amount-repository/amount-repository.s
 @Module({
   imports: [TypeOrmModule.forFeature([Amount])],
   providers: [AmountService, AmountRepositoryService],
-
+  exports: [AmountService]
 })
 export class AmountModule {
 }
