@@ -11,7 +11,7 @@ export class Amount {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column({update: false})
   ruleId: number;
 
   @Column()

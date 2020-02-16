@@ -6,7 +6,7 @@ export class Description {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column({update: false})
   ruleId: number;
 
   @Column()
