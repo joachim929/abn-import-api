@@ -11,10 +11,10 @@ export class Rule {
   @Column()
   categoryId: number;
 
-  @Column({default: false})
+  @Column({ default: false })
   autoAssign: boolean;
 
-  @Column()
+  @Column({ default: true })
   isActive: boolean;
 
   @CreateDateColumn()

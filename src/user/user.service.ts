@@ -89,7 +89,6 @@ export class UserService {
         bcrypt.hash(user.password, saltRounds).then(hash => {
           user.password = hash;
           resolve(user);
-          console.log(user.password);
         });
       } else {
         throw new HttpException('Bad request', HttpStatus.BAD_REQUEST);

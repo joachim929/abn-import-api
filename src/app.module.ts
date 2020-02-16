@@ -9,6 +9,8 @@ import { CategoryGroupModule } from './category-group/category-group.module';
 import { UserModule } from './user/user.module';
 import { InvoiceModule } from './invoice/invoice.module';
 import { AuthModule } from './auth/auth.module';
+import { AmountModule } from './amount/amount.module';
+import { DescriptionModule } from './description/description.module';
 
 @Module({
   imports: [
@@ -24,6 +26,8 @@ import { AuthModule } from './auth/auth.module';
     UserModule,
     InvoiceModule,
     AuthModule,
+    AmountModule,
+    DescriptionModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -11,7 +11,6 @@ export class InvoiceService {
 
   getInvoices(userId: number): Promise<Invoice[]> {
     return new Promise((resolve, reject) => {
-      console.log(userId);
       this.repositoryService.getInvoices(userId).then((response: Invoice[]) => {
         resolve(response);
       }).catch(reason => reject(reason));

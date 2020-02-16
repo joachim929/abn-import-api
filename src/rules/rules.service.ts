@@ -14,7 +14,6 @@ export class RulesService {
   getRule(id: number): Promise<Rule> {
     return new Promise((resolve, reject) => {
       this.rulesRepositoryService.getRuleById(id).then((response: Rule[]) => {
-        console.log(response);
         if (response.length > 1) {
           reject('Found more than 1 entry');
         } else {
