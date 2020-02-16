@@ -5,9 +5,14 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Rule } from './rule.entity';
 import { RulesRepositoryService } from './rules-repository/rules-repository.service';
 import { AmountModule } from '../amount/amount.module';
+import { DescriptionModule } from '../description/description.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Rule]), AmountModule],
+  imports: [
+    TypeOrmModule.forFeature([Rule]),
+    AmountModule,
+    DescriptionModule,
+  ],
   providers: [RulesService, RulesRepositoryService],
   controllers: [RulesController],
 })

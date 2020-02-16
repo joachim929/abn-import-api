@@ -4,39 +4,45 @@ import { RulesRepositoryService } from './rules-repository/rules-repository.serv
 import { DeleteResult } from 'typeorm/query-builder/result/DeleteResult';
 import { UpdateResult } from 'typeorm/query-builder/result/UpdateResult';
 import { AmountService } from '../amount/amount.service';
-import { Amount } from '../amount/amount.entity';
-import { RuleDto } from './dto/rule.dto';
+import { RuleDTO } from './dtos/rule.dto';
+import { DescriptionService } from '../description/description.service';
+import { AmountDTO } from '../amount/dtos/amount.dto';
 
 @Injectable()
 export class RulesService {
   constructor(
     private rulesRepositoryService: RulesRepositoryService,
     private amountService: AmountService,
+    private descriptionService: DescriptionService,
   ) {
   }
 
-  getRule(id: number): Promise<Rule> {
+  getRule(id: number): Promise<RuleDTO> {
     return new Promise((resolve, reject) => {
-      this.rulesRepositoryService.getRuleById(id).then((response: Rule[]) => {
-        if (response.length > 1) {
+      this.rulesRepositoryService.getRuleById(id).then((rulesResponse: Rule[]) => {
+        if (rulesResponse.length > 1) {
           reject('Found more than 1 entry');
         } else {
-          resolve(response[0]);
+          this.amountService.getAmountByRuleId(rulesResponse[0].id).then((amountResponse) => {
+            resolve(new RuleDTO(rulesResponse[0], amountResponse));
+          });
         }
       }).catch(reason => reject(reason));
     });
   }
 
-  getAll(): Promise<RuleDto[]> {
+  getAll(): Promise<RuleDTO[]> {
     return new Promise((resolve, reject) => {
-      const rulesResponse: RuleDto[] = []
+      const rulesResponse: RuleDTO[] = [];
       this.rulesRepositoryService.getRules().then((rules: Rule[]) => {
         for (let i = 0; i < rules.length; i++) {
-          this.amountService.getAmountByRuleId(rules[i].id).then((response) => {
-            rulesResponse.push(new RuleDto(rules[i], response));
-            if (i === rules.length - 1) {
-              resolve(rulesResponse);
-            }
+          this.amountService.getAmountByRuleId(rules[i].id).then((amountResponse) => {
+            this.descriptionService.getDescriptionByRuleId(rules[i].id).then((descriptionResponse) => {
+              rulesResponse.push(new RuleDTO(rules[i], amountResponse, descriptionResponse));
+              if (i === rules.length - 1) {
+                resolve(rulesResponse);
+              }
+            });
           }).catch(reason => reject(reason));
         }
       }).catch(reason => reject(reason));
@@ -80,25 +86,45 @@ export class RulesService {
     return new Promise((resolve, reject) => {
       this.rulesRepositoryService.createRule(rule).then((response: Rule) => {
         newRule = response;
-        if (rule.amount instanceof Array && rule.amount.length > 0) {
-          this.createAmounts(rule.amount, response.id).then((response) => {
-            newRule.amount = response;
+        this.createAmounts(rule, response.id).then((response) => {
+          newRule.amount = response;
+          this.createDescriptions(rule, newRule.id).then(response => {
+            newRule.description = response;
             resolve(newRule);
           });
-        }
+        });
         resolve(newRule);
       });
     });
   }
 
-  private createAmounts(amountRules: Amount[], ruleId: number) {
+  private createDescriptions(rule, ruleId: number) {
     return new Promise(resolve => {
-      const amountPromises = [];
-      for (const amount of amountRules) {
-        amount.ruleId = ruleId;
-        amountPromises.push(this.amountService.createAmount(amount));
+      if (rule.description instanceof Array && rule.description.length > 0) {
+        const descriptionPromises = [];
+        for (const description of rule.description) {
+          description.ruleId = ruleId;
+          descriptionPromises.push(this.descriptionService.createDescription(description));
+        }
+        Promise.all(descriptionPromises).then(response => resolve(response));
+      } else {
+        resolve([]);
       }
-      Promise.all(amountPromises).then(response => resolve(response));
+    });
+  }
+
+  private createAmounts(rule, ruleId: number): Promise<AmountDTO[]> {
+    return new Promise(resolve => {
+      if (rule.amount instanceof Array && rule.amount.length > 0) {
+        const amountPromises = [];
+        for (const amount of rule.amount) {
+          amount.ruleId = ruleId;
+          amountPromises.push(this.amountService.createAmount(amount));
+        }
+        Promise.all(amountPromises).then(response => resolve(response));
+      } else {
+        resolve([]);
+      }
     });
   }
 }

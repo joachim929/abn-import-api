@@ -16,7 +16,6 @@ export class RulesRepositoryService {
 
   async getRuleById(id: number): Promise<Rule[]> {
     return await this.ruleRepository.find({
-      relations: ['amount'],
       where: [{ id }],
     });
   }
