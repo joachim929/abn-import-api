@@ -52,7 +52,7 @@ export class RulesService {
   patchRule(rule: Rule) {
     return new Promise((resolve, reject) => {
       this.rulesRepositoryService.updateRule(rule.id, rule).then((response: UpdateResult) => {
-        resolve(response);
+        resolve();
       }).catch(reason => reject(reason));
     });
   }

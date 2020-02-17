@@ -1,11 +1,21 @@
 import { CategoryDTO } from '../../category/dtos/category.dto';
 import { CategoryGroup } from '../category-group.entity';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 export class CategoryGroupDTO {
+  @ApiProperty()
   id: number;
+
+  @ApiProperty()
   name: string;
+
+  @ApiProperty()
   userId: number;
+
+  @ApiPropertyOptional()
   description?: string;
+
+  @ApiPropertyOptional()
   categories?: CategoryDTO[];
 
   constructor(categoryGroup: CategoryGroup) {

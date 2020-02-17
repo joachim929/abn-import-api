@@ -1,11 +1,24 @@
 import { Amount } from '../../amount/amount.entity';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { AndOr } from '../../description/dtos/description.dto';
+
+export type AmountLogic = 'lessThan' | 'greaterThan' | 'equalTo';
 
 export class AmountDTO {
+  @ApiProperty()
   id: number;
+
+  @ApiProperty()
   ruleId: number;
+
+  @ApiProperty()
   amount: number;
-  logic: 'lessThan' | 'greaterThan' | 'equalTo';
-  andOr?: 'and' | 'or';
+
+  @ApiProperty()
+  logic: AmountLogic;
+
+  @ApiPropertyOptional()
+  andOr?: AndOr;
 
   constructor(amount: Amount) {
     this.id = amount.id;
