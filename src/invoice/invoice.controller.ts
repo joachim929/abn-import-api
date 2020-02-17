@@ -28,4 +28,9 @@ export class InvoiceController {
   create(@Body() invoice: Invoice) {
     return this.service.createInvoice(invoice).catch(reason => console.warn(reason));
   }
+
+  @Post('/multi')
+  createMulti(@Body() invoices: Invoice[]) {
+    return this.service.createInvoices(invoices);
+  }
 }

@@ -3,6 +3,7 @@ import { UserRepositoryService } from './user-repository/user-repository.service
 import { User } from './user.entity';
 import { DeleteResult, UpdateResult } from 'typeorm';
 import { UserValidationService } from './user-validation/user-validation.service';
+import { UserDTO } from './dtos/user.dto';
 
 @Injectable()
 export class UserService {
@@ -36,11 +37,11 @@ export class UserService {
     });
   }
 
-  getUsers(): Promise<User[]> {
+  getUsers(): Promise<UserDTO[]> {
     return new Promise((resolve, reject) => {
       this.userRepository.getUsers().then((response: User[]) => {
         if (response.length > 0) {
-          resolve(response);
+          resolve(response.map(user => new UserDTO(user)));
         } else {
           throw new HttpException('Bad request', HttpStatus.BAD_REQUEST);
         }

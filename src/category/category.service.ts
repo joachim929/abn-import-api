@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { CategoryRepositoryService } from './category-repository/category-repository.service';
 import { Category } from './category.entity';
 import { DeleteResult, UpdateResult } from 'typeorm';
+import { CategoryDTO } from './dtos/category.dto';
 
 @Injectable()
 export class CategoryService {
@@ -10,11 +11,11 @@ export class CategoryService {
   ) {
   }
 
-  getCategory(id: number): Promise<Category> {
+  getCategory(id: number): Promise<CategoryDTO> {
     return new Promise((resolve, reject) => {
       this.repositoryService.getCategoryById(id).then((response: Category[]) => {
         if (response.length === 1) {
-          resolve(response[0]);
+          resolve(new CategoryDTO(response[0]));
         } else {
           reject(`Found unexpected amount of entries for category.id: ${id}`);
         }
@@ -22,11 +23,11 @@ export class CategoryService {
     });
   }
 
-  getAll(): Promise<Category[]> {
+  getAll(): Promise<CategoryDTO[]> {
     return new Promise((resolve, reject) => {
       this.repositoryService.getCategories().then((response: Category[]) => {
         if (response.length > 0) {
-          resolve(response);
+          resolve(response.map(category => new CategoryDTO(category)));
         } else {
           reject(`Found no categories`);
         }
@@ -54,10 +55,10 @@ export class CategoryService {
     });
   }
 
-  createCategory(category: Category) {
+  createCategory(category: Category): Promise<CategoryDTO> {
     return new Promise((resolve, reject) => {
       this.repositoryService.createCategory(category).then((response: Category) => {
-        resolve(response);
+        resolve(new CategoryDTO(response));
       }).catch(reason => reject(reason));
     });
   }

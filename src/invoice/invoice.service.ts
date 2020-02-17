@@ -1,27 +1,39 @@
 import { Injectable } from '@nestjs/common';
 import { InvoiceRepositoryService } from './invoice-repository/invoice-repository.service';
 import { Invoice } from './invoice.entity';
-import { response } from 'express';
 import { DeleteResult, UpdateResult } from 'typeorm';
+import { InvoiceDTO } from './dtos/invoice.dto';
 
 @Injectable()
 export class InvoiceService {
   constructor(private repositoryService: InvoiceRepositoryService) {
   }
 
-  getInvoices(userId: number): Promise<Invoice[]> {
+  getInvoices(userId: number): Promise<InvoiceDTO[]> {
     return new Promise((resolve, reject) => {
       this.repositoryService.getInvoices(userId).then((response: Invoice[]) => {
-        resolve(response);
+        resolve(response.map(invoice => new InvoiceDTO(invoice)));
       }).catch(reason => reject(reason));
     });
   }
 
-  createInvoice(invoice: Invoice): Promise<Invoice> {
+  createInvoice(invoice: Invoice): Promise<InvoiceDTO> {
     return new Promise((resolve, reject) => {
       this.repositoryService.createInvoice(invoice).then((response: Invoice) => {
-        resolve(response);
+        resolve(new InvoiceDTO(response));
       }).catch(reason => reject(reason));
+    });
+  }
+
+  createInvoices(invoices: Invoice[]): Promise<InvoiceDTO[]> {
+    return new Promise((resolve, reject) => {
+      const promises = [];
+      for (const invoice of invoices) {
+        promises.push(this.createInvoice(invoice));
+      }
+      Promise.all(promises).then(createdInvoices => {
+        resolve(createdInvoices);
+      })
     });
   }
 

@@ -14,7 +14,7 @@ export class Invoice {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({nullable: true})
+  @Column({ nullable: true })
   originalId: number;
 
   @Column()
@@ -23,7 +23,8 @@ export class Invoice {
   @Column()
   mutationCode: string;
 
-  @Column({nullable: true})
+  // todo: add the other date from raw data, just for the hell of it
+  @Column({ nullable: true })
   transactionDate: Date;
 
   @Column()
@@ -38,17 +39,17 @@ export class Invoice {
   @Column()
   description: string;
 
-  @Column({nullable: true})
+  @Column({ nullable: true })
   comment: string;
 
-  @Column({nullable: true})
+  @Column({ nullable: true })
   categoryId: number;
 
   @Column()
   userId: number;
 
   @ManyToOne(type => User)
-  @JoinColumn({name: 'userId', referencedColumnName: 'id'})
+  @JoinColumn({ name: 'userId', referencedColumnName: 'id' })
   user: User;
 
   @CreateDateColumn()
