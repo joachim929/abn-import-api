@@ -3,6 +3,7 @@ import { InvoiceRepositoryService } from './invoice-repository/invoice-repositor
 import { Invoice } from './invoice.entity';
 import { DeleteResult, UpdateResult } from 'typeorm';
 import { InvoiceDTO } from './dtos/invoice.dto';
+import { CreateInvoiceDTO } from './dtos/create-invoice.dto';
 
 @Injectable()
 export class InvoiceService {
@@ -17,7 +18,8 @@ export class InvoiceService {
     });
   }
 
-  createInvoice(invoice: Invoice): Promise<InvoiceDTO> {
+  // todo: fix strong typing
+  createInvoice(invoice: any): Promise<InvoiceDTO> {
     return new Promise((resolve, reject) => {
       this.repositoryService.createInvoice(invoice).then((response: Invoice) => {
         resolve(new InvoiceDTO(response));
@@ -25,7 +27,8 @@ export class InvoiceService {
     });
   }
 
-  createInvoices(invoices: Invoice[]): Promise<InvoiceDTO[]> {
+  // todo: fix strong typing
+  createInvoices(invoices: any[]): Promise<InvoiceDTO[]> {
     return new Promise((resolve, reject) => {
       const promises = [];
       for (const invoice of invoices) {

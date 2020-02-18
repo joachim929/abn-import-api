@@ -1,8 +1,11 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, Query } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Query, UsePipes } from '@nestjs/common';
 import { InvoiceService } from './invoice.service';
 import { Invoice } from './invoice.entity';
 import { ApiBody, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { InvoiceDTO } from './dtos/invoice.dto';
+import { CreateInvoiceDTO } from './dtos/create-invoice.dto';
+import { ValidationPipe } from '../shared/pipes/validation.pipe';
+import { ParseIntPipe } from '../shared/pipes/parse-int.pipe';
 
 @ApiTags('Invoice')
 @Controller('invoice')
@@ -32,7 +35,7 @@ export class InvoiceController {
   @Patch(':id')
   @ApiBody({type: Invoice})
   @ApiResponse({
-    status: 204, description: 'Record patched'
+    status: 204, description: 'Record patched', type: null
   })
   @ApiResponse({
     status: 401, description: 'Unauthorized' // Not logged in
@@ -45,6 +48,7 @@ export class InvoiceController {
   }
 
   @Delete(':id')
+  @UsePipes(ParseIntPipe)
   @ApiResponse({
     status: 204, description: 'Record deleted'
   })
@@ -53,19 +57,27 @@ export class InvoiceController {
   }
 
   @Post()
+  @UsePipes(ValidationPipe)
   @ApiResponse({
-    status: 200, description: 'Record created', type: InvoiceDTO
+    status: 201, description: 'Record created', type: InvoiceDTO
   })
-  create(@Body() invoice: Invoice) {
+  @ApiResponse({
+    status: 422, description: 'Unprocessable Entity'
+  })
+  create(@Body() invoice: CreateInvoiceDTO) {
     return this.service.createInvoice(invoice).catch(reason => console.warn(reason));
   }
 
   @Post('/multi')
+  @UsePipes(ValidationPipe)
   @ApiResponse({
-    status: 200, description: 'Records created', type: [InvoiceDTO]
+    status: 201, description: 'Records created', type: [InvoiceDTO]
   })
-  @ApiBody({type: [Invoice]})
-  createMulti(@Body() invoices: Invoice[]) {
+  @ApiResponse({
+    status: 422, description: 'Unprocessable Entity'
+  })
+  @ApiBody({type: [CreateInvoiceDTO]})
+  createMulti(@Body() invoices: CreateInvoiceDTO[]) {
     return this.service.createInvoices(invoices);
   }
 }

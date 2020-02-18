@@ -79,7 +79,10 @@ export class UserController {
     status: 401, description: 'Unauthorized' // When auth works
   })
   @ApiResponse({
-    status: 405, description: 'Method not allowed' // When still logged in
+    status: 405, description: 'Method not allowed' // When still logged in but not at as admin
+  })
+  @ApiResponse({
+    status: 422, description: 'Unprocessable Entity' // Invalid params
   })
   create(@Body() user: User): Promise<UserDTO> {
     return this.service.createUser(user);
