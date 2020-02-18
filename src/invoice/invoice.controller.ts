@@ -70,7 +70,9 @@ export class InvoiceController {
   }
 
   @Post()
-  @UsePipes(new ValidationPipe({transform: true}))
+  @UsePipes(new ValidationPipe({
+    transform: true
+  }))
   @ApiResponse({
     status: 201, description: 'Record created', type: InvoiceDTO
   })
@@ -81,6 +83,7 @@ export class InvoiceController {
     status: 401, description: 'Unauthorized' // Not logged in
   })
   create(@Body() invoice: CreateInvoiceDTO) {
+    console.log(invoice);
     return this.service.createInvoice(invoice).catch(reason => console.warn(reason));
   }
 

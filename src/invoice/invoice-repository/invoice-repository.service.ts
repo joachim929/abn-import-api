@@ -18,6 +18,7 @@ export class InvoiceRepositoryService {
 
   async createInvoice<T extends DeepPartial<Invoice>>(entity: T, options?: SaveOptions): Promise<Invoice>
   async createInvoice(invoice: Invoice) {
+    console.log(invoice);
     return await this.repository.save(invoice);
   }
 

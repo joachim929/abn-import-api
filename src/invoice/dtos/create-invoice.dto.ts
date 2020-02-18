@@ -1,31 +1,31 @@
-import { IsString } from 'class-validator';
+import { IsOptional, IsString } from 'class-validator';
 import { Transform } from 'class-transformer';
 
 export class CreateInvoiceDTO {
-  @Transform(accountnumber => Number(accountnumber))
+  @Transform(accountNumber => Number(accountNumber))
   readonly accountNumber: number;
 
   @IsString()
   readonly mutationCode: string;
 
-  @Transform(transactiondate => new Date().setUTCFullYear(
-    transactiondate.slice(0, 4),
-    transactiondate.slice(4, 6),
-    transactiondate.slice(6, 8)
+  @Transform(transactionDate => new Date().setUTCFullYear(
+    transactionDate.slice(0, 4),
+    transactionDate.slice(4, 6),
+    transactionDate.slice(6, 8)
   ))
   readonly transactionDate?: Date;
 
-  @Transform(valuedate => new Date().setUTCFullYear(
-    valuedate.slice(0, 4),
-    valuedate.slice(4, 6),
-    valuedate.slice(6, 8)
+  @Transform(valueDate => new Date().setUTCFullYear(
+    valueDate.slice(0, 4),
+    valueDate.slice(4, 6),
+    valueDate.slice(6, 8)
   ))
   readonly valueDate?: Date;
 
-  @Transform(startsaldo => Number(startsaldo))
+  @Transform(startBalance => Number(startBalance))
   readonly startBalance: number;
 
-  @Transform(endsaldo => Number(endsaldo))
+  @Transform(endBalance => Number(endBalance))
   readonly endBalance: number;
 
   @Transform(amount => Number(amount))
@@ -34,9 +34,11 @@ export class CreateInvoiceDTO {
   @IsString()
   readonly description: string;
 
+  @IsOptional()
   @IsString()
   readonly comment?: string;
 
+  @IsOptional()
   @Transform(categoryId => Number(categoryId))
   readonly categoryId?: number;
 
