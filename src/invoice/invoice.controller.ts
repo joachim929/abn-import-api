@@ -16,6 +16,15 @@ export class InvoiceController {
   @ApiResponse({
     status: 200, description: 'Found records', type: [InvoiceDTO]
   })
+  @ApiResponse({
+    status: 204, description: 'No content'
+  })
+  @ApiResponse({
+    status: 401, description: 'Unauthorized' // When auth works
+  })
+  @ApiResponse({
+    status: 422, description: 'Unprocessable Entity' // Invalid id
+  })
   get(@Query() query) {
     return this.service.getInvoices(query.userId).catch(reason => console.warn(reason));
   }
@@ -24,6 +33,12 @@ export class InvoiceController {
   @ApiBody({type: Invoice})
   @ApiResponse({
     status: 204, description: 'Record patched'
+  })
+  @ApiResponse({
+    status: 401, description: 'Unauthorized' // Not logged in
+  })
+  @ApiResponse({
+    status: 422, description: 'Unprocessable Entity'
   })
   patch(@Body() invoice: Invoice) {
     return this.service.patchInvoice(invoice).catch(reason => console.warn(reason));

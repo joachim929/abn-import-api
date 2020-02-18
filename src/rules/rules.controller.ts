@@ -14,6 +14,15 @@ export class RulesController {
   @ApiResponse({
     status: 200, description: 'The found record', type: RuleDTO,
   })
+  @ApiResponse({
+    status: 204, description: 'No content' // When nothing found
+  })
+  @ApiResponse({
+    status: 403, description: 'Forbidden' // When auth works
+  })
+  @ApiResponse({
+    status: 422, description: 'Unprocessable Entity' // Invalid param
+  })
   get(@Param() params) {
     return this.service.getRule(params.id).catch(reason => console.warn(reason));
   }
@@ -21,6 +30,12 @@ export class RulesController {
   @Get()
   @ApiResponse({
     status: 200, description: 'The found records', type: [RuleDTO],
+  })
+  @ApiResponse({
+    status: 204, description: 'No content' // When nothing found
+  })
+  @ApiResponse({
+    status: 401, description: 'Unauthorized' // When auth works
   })
   getAll() {
     return this.service.getAll().catch(reason => console.warn(reason));
@@ -30,6 +45,15 @@ export class RulesController {
   @ApiResponse({
     status: 204, description: 'Record patched'
   })
+  @ApiResponse({
+    status: 401, description: 'Unauthorized' // When auth works, not logged in
+  })
+  @ApiResponse({
+    status: 403, description: 'Forbidden' // When auth works, not user rule
+  })
+  @ApiResponse( {
+    status: 422, description: 'Unprocessable Entity' // Invalid params
+  })
   patch(@Body() rule: Rule) {
     return this.service.patchRule(rule).catch(reason => console.warn(reason));
   }
@@ -38,13 +62,28 @@ export class RulesController {
   @ApiResponse({
     status: 204, description: 'Record deleted'
   })
+  @ApiResponse({
+    status: 401, description: 'Unauthorized' // When auth works, not logged in
+  })
+  @ApiResponse({
+    status: 403, description: 'Unauthorized' // When not user's rule
+  })
+  @ApiResponse({
+    status: 422, description: 'Unprocessable Entity' // Invalid params
+  })
   delete(@Param() params) {
     return this.service.deleteRule(params.id).catch(reason => console.warn(reason));
   }
 
   @Post()
   @ApiResponse({
-    status: 200, description: 'Record created', type: RuleDTO,
+    status: 201, description: 'Record created', type: RuleDTO,
+  })
+  @ApiResponse({
+    status: 401, description: 'Forbidden' // When not logged in
+  })
+  @ApiResponse({
+    status: 422, description: 'Unprocessable Entity' // Invalid params
   })
   create(@Body() rules: Rule[]) {
     return this.service.createRules(rules).catch(reason => console.warn(reason));
