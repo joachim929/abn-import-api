@@ -1,25 +1,34 @@
 import { IsString } from 'class-validator';
+import { Transform } from 'class-transformer';
 
 export class CreateInvoiceDTO {
-  @IsString() // todo check if this should be a number or not
-  readonly accountNumber: string;
+  @Transform(accountnumber => Number(accountnumber))
+  readonly accountnumber: number;
 
   @IsString()
   readonly mutationcode: string;
 
-  @IsString()
-  readonly transactiondate: string;
+  @Transform(transactiondate => new Date().setUTCFullYear(
+    transactiondate.slice(0, 4),
+    transactiondate.slice(4, 6),
+    transactiondate.slice(6, 8)
+  ))
+  readonly transactiondate: Date;
 
-  @IsString()
-  readonly valuedate: string;
+  @Transform(valuedate => new Date().setUTCFullYear(
+    valuedate.slice(0, 4),
+    valuedate.slice(4, 6),
+    valuedate.slice(6, 8)
+  ))
+  readonly valuedate: Date;
 
-  @IsString() // todo check if this should be a number or not
-  readonly startsaldo: string;
+  @Transform(startsaldo => Number(startsaldo))
+  readonly startsaldo: number;
 
-  @IsString() // todo check if this should be a number or not
-  readonly endsaldo: string;
+  @Transform(endsaldo => Number(endsaldo))
+  readonly endsaldo: number;
 
-  @IsString() // todo check if this should be a number or not
+  @Transform(amount => Number(amount))
   readonly amount: string;
 
   @IsString()

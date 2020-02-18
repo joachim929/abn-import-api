@@ -1,15 +1,27 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, Query, UsePipes } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  ParseIntPipe,
+  Patch,
+  Post,
+  Query,
+  UsePipes,
+  ValidationPipe,
+} from '@nestjs/common';
 import { InvoiceService } from './invoice.service';
 import { Invoice } from './invoice.entity';
 import { ApiBody, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { InvoiceDTO } from './dtos/invoice.dto';
-import { CreateInvoiceDTO } from './dtos/create-invoice.dto';
-import { ValidationPipe } from '../shared/pipes/validation.pipe';
-import { ParseIntPipe } from '../shared/pipes/parse-int.pipe';
+import { CreateInvoiceDTO } from './dtos/create-invoice.dto'
 
 @ApiTags('Invoice')
 @Controller('invoice')
 export class InvoiceController {
+
+  // todo:  read up on https://github.com/typestack/class-validator
   constructor(
     private service: InvoiceService,
   ) {
@@ -48,7 +60,7 @@ export class InvoiceController {
   }
 
   @Delete(':id')
-  @UsePipes(ParseIntPipe)
+  @UsePipes(new ParseIntPipe())
   @ApiResponse({
     status: 204, description: 'Record deleted'
   })
@@ -57,7 +69,7 @@ export class InvoiceController {
   }
 
   @Post()
-  @UsePipes(ValidationPipe)
+  @UsePipes(new ValidationPipe({}))
   @ApiResponse({
     status: 201, description: 'Record created', type: InvoiceDTO
   })
@@ -69,7 +81,7 @@ export class InvoiceController {
   }
 
   @Post('/multi')
-  @UsePipes(ValidationPipe)
+  @UsePipes(new ValidationPipe({}))
   @ApiResponse({
     status: 201, description: 'Records created', type: [InvoiceDTO]
   })
