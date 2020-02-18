@@ -40,7 +40,7 @@ export class InvoiceService {
     });
   }
 
-  patchInvoice(invoice: Invoice): Promise<UpdateResult> {
+  patchInvoice(invoice): Promise<UpdateResult> {
     return new Promise((resolve, reject) => {
       this.repositoryService.updateInvoice(invoice.id, invoice).then((response: UpdateResult) => {
         resolve(response);

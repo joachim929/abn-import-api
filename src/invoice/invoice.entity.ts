@@ -23,9 +23,11 @@ export class Invoice {
   @Column()
   mutationCode: string;
 
-  // todo: add the other date from raw data, just for the hell of it
   @Column({ nullable: true })
   transactionDate: Date;
+
+  @Column({ nullable: true })
+  valueDate: Date;
 
   @Column()
   startBalance: number;

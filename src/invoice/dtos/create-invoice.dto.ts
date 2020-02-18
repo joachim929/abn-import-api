@@ -3,34 +3,43 @@ import { Transform } from 'class-transformer';
 
 export class CreateInvoiceDTO {
   @Transform(accountnumber => Number(accountnumber))
-  readonly accountnumber: number;
+  readonly accountNumber: number;
 
   @IsString()
-  readonly mutationcode: string;
+  readonly mutationCode: string;
 
   @Transform(transactiondate => new Date().setUTCFullYear(
     transactiondate.slice(0, 4),
     transactiondate.slice(4, 6),
     transactiondate.slice(6, 8)
   ))
-  readonly transactiondate: Date;
+  readonly transactionDate?: Date;
 
   @Transform(valuedate => new Date().setUTCFullYear(
     valuedate.slice(0, 4),
     valuedate.slice(4, 6),
     valuedate.slice(6, 8)
   ))
-  readonly valuedate: Date;
+  readonly valueDate?: Date;
 
   @Transform(startsaldo => Number(startsaldo))
-  readonly startsaldo: number;
+  readonly startBalance: number;
 
   @Transform(endsaldo => Number(endsaldo))
-  readonly endsaldo: number;
+  readonly endBalance: number;
 
   @Transform(amount => Number(amount))
-  readonly amount: string;
+  readonly amount: number;
 
   @IsString()
   readonly description: string;
+
+  @IsString()
+  readonly comment?: string;
+
+  @Transform(categoryId => Number(categoryId))
+  readonly categoryId?: number;
+
+  @Transform(userId => Number(userId))
+  readonly userId: number;
 }
