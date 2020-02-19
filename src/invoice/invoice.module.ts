@@ -6,8 +6,11 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Invoice } from './invoice.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Invoice])],
+  imports: [
+    TypeOrmModule.forFeature([Invoice])
+  ],
   controllers: [InvoiceController],
-  providers: [InvoiceService, InvoiceRepositoryService]
+  providers: [InvoiceService, InvoiceRepositoryService],
 })
-export class InvoiceModule {}
+export class InvoiceModule {
+}

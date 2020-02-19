@@ -18,8 +18,7 @@ export class InvoiceService {
     });
   }
 
-  // todo: fix strong typing
-  createInvoice(invoice: any): Promise<InvoiceDTO> {
+  createInvoice(invoice: CreateInvoiceDTO): Promise<InvoiceDTO> {
     return new Promise((resolve, reject) => {
       this.repositoryService.createInvoice(invoice).then((response: Invoice) => {
         resolve(new InvoiceDTO(response));
@@ -27,8 +26,7 @@ export class InvoiceService {
     });
   }
 
-  // todo: fix strong typing
-  createInvoices(invoices: any[]): Promise<InvoiceDTO[]> {
+  createInvoices(invoices: CreateInvoiceDTO[]): Promise<InvoiceDTO[]> {
     return new Promise((resolve, reject) => {
       const promises = [];
       for (const invoice of invoices) {
@@ -36,7 +34,7 @@ export class InvoiceService {
       }
       Promise.all(promises).then(createdInvoices => {
         resolve(createdInvoices);
-      })
+      });
     });
   }
 
@@ -53,6 +51,24 @@ export class InvoiceService {
       this.repositoryService.deleteInvoice(id).then((response) => {
         resolve(response);
       }).catch(reason => reject(reason));
+    });
+  }
+
+  // todo: Find out if there are any differences between 'excel' and 'text' or
+  //    if its the same once converted to JSON
+  importInvoices(type: 'excel' | 'text', file: CreateInvoiceDTO[]): Promise<any> {
+    return new Promise((resolve, reject) => {
+      console.log(file);
+      // todo: Parse data
+      //    then
+      const parsdedData = file;
+      const promises = [];
+      for (const invoice of parsdedData) {
+        promises.push(this.createInvoice(invoice));
+      }
+      Promise.all(promises)
+        .then((response: InvoiceDTO[]) => resolve(response))
+        .catch(reason => reject(reason));
     });
   }
 }

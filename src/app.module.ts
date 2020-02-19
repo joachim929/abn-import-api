@@ -27,7 +27,7 @@ import { DescriptionModule } from './description/description.module';
     InvoiceModule,
     AuthModule,
     AmountModule,
-    DescriptionModule,
+    DescriptionModule
   ],
   controllers: [AppController],
   providers: [AppService],

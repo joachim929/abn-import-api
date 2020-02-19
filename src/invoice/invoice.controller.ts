@@ -7,7 +7,7 @@ import {
   ParseIntPipe,
   Patch,
   Post,
-  Query, UploadedFile, UseInterceptors,
+  Query,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
@@ -15,7 +15,6 @@ import { InvoiceService } from './invoice.service';
 import { ApiBody, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { InvoiceDTO } from './dtos/invoice.dto';
 import { CreateInvoiceDTO } from './dtos/create-invoice.dto';
-import { FileInterceptor } from '@nestjs/platform-express';
 
 @ApiTags('Invoice')
 @Controller('invoice')
@@ -29,13 +28,13 @@ export class InvoiceController {
   @Get()
   @UsePipes(new ParseIntPipe())
   @ApiResponse({
-    status: 200, description: 'Found records', type: [InvoiceDTO]
+    status: 200, description: 'Found records', type: [InvoiceDTO],
   })
   @ApiResponse({
-    status: 204, description: 'No content'
+    status: 204, description: 'No content',
   })
   @ApiResponse({
-    status: 401, description: 'Unauthorized' // When auth works
+    status: 401, description: 'Unauthorized', // When auth works
   })
   get(@Query('userId', new ParseIntPipe()) userId) {
     return this.service.getInvoices(userId).catch(reason => console.warn(reason));
@@ -43,13 +42,13 @@ export class InvoiceController {
 
   @Patch()
   @ApiResponse({
-    status: 204, description: 'Record patched'
+    status: 204, description: 'Record patched',
   })
   @ApiResponse({
-    status: 400, description: 'Bad request'
+    status: 400, description: 'Bad request',
   })
   @ApiResponse({
-    status: 401, description: 'Unauthorized' // Not logged in
+    status: 401, description: 'Unauthorized', // Not logged in
   })
   patch(@Body() invoice: CreateInvoiceDTO) {
     return this.service.patchInvoice(invoice).catch(reason => console.warn(reason));
@@ -57,13 +56,13 @@ export class InvoiceController {
 
   @Delete(':id')
   @ApiResponse({
-    status: 204, description: 'Record deleted'
+    status: 204, description: 'Record deleted',
   })
   @ApiResponse({
-    status: 400, description: 'Bad request' // Id doesn't exist
+    status: 400, description: 'Bad request', // Id doesn't exist
   })
   @ApiResponse({
-    status: 401, description: 'Unauthorized' // Not logged in
+    status: 401, description: 'Unauthorized', // Not logged in
   })
   delete(@Param('id', new ParseIntPipe()) id) {
     return this.service.deleteInvoice(id).catch(reason => console.warn(reason));
@@ -71,16 +70,16 @@ export class InvoiceController {
 
   @Post()
   @UsePipes(new ValidationPipe({
-    transform: true
+    transform: true,
   }))
   @ApiResponse({
-    status: 201, description: 'Record created', type: InvoiceDTO
+    status: 201, description: 'Record created', type: InvoiceDTO,
   })
   @ApiResponse({
-    status: 400, description: 'Bad request'
+    status: 400, description: 'Bad request',
   })
   @ApiResponse({
-    status: 401, description: 'Unauthorized' // Not logged in
+    status: 401, description: 'Unauthorized', // Not logged in
   })
   create(@Body() invoice: CreateInvoiceDTO) {
     console.log(invoice);
@@ -88,26 +87,52 @@ export class InvoiceController {
   }
 
   @Post('/multi')
-  @UsePipes(new ValidationPipe({transform: true}))
+  @UsePipes(new ValidationPipe({ transform: true }))
   @ApiResponse({
-    status: 201, description: 'Records created', type: [InvoiceDTO]
+    status: 201, description: 'Records created', type: [InvoiceDTO],
   })
   @ApiResponse({
-    status: 400, description: 'Bad request'
+    status: 400, description: 'Bad request',
   })
   @ApiResponse({
-    status: 401, description: 'Unauthorized' // Not logged in
+    status: 401, description: 'Unauthorized', // Not logged in
   })
-  @ApiBody({type: [CreateInvoiceDTO]})
+  @ApiBody({ type: [CreateInvoiceDTO] })
   createMulti(@Body() invoices: CreateInvoiceDTO[]) {
     return this.service.createInvoices(invoices);
   }
 
-  // todo: Finish this
-  @Post('/upload/:type')
-  @UseInterceptors(FileInterceptor('file'))
-  import(@Param('type') type: 'csv' | 'xlsx' | 'xls', @UploadedFile() file) {
-    console.log(file);
-    return 'WIP';
+  // todo: Implement this
+  @Post('/upload/text')
+  @UsePipes(new ValidationPipe({ transform: true }))
+  @ApiResponse({
+    status: 201, description: 'Records created', // todo: Strong type
+  })
+  @ApiResponse({
+    status: 400, description: 'Bad request',
+  })
+  @ApiResponse({
+    status: 401, description: 'Unauthorized', // Not logged in
+  })
+  @ApiBody({ type: [CreateInvoiceDTO] })
+  importText(@Body() file: CreateInvoiceDTO[]) {
+    return this.service.importInvoices('text', file);
+  }
+
+  // todo: Implement this
+  @Post('/upload/excel')
+  @UsePipes(new ValidationPipe({ transform: true })) // todo: Will need a new DTO as the attribute names are different
+  @ApiResponse({
+    status: 201, description: 'Records created', // todo: Strong type
+  })
+  @ApiResponse({
+    status: 400, description: 'Bad request',
+  })
+  @ApiResponse({
+    status: 401, description: 'Unauthorized', // Not logged in
+  })
+  @ApiBody({ type: [CreateInvoiceDTO] })
+  importExcel(@Body() file: CreateInvoiceDTO[]) {
+    return this.service.importInvoices('excel', file);
   }
 }
