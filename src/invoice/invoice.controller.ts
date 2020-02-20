@@ -12,7 +12,7 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import { InvoiceService } from './invoice.service';
-import { ApiBody, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { InvoiceDTO, UserIdDTO } from './dtos/invoice.dto';
 import { CreateInvoiceDTO } from './dtos/create-invoice.dto';
 import { isNumber } from 'util';
@@ -26,7 +26,10 @@ export class InvoiceController {
   ) {
   }
 
-  @Get(':id')
+  @Get(':userId')
+  @ApiOperation({
+    operationId: 'getInvoicesForUser'
+  })
   @ApiResponse({
     status: 200, description: 'Found records'
   })
@@ -36,13 +39,14 @@ export class InvoiceController {
   @ApiResponse({
     status: 401, description: 'Unauthorized', // When auth works
   })
-  get(@Param() params: UserIdDTO) {
-    console.log(params, isNumber(params));
-    return params;
-    // return this.service.getInvoices(userId).catch(reason => console.warn(reason));
+  get(@Param('userId', new ParseIntPipe()) userId: number) {
+    return this.service.getInvoices(userId).catch(reason => console.warn(reason));
   }
 
   @Patch()
+  @ApiOperation({
+    operationId: 'patchInvoice'
+  })
   @ApiResponse({
     status: 204, description: 'Record patched',
   })
@@ -57,6 +61,9 @@ export class InvoiceController {
   }
 
   @Delete(':id')
+  @ApiOperation({
+    operationId: 'deleteInvoice'
+  })
   @ApiResponse({
     status: 204, description: 'Record deleted',
   })
@@ -71,6 +78,9 @@ export class InvoiceController {
   }
 
   @Post()
+  @ApiOperation({
+    operationId: 'postInvoice'
+  })
   @UsePipes(new ValidationPipe({
     transform: true,
   }))
@@ -89,6 +99,9 @@ export class InvoiceController {
   }
 
   @Post('/multi')
+  @ApiOperation({
+    operationId: 'postInvoiceMulti'
+  })
   @UsePipes(new ValidationPipe({ transform: true }))
   @ApiResponse({
     status: 201, description: 'Records created', type: [InvoiceDTO],
@@ -106,6 +119,9 @@ export class InvoiceController {
 
   // todo: Implement this
   @Post('/upload/text')
+  @ApiOperation({
+    operationId: 'postInvoiceMultiText'
+  })
   @UsePipes(new ValidationPipe({ transform: true }))
   @ApiResponse({
     status: 201, description: 'Records created', // todo: Strong type
@@ -140,6 +156,9 @@ export class InvoiceController {
    */
   // todo: Implement this
   @Post('/upload/excel')
+  @ApiOperation({
+    operationId: 'postInvoiceMultiExcel'
+  })
   @UsePipes(new ValidationPipe({ transform: true })) // todo: Will need a new DTO as the attribute names are different
   @ApiResponse({
     status: 201, description: 'Records created', // todo: Strong type
