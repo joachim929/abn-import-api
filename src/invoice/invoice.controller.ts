@@ -73,7 +73,7 @@ export class InvoiceController {
   @ApiResponse({
     status: 401, description: 'Unauthorized', // Not logged in
   })
-  delete(@Param('id', new ParseIntPipe()) id) {
+  delete(@Param('id', new ParseIntPipe()) id: number) {
     return this.service.deleteInvoice(id).catch(reason => console.warn(reason));
   }
 
