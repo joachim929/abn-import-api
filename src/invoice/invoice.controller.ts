@@ -13,8 +13,9 @@ import {
 } from '@nestjs/common';
 import { InvoiceService } from './invoice.service';
 import { ApiBody, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { InvoiceDTO } from './dtos/invoice.dto';
+import { InvoiceDTO, UserIdDTO } from './dtos/invoice.dto';
 import { CreateInvoiceDTO } from './dtos/create-invoice.dto';
+import { isNumber } from 'util';
 
 @ApiTags('Invoice')
 @Controller('invoice')
@@ -25,10 +26,9 @@ export class InvoiceController {
   ) {
   }
 
-  @Get()
-  @UsePipes(new ParseIntPipe())
+  @Get(':id')
   @ApiResponse({
-    status: 200, description: 'Found records', type: [InvoiceDTO],
+    status: 200, description: 'Found records'
   })
   @ApiResponse({
     status: 204, description: 'No content',
@@ -36,8 +36,10 @@ export class InvoiceController {
   @ApiResponse({
     status: 401, description: 'Unauthorized', // When auth works
   })
-  get(@Query('userId', new ParseIntPipe()) userId) {
-    return this.service.getInvoices(userId).catch(reason => console.warn(reason));
+  get(@Param() params: UserIdDTO) {
+    console.log(params, isNumber(params));
+    return params;
+    // return this.service.getInvoices(userId).catch(reason => console.warn(reason));
   }
 
   @Patch()
@@ -119,6 +121,23 @@ export class InvoiceController {
     return this.service.importInvoices('text', file);
   }
 
+  /**
+   Beginsaldo: 601.83
+   ​​
+   Eindsaldo: 595.33
+   ​​
+   Muntsoort: "EUR"
+   ​​
+   Omschrijving: "BEA   NR:4ZJ201   13.02.20/07.52 Huiskamer KL 4804, WP,PAS043    WEESP"
+   ​​
+   Rekeningnummer: 523962118
+   ​​
+   Rentedatum: 20200213
+   ​​
+   Transactiebedrag: -6.5
+   ​​
+   Transactiedatum: 20200213
+   */
   // todo: Implement this
   @Post('/upload/excel')
   @UsePipes(new ValidationPipe({ transform: true })) // todo: Will need a new DTO as the attribute names are different
@@ -131,7 +150,7 @@ export class InvoiceController {
   @ApiResponse({
     status: 401, description: 'Unauthorized', // Not logged in
   })
-  @ApiBody({ type: [CreateInvoiceDTO] })
+  // @ApiBody({ })
   importExcel(@Body() file: CreateInvoiceDTO[]) {
     return this.service.importInvoices('excel', file);
   }

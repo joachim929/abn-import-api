@@ -1,5 +1,7 @@
 import { Invoice } from '../invoice.entity';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { IsNumber, IsNumberString } from 'class-validator';
+import { Transform } from 'class-transformer';
 
 export class InvoiceDTO {
 
@@ -54,4 +56,9 @@ export class InvoiceDTO {
     this.userId = invoice.userId;
   }
 
+}
+
+export class UserIdDTO {
+  @IsNumberString()
+  id: number;
 }
