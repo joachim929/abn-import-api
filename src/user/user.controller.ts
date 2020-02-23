@@ -13,6 +13,9 @@ export class UserController {
   }
 
   @Get()
+  @ApiOperation({
+    operationId: 'getAllUsers',
+  })
   @ApiResponse({
     status: 200, description: 'The found records', type: [UserDTO],
   })
@@ -27,6 +30,9 @@ export class UserController {
   }
 
   @Get(':id')
+  @ApiOperation({
+    operationId: 'getUserById',
+  })
   @ApiResponse({
     status: 200, description: 'The found record', type: UserDTO,
   })
@@ -41,6 +47,9 @@ export class UserController {
   }
 
   @Patch(':id')
+  @ApiOperation({
+    operationId: 'patchUser',
+  })
   @ApiResponse({
     status: 204, description: 'Record patched'
   })
@@ -58,6 +67,9 @@ export class UserController {
   }
 
   @Delete(':id')
+  @ApiOperation({
+    operationId: 'deleteUser',
+  })
   @ApiResponse({
     status: 204, description: 'Record deleted'
   })
@@ -72,6 +84,9 @@ export class UserController {
   }
 
   @Post()
+  @ApiOperation({
+    operationId: 'createUser',
+  })
   @ApiResponse({
     status: 201, description: 'Created record', type: UserDTO,
   })

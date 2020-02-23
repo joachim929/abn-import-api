@@ -1,7 +1,7 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common';
 import { RulesService } from './rules.service';
 import { Rule } from './rule.entity';
-import { ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { RuleDTO } from './dtos/rule.dto';
 
 @ApiTags('Rules')
@@ -11,6 +11,9 @@ export class RulesController {
   }
 
   @Get(':id')
+  @ApiOperation({
+    operationId: 'getRuleById',
+  })
   @ApiResponse({
     status: 200, description: 'The found record', type: RuleDTO,
   })
@@ -28,6 +31,9 @@ export class RulesController {
   }
 
   @Get()
+  @ApiOperation({
+    operationId: 'getAllRules',
+  })
   @ApiResponse({
     status: 200, description: 'The found records', type: [RuleDTO],
   })
@@ -42,6 +48,9 @@ export class RulesController {
   }
 
   @Patch(':id')
+  @ApiOperation({
+    operationId: 'patchRule',
+  })
   @ApiResponse({
     status: 204, description: 'Record patched'
   })
@@ -59,6 +68,9 @@ export class RulesController {
   }
 
   @Delete(':id')
+  @ApiOperation({
+    operationId: 'deleteRule',
+  })
   @ApiResponse({
     status: 204, description: 'Record deleted'
   })
@@ -76,6 +88,9 @@ export class RulesController {
   }
 
   @Post()
+  @ApiOperation({
+    operationId: 'createRule',
+  })
   @ApiResponse({
     status: 201, description: 'Record created', type: RuleDTO,
   })

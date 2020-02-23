@@ -1,7 +1,7 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common';
 import { CategoryService } from './category.service';
 import { Category } from './category.entity';
-import { ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { CategoryDTO } from './dtos/category.dto';
 
 @ApiTags('Category')
@@ -13,6 +13,9 @@ export class CategoryController {
   }
 
   @Get()
+  @ApiOperation({
+    operationId: 'getAllCategories',
+  })
   @ApiResponse({
     status: 200, type: [CategoryDTO]
   })
@@ -21,6 +24,9 @@ export class CategoryController {
   }
 
   @Get(':id')
+  @ApiOperation({
+    operationId: 'getCategoryById',
+  })
   @ApiResponse({
     status: 200, type: CategoryDTO
   })
@@ -29,6 +35,9 @@ export class CategoryController {
   }
 
   @Patch(':id')
+  @ApiOperation({
+    operationId: 'patchCategory',
+  })
   @ApiResponse({
     status: 204
   })
@@ -37,6 +46,9 @@ export class CategoryController {
   }
 
   @Delete(':id')
+  @ApiOperation({
+    operationId: 'deleteCategory',
+  })
   @ApiResponse({
     status: 204
   })
@@ -45,6 +57,9 @@ export class CategoryController {
   }
 
   @Post()
+  @ApiOperation({
+    operationId: 'createCategory',
+  })
   @ApiResponse({
     status: 200, type: CategoryDTO
   })
