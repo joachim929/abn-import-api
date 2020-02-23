@@ -4,7 +4,7 @@ import { Rule } from './rule.entity';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { RuleDTO } from './dtos/rule.dto';
 
-@ApiTags('Rules')
+@ApiTags('RulesApi')
 @Controller('rules')
 export class RulesController {
   constructor(private service: RulesService) {

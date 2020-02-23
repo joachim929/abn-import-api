@@ -16,7 +16,7 @@ import { InvoiceDTO } from './dtos/invoice.dto';
 import { CreateInvoiceDTO } from './dtos/create-invoice.dto';
 import { PostInvoiceService } from './services/post-invoice/post-invoice.service';
 
-@ApiTags('Invoice')
+@ApiTags('InvoiceApi')
 @Controller('invoice')
 export class InvoiceController {
 
@@ -31,10 +31,10 @@ export class InvoiceController {
     operationId: 'getInvoicesForUser',
   })
   @ApiResponse({
-    status: 200, description: 'Found records',
+    status: 200, description: 'Found records', type: [InvoiceDTO]
   })
   @ApiResponse({
-    status: 204, description: 'No content',
+    status: 204, description: 'No content'
   })
   @ApiResponse({
     status: 401, description: 'Unauthorized', // When auth works

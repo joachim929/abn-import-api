@@ -4,7 +4,7 @@ import { Category } from './category.entity';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { CategoryDTO } from './dtos/category.dto';
 
-@ApiTags('Category')
+@ApiTags('CategoryApi')
 @Controller('category')
 export class CategoryController {
   constructor(

@@ -3,7 +3,7 @@ import { CategoryGroupService } from './category-group.service';
 import { CategoryGroup } from './category-group.entity';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 
-@ApiTags('Category-group')
+@ApiTags('CategoryGroupApi')
 @Controller('category-group')
 export class CategoryGroupController {
   constructor(private service: CategoryGroupService) {
