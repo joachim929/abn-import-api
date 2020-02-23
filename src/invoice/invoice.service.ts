@@ -56,7 +56,7 @@ export class InvoiceService {
 
   // todo: Find out if there are any differences between 'excel' and 'text' or
   //    if its the same once converted to JSON
-  importInvoices(type: 'excel' | 'text', file: CreateInvoiceDTO[]): Promise<any> {
+  importInvoices(type: 'excel' | 'text', file: CreateInvoiceDTO[]): Promise<InvoiceDTO[]> {
     return new Promise((resolve, reject) => {
       console.log(file);
       const parsdedData = file;

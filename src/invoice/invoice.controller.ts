@@ -7,12 +7,11 @@ import {
   ParseIntPipe,
   Patch,
   Post,
-  Query,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
 import { InvoiceService } from './invoice.service';
-import { ApiBody, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { InvoiceDTO } from './dtos/invoice.dto';
 import { CreateInvoiceDTO } from './dtos/create-invoice.dto';
 import { PostInvoiceService } from './services/post-invoice/post-invoice.service';
@@ -117,14 +116,12 @@ export class InvoiceController {
     return this.service.createInvoices(invoices);
   }
 
-  // todo: Implement this
   @Post('/upload/text')
   @ApiOperation({
     operationId: 'postInvoiceMultiText',
   })
-  @UsePipes(new ValidationPipe({ transform: true }))
   @ApiResponse({
-    status: 201, description: 'Records created', // todo: Strong type
+    status: 201, description: 'Records created', type: [InvoiceDTO],
   })
   @ApiResponse({
     status: 400, description: 'Bad request',
@@ -132,18 +129,16 @@ export class InvoiceController {
   @ApiResponse({
     status: 401, description: 'Unauthorized', // Not logged in
   })
-  @ApiBody({ type: [CreateInvoiceDTO] })
-  importText(@Body() file: CreateInvoiceDTO[]) {
-    return this.service.importInvoices('text', file);
+  importText(@Body() file) {
+    return this.service.importInvoices('text', this.postInvoiceService.serializeRawJson(file));
   }
 
   @Post('/upload/excel')
   @ApiOperation({
     operationId: 'postInvoiceMultiExcel',
   })
-  @UsePipes(new ValidationPipe({ transform: true })) // todo: Will need a new DTO as the attribute names are different
   @ApiResponse({
-    status: 201, description: 'Records created', // todo: Strong type
+    status: 201, description: 'Records created', type: [InvoiceDTO],
   })
   @ApiResponse({
     status: 400, description: 'Bad request',
