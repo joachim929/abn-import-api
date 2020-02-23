@@ -59,8 +59,6 @@ export class InvoiceService {
   importInvoices(type: 'excel' | 'text', file: CreateInvoiceDTO[]): Promise<any> {
     return new Promise((resolve, reject) => {
       console.log(file);
-      // todo: Parse data
-      //    then
       const parsdedData = file;
       const promises = [];
       for (const invoice of parsdedData) {

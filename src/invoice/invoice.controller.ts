@@ -1,4 +1,3 @@
-import * as XLSX from  'XLSX';
 import {
   Body,
   Controller,
@@ -16,7 +15,7 @@ import { InvoiceService } from './invoice.service';
 import { ApiBody, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { InvoiceDTO } from './dtos/invoice.dto';
 import { CreateInvoiceDTO } from './dtos/create-invoice.dto';
-import * as fs from 'fs';
+import { PostInvoiceService } from './services/post-invoice/post-invoice.service';
 
 @ApiTags('Invoice')
 @Controller('invoice')
@@ -24,15 +23,16 @@ export class InvoiceController {
 
   constructor(
     private service: InvoiceService,
+    private postInvoiceService: PostInvoiceService,
   ) {
   }
 
   @Get(':userId')
   @ApiOperation({
-    operationId: 'getInvoicesForUser'
+    operationId: 'getInvoicesForUser',
   })
   @ApiResponse({
-    status: 200, description: 'Found records'
+    status: 200, description: 'Found records',
   })
   @ApiResponse({
     status: 204, description: 'No content',
@@ -46,7 +46,7 @@ export class InvoiceController {
 
   @Patch()
   @ApiOperation({
-    operationId: 'patchInvoice'
+    operationId: 'patchInvoice',
   })
   @ApiResponse({
     status: 204, description: 'Record patched',
@@ -63,7 +63,7 @@ export class InvoiceController {
 
   @Delete(':id')
   @ApiOperation({
-    operationId: 'deleteInvoice'
+    operationId: 'deleteInvoice',
   })
   @ApiResponse({
     status: 204, description: 'Record deleted',
@@ -80,7 +80,7 @@ export class InvoiceController {
 
   @Post()
   @ApiOperation({
-    operationId: 'postInvoice'
+    operationId: 'postInvoice',
   })
   @UsePipes(new ValidationPipe({
     transform: true,
@@ -100,7 +100,7 @@ export class InvoiceController {
 
   @Post('/multi')
   @ApiOperation({
-    operationId: 'postInvoiceMulti'
+    operationId: 'postInvoiceMulti',
   })
   @UsePipes(new ValidationPipe({ transform: true }))
   @ApiResponse({
@@ -120,7 +120,7 @@ export class InvoiceController {
   // todo: Implement this
   @Post('/upload/text')
   @ApiOperation({
-    operationId: 'postInvoiceMultiText'
+    operationId: 'postInvoiceMultiText',
   })
   @UsePipes(new ValidationPipe({ transform: true }))
   @ApiResponse({
@@ -137,22 +137,11 @@ export class InvoiceController {
     return this.service.importInvoices('text', file);
   }
 
-  /**
-   Beginsaldo: 601.83
-   Eindsaldo: 595.33​
-   Muntsoort: "EUR"
-   Omschrijving: "BEA   NR:4ZJ201   13.02.20/07.52 Huiskamer KL 4804, WP,PAS043    WEESP"
-   Rekeningnummer: 523962118
-   Rentedatum: 20200213
-   Transactiebedrag: -6.5
-   Transactiedatum: 20200213
-   */
-  // todo: Implement this, given up on uploading a file for
   @Post('/upload/excel')
   @ApiOperation({
-    operationId: 'postInvoiceMultiExcel'
+    operationId: 'postInvoiceMultiExcel',
   })
-  // @UsePipes(new ValidationPipe({ transform: true })) // todo: Will need a new DTO as the attribute names are different
+  @UsePipes(new ValidationPipe({ transform: true })) // todo: Will need a new DTO as the attribute names are different
   @ApiResponse({
     status: 201, description: 'Records created', // todo: Strong type
   })
@@ -162,35 +151,7 @@ export class InvoiceController {
   @ApiResponse({
     status: 401, description: 'Unauthorized', // Not logged in
   })
-  // @ApiBody({ })
   importExcel(@Body() file) {
-    console.log(file);
-    // const workSheetsFromFile = XLSX.read(file, {type: 'buffer'});
-    // const sheetName = workSheetsFromFile.SheetNames[0];
-    // const worksheet = workSheetsFromFile.Sheets[sheetName];
-    // console.log(XLSX.utils.sheet_to_txt(worksheet));
-    // console.log(workSheetsFromFile);
-    return;
-    // return this.service.importInvoices('excel', file);
-  }
-
-
-  xlsToJson(file) {
-    const fileReader = new FileReader();
-    fileReader.onload = (e) => {
-      const arrayBuffer: any = fileReader.result;
-      const data = new Uint8Array(arrayBuffer);
-      const arr = [];
-      for (let i = 0; i !== data.length; ++i) {
-        arr[i] = String.fromCharCode(data[i]);
-      }
-      const bstr = arr.join('');
-      const workbook = XLSX.read(bstr, {type: 'binary'});
-      const firstSheetName = workbook.SheetNames[0];
-      const worksheet = workbook.Sheets[firstSheetName];
-      const json = XLSX.utils.sheet_to_json(worksheet, {raw: true});
-      console.log(json);
-    };
-    fileReader.readAsArrayBuffer(file);
+    return this.service.importInvoices('excel', this.postInvoiceService.serializeRawJson(file));
   }
 }
