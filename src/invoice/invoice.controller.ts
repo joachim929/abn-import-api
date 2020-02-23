@@ -1,3 +1,4 @@
+import * as XLSX from  'XLSX';
 import {
   Body,
   Controller,
@@ -13,9 +14,9 @@ import {
 } from '@nestjs/common';
 import { InvoiceService } from './invoice.service';
 import { ApiBody, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { InvoiceDTO, UserIdDTO } from './dtos/invoice.dto';
+import { InvoiceDTO } from './dtos/invoice.dto';
 import { CreateInvoiceDTO } from './dtos/create-invoice.dto';
-import { isNumber } from 'util';
+import * as fs from 'fs';
 
 @ApiTags('Invoice')
 @Controller('invoice')
@@ -94,7 +95,6 @@ export class InvoiceController {
     status: 401, description: 'Unauthorized', // Not logged in
   })
   create(@Body() invoice: CreateInvoiceDTO) {
-    console.log(invoice);
     return this.service.createInvoice(invoice).catch(reason => console.warn(reason));
   }
 
@@ -139,27 +139,20 @@ export class InvoiceController {
 
   /**
    Beginsaldo: 601.83
-   ​​
-   Eindsaldo: 595.33
-   ​​
+   Eindsaldo: 595.33​
    Muntsoort: "EUR"
-   ​​
    Omschrijving: "BEA   NR:4ZJ201   13.02.20/07.52 Huiskamer KL 4804, WP,PAS043    WEESP"
-   ​​
    Rekeningnummer: 523962118
-   ​​
    Rentedatum: 20200213
-   ​​
    Transactiebedrag: -6.5
-   ​​
    Transactiedatum: 20200213
    */
-  // todo: Implement this
+  // todo: Implement this, given up on uploading a file for
   @Post('/upload/excel')
   @ApiOperation({
     operationId: 'postInvoiceMultiExcel'
   })
-  @UsePipes(new ValidationPipe({ transform: true })) // todo: Will need a new DTO as the attribute names are different
+  // @UsePipes(new ValidationPipe({ transform: true })) // todo: Will need a new DTO as the attribute names are different
   @ApiResponse({
     status: 201, description: 'Records created', // todo: Strong type
   })
@@ -170,7 +163,34 @@ export class InvoiceController {
     status: 401, description: 'Unauthorized', // Not logged in
   })
   // @ApiBody({ })
-  importExcel(@Body() file: CreateInvoiceDTO[]) {
-    return this.service.importInvoices('excel', file);
+  importExcel(@Body() file) {
+    console.log(file);
+    // const workSheetsFromFile = XLSX.read(file, {type: 'buffer'});
+    // const sheetName = workSheetsFromFile.SheetNames[0];
+    // const worksheet = workSheetsFromFile.Sheets[sheetName];
+    // console.log(XLSX.utils.sheet_to_txt(worksheet));
+    // console.log(workSheetsFromFile);
+    return;
+    // return this.service.importInvoices('excel', file);
+  }
+
+
+  xlsToJson(file) {
+    const fileReader = new FileReader();
+    fileReader.onload = (e) => {
+      const arrayBuffer: any = fileReader.result;
+      const data = new Uint8Array(arrayBuffer);
+      const arr = [];
+      for (let i = 0; i !== data.length; ++i) {
+        arr[i] = String.fromCharCode(data[i]);
+      }
+      const bstr = arr.join('');
+      const workbook = XLSX.read(bstr, {type: 'binary'});
+      const firstSheetName = workbook.SheetNames[0];
+      const worksheet = workbook.Sheets[firstSheetName];
+      const json = XLSX.utils.sheet_to_json(worksheet, {raw: true});
+      console.log(json);
+    };
+    fileReader.readAsArrayBuffer(file);
   }
 }
