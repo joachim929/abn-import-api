@@ -15,6 +15,7 @@ import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { InvoiceDTO } from './dtos/invoice.dto';
 import { CreateInvoiceDTO } from './dtos/create-invoice.dto';
 import { PostInvoiceService } from './services/post-invoice/post-invoice.service';
+import { RawInvoiceJsonDTO } from './dtos/raw-invoice-json.dto';
 
 @ApiTags('InvoiceApi')
 @Controller('invoice')
@@ -129,7 +130,8 @@ export class InvoiceController {
   @ApiResponse({
     status: 401, description: 'Unauthorized', // Not logged in
   })
-  importText(@Body() file) {
+  importText(@Body() file: RawInvoiceJsonDTO[]) {
+    console.log(file);
     return this.service.importInvoices('text', this.postInvoiceService.serializeRawJson(file));
   }
 
@@ -146,7 +148,8 @@ export class InvoiceController {
   @ApiResponse({
     status: 401, description: 'Unauthorized', // Not logged in
   })
-  importExcel(@Body() file) {
+  importExcel(@Body() file: RawInvoiceJsonDTO[]) {
+    console.log(file);
     return this.service.importInvoices('excel', this.postInvoiceService.serializeRawJson(file));
   }
 }
