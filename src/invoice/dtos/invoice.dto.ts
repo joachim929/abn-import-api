@@ -1,7 +1,6 @@
 import { Invoice } from '../invoice.entity';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsNumber, IsNumberString } from 'class-validator';
-import { Transform } from 'class-transformer';
+import { IsNumberString } from 'class-validator';
 
 export class InvoiceDTO {
 
@@ -13,6 +12,9 @@ export class InvoiceDTO {
 
   @ApiProperty()
   categoryId?: number;
+
+  @ApiProperty()
+  comment?: string;
 
   @ApiPropertyOptional()
   description: string;
@@ -39,21 +41,9 @@ export class InvoiceDTO {
   userId: number;
 
   constructor(invoice: Invoice) {
-    this.accountNumber = invoice.accountNumber;
-    this.amount = invoice.amount;
-    if (invoice.categoryId) {
-      this.categoryId = invoice.categoryId;
-    }
-    this.description = invoice.description;
-    this.endBalance = invoice.endBalance;
-    this.id = invoice.id;
-    this.mutationCode = invoice.mutationCode;
-    if (invoice.originalId) {
-      this.originalId = invoice.originalId;
-    }
-    this.startBalance = invoice.startBalance;
-    this.transactionDate = invoice.transactionDate;
-    this.userId = invoice.userId;
+    Object.keys(invoice).map(key => {
+      this[key] = invoice[key];
+    });
   }
 
 }
