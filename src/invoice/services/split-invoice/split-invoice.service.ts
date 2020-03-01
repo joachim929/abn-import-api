@@ -11,6 +11,7 @@ export class SplitInvoiceService {
     return new Promise(resolve => {
       this.repositoryService.getInvoice(invoices.patch.id).then((next) => {
         if (this.validateGetInvoice(next) && this.validateAmount(invoices, next[0].amount)) {
+          invoices.split.originalId = invoices.patch.id;
           const promises = [];
           promises.push(this.repositoryService.updateInvoice(invoices.patch.id, invoices.patch));
           promises.push(this.repositoryService.createInvoice(invoices.split));
