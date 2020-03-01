@@ -1,7 +1,8 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common';
 import { CategoryGroupService } from './category-group.service';
 import { CategoryGroup } from './category-group.entity';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { CategoryGroupDTO } from './dtos/category-group.dto';
 
 @ApiTags('CategoryGroupApi')
 @Controller('category-group')
@@ -13,6 +14,15 @@ export class CategoryGroupController {
   @ApiOperation({
     operationId: 'getAllCategoryGroups',
   })
+  @ApiResponse({
+    status: 200, description: 'Found records', type: [CategoryGroupDTO]
+  })
+  @ApiResponse({
+    status: 204, description: 'No content'
+  })
+  @ApiResponse({
+    status: 401, description: 'Unauthorized', // When auth works
+  })
   getAll() {
     return this.service.getAll().catch(reason => console.warn(reason));
   }
@@ -21,6 +31,15 @@ export class CategoryGroupController {
   @ApiOperation({
     operationId: 'getCategoryGroupById',
   })
+  @ApiResponse({
+    status: 200, description: 'Found records', type: CategoryGroupDTO
+  })
+  @ApiResponse({
+    status: 204, description: 'No content'
+  })
+  @ApiResponse({
+    status: 401, description: 'Unauthorized', // When auth works
+  })
   get(@Param() params) {
     return this.service.getCategoryGroup(params.id).catch(reason => console.warn(reason));
   }
@@ -28,6 +47,15 @@ export class CategoryGroupController {
   @Get()
   @ApiOperation({
     operationId: 'getAllCategoryGroupsWithCategories',
+  })
+  @ApiResponse({
+    status: 200, description: 'Found records', type: [CategoryGroupDTO]
+  })
+  @ApiResponse({
+    status: 204, description: 'No content'
+  })
+  @ApiResponse({
+    status: 401, description: 'Unauthorized', // When auth works
   })
   getAllWithCategories() {
     return this.service.getAllWithCategories().catch(reason => console.warn(reason));

@@ -44,4 +44,8 @@ export class CreateInvoiceDTO {
 
   @Transform(userId => Number(userId))
   readonly userId: number;
+
+  @IsOptional()
+  @Transform(originalId => Number(originalId))
+  readonly originalId?: number;
 }

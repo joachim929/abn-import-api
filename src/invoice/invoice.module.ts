@@ -5,13 +5,17 @@ import { InvoiceRepositoryService } from './invoice-repository/invoice-repositor
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Invoice } from './invoice.entity';
 import { PostInvoiceService } from './services/post-invoice/post-invoice.service';
+import { SplitInvoiceService } from './services/split-invoice/split-invoice.service';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Invoice])
+    TypeOrmModule.forFeature([Invoice]),
   ],
   controllers: [InvoiceController],
-  providers: [InvoiceService, InvoiceRepositoryService, PostInvoiceService],
+  providers: [InvoiceService,
+    InvoiceRepositoryService,
+    PostInvoiceService,
+    SplitInvoiceService],
 })
 export class InvoiceModule {
 }

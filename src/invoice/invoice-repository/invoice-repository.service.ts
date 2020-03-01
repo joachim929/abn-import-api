@@ -2,27 +2,33 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Invoice } from '../invoice.entity';
 import { DeepPartial, DeleteResult, Repository, SaveOptions, UpdateResult } from 'typeorm';
+import { InvoiceDTO } from '../dtos/invoice.dto';
 
 @Injectable()
 export class InvoiceRepositoryService {
   constructor(
-    @InjectRepository(Invoice) private repository: Repository<Invoice>
+    @InjectRepository(Invoice) private repository: Repository<Invoice>,
   ) {
   }
 
   async getInvoices(userId: number): Promise<Invoice[]> {
     return await this.repository.find({
-      where: [{userId}]
+      where: [{ userId }],
+    });
+  }
+
+  async getInvoice(id: number): Promise<Invoice[]> {
+    return await this.repository.find({
+      where: [{ id }],
     });
   }
 
   async createInvoice<T extends DeepPartial<Invoice>>(entity: T, options?: SaveOptions): Promise<Invoice>
   async createInvoice(invoice: Invoice) {
-    console.log(invoice);
     return await this.repository.save(invoice);
   }
 
-  async updateInvoice(id: number, invoice: Invoice): Promise<UpdateResult> {
+  async updateInvoice(id: number, invoice: InvoiceDTO): Promise<UpdateResult> {
     return await this.repository.update(id, invoice);
   }
 

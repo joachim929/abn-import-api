@@ -16,6 +16,8 @@ import { InvoiceDTO } from './dtos/invoice.dto';
 import { CreateInvoiceDTO } from './dtos/create-invoice.dto';
 import { PostInvoiceService } from './services/post-invoice/post-invoice.service';
 import { RawInvoiceJsonDTO } from './dtos/raw-invoice-json.dto';
+import { SplitInvoiceDTO } from './dtos/split-invoice.dto';
+import { SplitInvoiceService } from './services/split-invoice/split-invoice.service';
 
 @ApiTags('InvoiceApi')
 @Controller('invoice')
@@ -24,6 +26,7 @@ export class InvoiceController {
   constructor(
     private service: InvoiceService,
     private postInvoiceService: PostInvoiceService,
+    private splitInvoiceService: SplitInvoiceService,
   ) {
   }
 
@@ -32,10 +35,10 @@ export class InvoiceController {
     operationId: 'getInvoicesForUser',
   })
   @ApiResponse({
-    status: 200, description: 'Found records', type: [InvoiceDTO]
+    status: 200, description: 'Found records', type: [InvoiceDTO],
   })
   @ApiResponse({
-    status: 204, description: 'No content'
+    status: 204, description: 'No content',
   })
   @ApiResponse({
     status: 401, description: 'Unauthorized', // When auth works
@@ -98,6 +101,23 @@ export class InvoiceController {
     return this.service.createInvoice(invoice).catch(reason => console.warn(reason));
   }
 
+  @Post('/split')
+  @ApiOperation({
+    operationId: 'splitInvoice',
+  })
+  @ApiResponse({
+    status: 201, description: 'Record created and patched', type: SplitInvoiceDTO
+  })
+  @ApiResponse({
+    status: 400, description: 'Bad request',
+  })
+  @ApiResponse({
+    status: 401, description: 'Unauthorized',
+  })
+  split(@Body() body: SplitInvoiceDTO) {
+    return this.splitInvoiceService.splitInvoice(body).catch(reason => console.warn(reason));
+  }
+
   @Post('/multi')
   @ApiOperation({
     operationId: 'postInvoiceMulti',
@@ -131,7 +151,6 @@ export class InvoiceController {
     status: 401, description: 'Unauthorized', // Not logged in
   })
   importText(@Body() file: RawInvoiceJsonDTO[]) {
-    console.log(file);
     return this.service.importInvoices('text', this.postInvoiceService.serializeRawJson(file));
   }
 
