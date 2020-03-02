@@ -39,10 +39,10 @@ export class InvoiceService {
     });
   }
 
-  patchInvoice(invoice): Promise<UpdateResult> {
+  patchInvoice(request): Promise<InvoiceDTO> {
     return new Promise((resolve, reject) => {
-      this.repositoryService.updateInvoice(invoice.id, invoice).then((response: UpdateResult) => {
-        resolve(response);
+      this.repositoryService.updateInvoice(request.patch.id, request.patch).then(() => {
+        resolve(request.patch);
       }).catch(reason => reject(reason));
     });
   }
@@ -59,7 +59,6 @@ export class InvoiceService {
   //    if its the same once converted to JSON
   importInvoices(type: 'excel' | 'text', file: CreateInvoiceDTO[]): Promise<InvoiceDTO[]> {
     return new Promise((resolve, reject) => {
-      console.log(file);
       const parsdedData = file;
       const promises = [];
       for (const invoice of parsdedData) {

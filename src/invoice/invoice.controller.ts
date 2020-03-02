@@ -52,7 +52,7 @@ export class InvoiceController {
     operationId: 'patchInvoice',
   })
   @ApiResponse({
-    status: 204, description: 'Record patched',
+    status: 200, description: 'Record patched', type: InvoiceDTO
   })
   @ApiResponse({
     status: 400, description: 'Bad request',
@@ -60,8 +60,8 @@ export class InvoiceController {
   @ApiResponse({
     status: 401, description: 'Unauthorized', // Not logged in
   })
-  patch(@Body() invoice: CreateInvoiceDTO) {
-    return this.service.patchInvoice(invoice).catch(reason => console.warn(reason));
+  patch(@Body() body: CreateInvoiceDTO) {
+    return this.service.patchInvoice(body).catch(reason => console.warn(reason));
   }
 
   @Delete(':id')
