@@ -47,6 +47,12 @@ export class InvoiceController {
     return this.service.getInvoices(userId).catch(reason => console.warn(reason));
   }
 
+  @Get()
+  getFiltered(@Body() body) {
+    console.log(body);
+    return;
+  }
+
   @Patch()
   @ApiOperation({
     operationId: 'patchInvoice',
