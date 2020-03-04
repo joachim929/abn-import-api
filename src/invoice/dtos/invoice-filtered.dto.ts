@@ -1,27 +1,37 @@
 import { InvoiceDTO } from './invoice.dto';
-import { IsDateString, IsNumber, IsOptional } from 'class-validator';
+import { IsOptional, IsString } from 'class-validator';
+import { Transform } from 'class-transformer';
+
+export enum OrderEnum {
+  'ASC',
+  'DESC'
+}
+
+export type OrderType = OrderEnum.ASC | OrderEnum.DESC;
 
 export class InvoiceFilteredDTO {
-  @IsOptional()
-  @IsDateString()
+
+  @Transform(startDate => new Date(startDate))
   startDate?: Date;
 
-  @IsOptional()
-  @IsDateString()
+  @Transform(endDate => new Date(endDate))
   endDate?: Date;
 
-  @IsOptional()
-  @IsNumber()
+  @Transform(limit => Number(limit))
   limit?: number;
 
-  @IsOptional()
-  @IsNumber()
+  @Transform(skip => Number(skip))
   skip?: number;
 
-  @IsOptional()
-  @IsNumber()
+  @Transform(maxAmount => Number(maxAmount))
   maxAmount?: number;
+
+  @Transform(minAmount => Number(minAmount))
+  minAmount?: number;
 
   @IsOptional()
   records?: InvoiceDTO[];
+
+  @IsString()
+  order?: OrderType;
 }

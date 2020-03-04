@@ -10,7 +10,6 @@ export class SplitInvoiceService {
   splitInvoice(invoices: SplitInvoiceDTO): Promise<SplitInvoiceDTO> {
     return new Promise(resolve => {
       this.repositoryService.getInvoice(invoices.patch.id).then((next) => {
-        console.log(this.validateAmount(invoices, next.amount));
         if (this.validateAmount(invoices, next.amount)) {
           invoices.split.originalId = invoices.patch.id;
           const promises = [];
@@ -30,18 +29,6 @@ export class SplitInvoiceService {
         throw new HttpException(reason, HttpStatus.INTERNAL_SERVER_ERROR);
       });
     });
-  }
-
-  private validateGetInvoice(next): boolean {
-    let valid = false;
-    if (next.length === 1) {
-      valid = true;
-    } else if (next.length < 0) {
-      throw new HttpException('Not found', HttpStatus.NOT_FOUND);
-    } else {
-      throw new HttpException('Internal server error', HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-    return valid;
   }
 
   private validateAmount(invoices: SplitInvoiceDTO, originalAmount: number): boolean {
