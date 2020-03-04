@@ -18,6 +18,8 @@ import { PostInvoiceService } from './services/post-invoice/post-invoice.service
 import { RawInvoiceJsonDTO } from './dtos/raw-invoice-json.dto';
 import { SplitInvoiceDTO } from './dtos/split-invoice.dto';
 import { SplitInvoiceService } from './services/split-invoice/split-invoice.service';
+import { InvoiceFilteredDTO } from './dtos/invoice-filtered.dto';
+import { FilteredInvoiceService } from './services/filtered-invoice/filtered-invoice.service';
 
 @ApiTags('InvoiceApi')
 @Controller('invoice')
@@ -27,30 +29,8 @@ export class InvoiceController {
     private service: InvoiceService,
     private postInvoiceService: PostInvoiceService,
     private splitInvoiceService: SplitInvoiceService,
+    private filteredInvoiceService: FilteredInvoiceService
   ) {
-  }
-
-  @Get(':userId')
-  @ApiOperation({
-    operationId: 'getInvoicesForUser',
-  })
-  @ApiResponse({
-    status: 200, description: 'Found records', type: [InvoiceDTO],
-  })
-  @ApiResponse({
-    status: 204, description: 'No content',
-  })
-  @ApiResponse({
-    status: 401, description: 'Unauthorized', // When auth works
-  })
-  get(@Param('userId', new ParseIntPipe()) userId: number) {
-    return this.service.getInvoices(userId).catch(reason => console.warn(reason));
-  }
-
-  @Get()
-  getFiltered(@Body() body) {
-    console.log(body);
-    return;
   }
 
   @Patch()
@@ -58,7 +38,7 @@ export class InvoiceController {
     operationId: 'patchInvoice',
   })
   @ApiResponse({
-    status: 200, description: 'Record patched', type: InvoiceDTO
+    status: 200, description: 'Record patched', type: InvoiceDTO,
   })
   @ApiResponse({
     status: 400, description: 'Bad request',
@@ -68,23 +48,6 @@ export class InvoiceController {
   })
   patch(@Body() body: CreateInvoiceDTO) {
     return this.service.patchInvoice(body).catch(reason => console.warn(reason));
-  }
-
-  @Delete(':id')
-  @ApiOperation({
-    operationId: 'deleteInvoice',
-  })
-  @ApiResponse({
-    status: 204, description: 'Record deleted',
-  })
-  @ApiResponse({
-    status: 400, description: 'Bad request', // Id doesn't exist
-  })
-  @ApiResponse({
-    status: 401, description: 'Unauthorized', // Not logged in
-  })
-  delete(@Param('id', new ParseIntPipe()) id: number) {
-    return this.service.deleteInvoice(id).catch(reason => console.warn(reason));
   }
 
   @Post()
@@ -107,12 +70,63 @@ export class InvoiceController {
     return this.service.createInvoice(invoice).catch(reason => console.warn(reason));
   }
 
+  @Get(':userId')
+  @ApiOperation({
+    operationId: 'getInvoicesForUser',
+  })
+  @ApiResponse({
+    status: 200, description: 'Found records', type: [InvoiceDTO],
+  })
+  @ApiResponse({
+    status: 204, description: 'No content',
+  })
+  @ApiResponse({
+    status: 401, description: 'Unauthorized', // When auth works
+  })
+  get(@Param('userId', new ParseIntPipe()) userId: number) {
+    return this.service.getInvoices(userId).catch(reason => console.warn(reason));
+  }
+
+  @Delete(':id')
+  @ApiOperation({
+    operationId: 'deleteInvoice',
+  })
+  @ApiResponse({
+    status: 204, description: 'Record deleted',
+  })
+  @ApiResponse({
+    status: 400, description: 'Bad request', // Id doesn't exist
+  })
+  @ApiResponse({
+    status: 401, description: 'Unauthorized', // Not logged in
+  })
+  delete(@Param('id', new ParseIntPipe()) id: number) {
+    return this.service.deleteInvoice(id).catch(reason => console.warn(reason));
+  }
+
+  @Post('/filtered')
+  @ApiOperation({
+    operationId: 'filteredInvoices',
+  })
+  @ApiResponse({
+    status: 200, description: 'Got records', type: InvoiceFilteredDTO,
+  })
+  @ApiResponse({
+    status: 400, description: 'Bad request',
+  })
+  @ApiResponse({
+    status: 401, description: 'Unauthorized', // Not logged in
+  })
+  getFiltered(@Body() body: InvoiceFilteredDTO) {
+    return this.filteredInvoiceService.get(body);
+  }
+
   @Post('/split')
   @ApiOperation({
     operationId: 'splitInvoice',
   })
   @ApiResponse({
-    status: 201, description: 'Record created and patched', type: SplitInvoiceDTO
+    status: 201, description: 'Record created and patched', type: SplitInvoiceDTO,
   })
   @ApiResponse({
     status: 400, description: 'Bad request',

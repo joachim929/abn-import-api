@@ -6,6 +6,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Invoice } from './invoice.entity';
 import { PostInvoiceService } from './services/post-invoice/post-invoice.service';
 import { SplitInvoiceService } from './services/split-invoice/split-invoice.service';
+import { FilteredInvoiceService } from './services/filtered-invoice/filtered-invoice.service';
 
 @Module({
   imports: [
@@ -15,7 +16,8 @@ import { SplitInvoiceService } from './services/split-invoice/split-invoice.serv
   providers: [InvoiceService,
     InvoiceRepositoryService,
     PostInvoiceService,
-    SplitInvoiceService],
+    SplitInvoiceService,
+    FilteredInvoiceService],
 })
 export class InvoiceModule {
 }
