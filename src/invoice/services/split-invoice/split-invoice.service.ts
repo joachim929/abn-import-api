@@ -10,7 +10,8 @@ export class SplitInvoiceService {
   splitInvoice(invoices: SplitInvoiceDTO): Promise<SplitInvoiceDTO> {
     return new Promise(resolve => {
       this.repositoryService.getInvoice(invoices.patch.id).then((next) => {
-        if (this.validateGetInvoice(next) && this.validateAmount(invoices, next[0].amount)) {
+        console.log(this.validateAmount(invoices, next.amount));
+        if (this.validateAmount(invoices, next.amount)) {
           invoices.split.originalId = invoices.patch.id;
           const promises = [];
           promises.push(this.repositoryService.updateInvoice(invoices.patch.id, invoices.patch));
@@ -23,8 +24,10 @@ export class SplitInvoiceService {
             }
           });
         } else {
-          throw new HttpException('Bad request', HttpStatus.BAD_REQUEST);
+          throw new HttpException(`${invoices.patch.amount} + ${invoices.split.amount} !== original amount: ${next.amount}`, HttpStatus.BAD_REQUEST);
         }
+      }).catch(reason => {
+        throw new HttpException(reason, HttpStatus.INTERNAL_SERVER_ERROR);
       });
     });
   }

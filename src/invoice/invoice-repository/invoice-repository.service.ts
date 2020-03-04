@@ -58,7 +58,7 @@ export class InvoiceRepositoryService {
   }
 
   async getInvoice(id: number): Promise<Invoice> {
-    return await this.repository.findOneOrFail({
+    return await this.repository.findOne({
       where: [{ id }],
     });
   }
