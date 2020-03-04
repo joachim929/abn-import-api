@@ -45,7 +45,9 @@ export class SplitInvoiceService {
   }
 
   private validateAmount(invoices: SplitInvoiceDTO, originalAmount: number): boolean {
-    return Number(invoices.patch.amount) + Number(invoices.split.amount) === Number(originalAmount);
+    invoices.patch.amount = Number(invoices.patch.amount);
+    invoices.split.amount = Number(invoices.split.amount);
+    return (invoices.patch.amount + invoices.split.amount).toFixed(2) === Number(originalAmount).toFixed(2);
   }
 
 }
