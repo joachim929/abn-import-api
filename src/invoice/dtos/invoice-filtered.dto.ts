@@ -23,10 +23,10 @@ export class InvoiceFilteredDTO {
   @Transform(skip => Number(skip))
   skip?: number;
 
-  @Transform(maxAmount => Number(maxAmount))
+  @Transform(maxAmount => Number(maxAmount.toFixed(2)))
   maxAmount?: number;
 
-  @Transform(minAmount => Number(minAmount))
+  @Transform(minAmount => Number(minAmount.toFixed(2)))
   minAmount?: number;
 
   @IsOptional()

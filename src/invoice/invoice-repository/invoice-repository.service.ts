@@ -35,23 +35,33 @@ export class InvoiceRepositoryService {
   }
 
   async getFilteredInvoices(filters: InvoiceFilteredDTO) {
-    const query: any = {};
+    const query: any = {
+      where: {},
+    };
     if (filters.startDate && filters.endDate) {
-      query.transactionDate = Between(filters.startDate, filters.endDate);
+      query.where.transactionDate = Between(filters.startDate, filters.endDate);
     } else if (filters.startDate) {
-      query.transactionDate = MoreThanOrEqual(filters.startDate);
+      query.where.transactionDate = MoreThanOrEqual(filters.startDate);
     } else if (filters.endDate) {
-      query.transactionDate = LessThanOrEqual(filters.endDate);
+      query.where.transactionDate = LessThanOrEqual(filters.endDate);
+    }
+
+    if (filters.minAmount && filters.maxAmount) {
+      query.where.amount = Between(filters.minAmount, filters.maxAmount);
+    } else if (filters.minAmount) {
+      query.where.amount = MoreThan(filters.minAmount);
+    } else if (filters.maxAmount) {
+      query.where.amount = LessThan(filters.maxAmount);
     }
 
     if (filters.limit) {
       query.take = filters.limit;
     }
 
-    query.skip = filters.skip || null;
+    query.skip = filters.skip || 0;
 
     return this.repository.findAndCount(
-      query,
+      query
     );
   }
 
