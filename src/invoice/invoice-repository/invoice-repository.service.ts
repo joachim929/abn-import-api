@@ -44,6 +44,10 @@ export class InvoiceRepositoryService {
       query.transactionDate = LessThanOrEqual(filters.endDate);
     }
 
+    if (filters.limit) {
+      query.take = filters.limit;
+    }
+
     query.skip = filters.skip || null;
 
     return this.repository.findAndCount(

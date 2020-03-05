@@ -34,4 +34,7 @@ export class InvoiceFilteredDTO {
 
   @IsString()
   order?: OrderType;
+
+  @Transform( count => Number(count))
+  count?: number;
 }
