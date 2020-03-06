@@ -37,4 +37,7 @@ export class InvoiceFilteredDTO {
 
   @Transform( count => Number(count))
   count?: number;
+
+  @Transform(categoryId => Number(categoryId))
+  categoryId?: number;
 }

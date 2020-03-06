@@ -39,10 +39,14 @@ export class InvoiceRepositoryService {
     const query: any = {
       where: {},
     };
+    if (filters.categoryId) {
+      query.where.categoryId = filters.categoryId;
+    }
+
     if (filters.startDate && filters.endDate) {
       query.where.transactionDate = Between(
         Number(moment(filters.startDate).format('x')),
-        Number(moment(filters.endDate).format('x'))
+        Number(moment(filters.endDate).format('x')),
       );
     } else if (filters.startDate) {
 
@@ -51,7 +55,7 @@ export class InvoiceRepositoryService {
     } else if (filters.endDate) {
 
       query.where.transactionDate = LessThanOrEqual(
-        Number(moment(filters.endDate).format('x'))
+        Number(moment(filters.endDate).format('x')),
       );
     }
 
@@ -70,7 +74,7 @@ export class InvoiceRepositoryService {
     query.skip = filters.skip || 0;
 
     return this.repository.findAndCount(
-      query
+      query,
     );
   }
 

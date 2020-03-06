@@ -10,23 +10,6 @@ export class CategoryGroupController {
   constructor(private service: CategoryGroupService) {
   }
 
-  @Get('all')
-  @ApiOperation({
-    operationId: 'getAllCategoryGroups',
-  })
-  @ApiResponse({
-    status: 200, description: 'Found records', type: [CategoryGroupDTO]
-  })
-  @ApiResponse({
-    status: 204, description: 'No content'
-  })
-  @ApiResponse({
-    status: 401, description: 'Unauthorized', // When auth works
-  })
-  getAll() {
-    return this.service.getAll().catch(reason => console.warn(reason));
-  }
-
   @Get(':id')
   @ApiOperation({
     operationId: 'getCategoryGroupById',
@@ -83,5 +66,22 @@ export class CategoryGroupController {
   })
   create(@Body() categoryGroup: CategoryGroup) {
     return this.service.createCategoryGroup(categoryGroup).catch(reason => console.warn(reason));
+  }
+
+  @Get('all')
+  @ApiOperation({
+    operationId: 'getAllCategoryGroups',
+  })
+  @ApiResponse({
+    status: 200, description: 'Found records', type: [CategoryGroupDTO]
+  })
+  @ApiResponse({
+    status: 204, description: 'No content'
+  })
+  @ApiResponse({
+    status: 401, description: 'Unauthorized', // When auth works
+  })
+  getAll() {
+    return this.service.getAll().catch(reason => console.warn(reason));
   }
 }
