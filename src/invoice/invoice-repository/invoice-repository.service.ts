@@ -6,14 +6,12 @@ import {
   DeepPartial,
   DeleteResult,
   LessThan, LessThanOrEqual, MoreThan, MoreThanOrEqual,
-  QueryBuilder,
   Repository,
   SaveOptions,
   UpdateResult,
 } from 'typeorm';
 import { InvoiceDTO } from '../dtos/invoice.dto';
 import { InvoiceFilteredDTO } from '../dtos/invoice-filtered.dto';
-import * as moment from 'moment';
 
 @Injectable()
 export class InvoiceRepositoryService {
@@ -45,17 +43,17 @@ export class InvoiceRepositoryService {
 
     if (filters.startDate && filters.endDate) {
       query.where.transactionDate = Between(
-        Number(moment(filters.startDate).format('x')),
-        Number(moment(filters.endDate).format('x')),
+        Number(filters.startDate),
+        Number(filters.endDate),
       );
     } else if (filters.startDate) {
 
       query.where.transactionDate = MoreThanOrEqual(
-        Number(moment(filters.startDate).format('x')));
+        Number(filters.startDate));
     } else if (filters.endDate) {
 
       query.where.transactionDate = LessThanOrEqual(
-        Number(moment(filters.endDate).format('x')),
+        Number(filters.endDate),
       );
     }
 

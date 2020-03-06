@@ -1,7 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InvoiceRepositoryService } from '../../invoice-repository/invoice-repository.service';
 import { InvoiceFilteredDTO } from '../../dtos/invoice-filtered.dto';
-import * as moment from 'moment';
 
 @Injectable()
 export class FilteredInvoiceService {

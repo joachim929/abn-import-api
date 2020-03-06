@@ -11,10 +11,10 @@ export type OrderType = OrderEnum.ASC | OrderEnum.DESC;
 
 export class InvoiceFilteredDTO {
 
-  @Transform(startDate => new Date(startDate))
+  @Transform(startDate => Number(startDate))
   startDate?: Date;
 
-  @Transform(endDate => new Date(endDate))
+  @Transform(endDate => Number(endDate))
   endDate?: Date;
 
   @Transform(limit => Number(limit))
