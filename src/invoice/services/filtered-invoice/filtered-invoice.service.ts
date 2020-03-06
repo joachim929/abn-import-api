@@ -1,6 +1,7 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InvoiceRepositoryService } from '../../invoice-repository/invoice-repository.service';
 import { InvoiceFilteredDTO } from '../../dtos/invoice-filtered.dto';
+import * as moment from 'moment';
 
 @Injectable()
 export class FilteredInvoiceService {
@@ -14,7 +15,6 @@ export class FilteredInvoiceService {
       promises.push(this.repositoryService.getMinAmount());
       promises.push(this.repositoryService.getFilteredInvoices(body));
       Promise.all(promises).then(result => {
-        console.log(result[2][0].length);
         const res: InvoiceFilteredDTO = {
           minAmount: result[0].min,
           maxAmount: result[1].max,

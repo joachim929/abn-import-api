@@ -41,17 +41,17 @@ export class InvoiceRepositoryService {
     };
     if (filters.startDate && filters.endDate) {
       query.where.transactionDate = Between(
-        moment(filters.startDate).format('YYYY-MM-DD HH:MM:SS'),
-        moment(filters.endDate).format('YYYY-MM-DD HH:MM:SS')
+        Number(moment(filters.startDate).format('x')),
+        Number(moment(filters.endDate).format('x'))
       );
     } else if (filters.startDate) {
 
       query.where.transactionDate = MoreThanOrEqual(
-        moment(filters.startDate).format('YYYY-MM-DD HH:MM:SS'));
+        Number(moment(filters.startDate).format('x')));
     } else if (filters.endDate) {
 
       query.where.transactionDate = LessThanOrEqual(
-        moment(filters.endDate).format('YYYY-MM-DD HH:MM:SS')
+        Number(moment(filters.endDate).format('x'))
       );
     }
 
