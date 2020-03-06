@@ -13,6 +13,7 @@ import {
 } from 'typeorm';
 import { InvoiceDTO } from '../dtos/invoice.dto';
 import { InvoiceFilteredDTO } from '../dtos/invoice-filtered.dto';
+import * as moment from 'moment';
 
 @Injectable()
 export class InvoiceRepositoryService {
@@ -39,11 +40,19 @@ export class InvoiceRepositoryService {
       where: {},
     };
     if (filters.startDate && filters.endDate) {
-      query.where.transactionDate = Between(filters.startDate, filters.endDate);
+      query.where.transactionDate = Between(
+        moment(filters.startDate).format('YYYY-MM-DD HH:MM:SS'),
+        moment(filters.endDate).format('YYYY-MM-DD HH:MM:SS')
+      );
     } else if (filters.startDate) {
-      query.where.transactionDate = MoreThanOrEqual(filters.startDate);
+
+      query.where.transactionDate = MoreThanOrEqual(
+        moment(filters.startDate).format('YYYY-MM-DD HH:MM:SS'));
     } else if (filters.endDate) {
-      query.where.transactionDate = LessThanOrEqual(filters.endDate);
+
+      query.where.transactionDate = LessThanOrEqual(
+        moment(filters.endDate).format('YYYY-MM-DD HH:MM:SS')
+      );
     }
 
     if (filters.minAmount && filters.maxAmount) {
