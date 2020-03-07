@@ -35,6 +35,9 @@ export class InvoiceRepositoryService {
 
   async getFilteredInvoices(filters: InvoiceFilteredDTO) {
     const query: any = {
+      order: {
+        transactionDate: filters.order,
+      },
       where: {},
     };
     if (filters.categoryId) {
