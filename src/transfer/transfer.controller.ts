@@ -16,7 +16,7 @@ export class TransferController {
     operationId: 'getTransactions',
   })
   get() {
-    return this.service.getDebug();
+    return this.service.getTransfersWithMutations();
   }
 
   @Post('upload/excel')

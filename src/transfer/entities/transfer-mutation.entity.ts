@@ -15,15 +15,6 @@ export class TransferMutation {
   id: number;
 
   @Column()
-  currencyCode: string;
-
-  @Column()
-  transactionDate: Date;
-
-  @Column()
-  valueDate: Date;
-
-  @Column()
   startBalance: number;
 
   @Column()
@@ -31,6 +22,9 @@ export class TransferMutation {
 
   @Column()
   description: string;
+
+  @Column({nullable: true})
+  comment: string;
 
   @Column({ default: true })
   active: boolean;

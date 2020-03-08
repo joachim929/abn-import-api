@@ -12,6 +12,15 @@ export class Transfer {
   @Column()
   accountNumber: number;
 
+  @Column()
+  currencyCode: string;
+
+  @Column()
+  valueDate: Date;
+
+  @Column()
+  transactionDate: Date;
+
   @OneToMany(type => TransferMutation, mutation => mutation.transfer)
   mutations: TransferMutation[];
 

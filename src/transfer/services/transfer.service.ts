@@ -4,6 +4,7 @@ import { TransferMutationRepositoryService } from '../repositories/transfer-muta
 import { RawInvoiceJsonDTO } from '../../invoice/dtos/raw-invoice-json.dto';
 import { Transfer } from '../entities/transfer.entity';
 import * as hash from 'object-hash';
+import { TransferMutation } from '../entities/transfer-mutation.entity';
 
 @Injectable()
 export class TransferService {
@@ -13,38 +14,57 @@ export class TransferService {
   ) {
   }
 
-  getDebug() {
+  getTransfersWithMutations(): Promise<Transfer[]> {
     return new Promise((resolve) => {
       resolve(this.transferRepository.getTransfersWithMutations());
     });
   }
 
-  getTransfers() {
-    return new Promise((resolve) => {
-      resolve('WIP');
-    });
-  }
-
-  postMultiExcel(file: RawInvoiceJsonDTO[]) {
+  postMultiExcel(file: RawInvoiceJsonDTO[]): Promise<Transfer[]> {
     return new Promise((resolve) => {
       this.serializeRawJson(file).then((formattedData) => {
+        const transferMutationPromises = [];
         const transferPromises = [];
-
         for (const datum of formattedData) {
-          this.transferRepository.save(datum.transfer).then(savedTransfer => {
-            datum.mutation.transfer = savedTransfer;
-            transferPromises.push(this.transferMutationRepository.save(datum.mutation));
-          });
+          transferPromises.push(this.transferRepository.save(datum.transfer));
         }
 
-        Promise.all(transferPromises).then((res) => {
-          resolve(this.transferRepository.getTransfersWithMutations());
+        Promise.all(transferPromises).then((savedTransfers: Transfer[]) => {
+          if (savedTransfers.length !== formattedData.length) {
+            throw new HttpException('Something went wrong', HttpStatus.INTERNAL_SERVER_ERROR);
+          }
+          for (let i = 0; i < formattedData.length; i++) {
+            formattedData[i].mutation.transfer = savedTransfers[i];
+            transferMutationPromises.push(this.transferMutationRepository.save(formattedData[i].mutation));
+          }
+
+          Promise.all(transferMutationPromises).then((savedMutations: TransferMutation[]) => {
+            const savedResponse: Transfer[] = [];
+            for (const savedMutation of savedMutations) {
+              const savedTransfer: Transfer = savedMutation.transfer;
+              savedTransfer.mutations = [{
+                startBalance: savedMutation.startBalance,
+                endBalance: savedMutation.endBalance,
+                description: savedMutation.description,
+                comment: savedMutation.comment,
+                id: savedMutation.id,
+                active: savedMutation.active,
+                createdAt: savedMutation.createdAt,
+                updatedAt: savedMutation.updatedAt,
+                transfer: null,
+                parent: null,
+                children: null,
+              }];
+              savedResponse.push(savedTransfer);
+            }
+            resolve(savedResponse);
+          });
         });
       });
     });
   }
 
-  private serializeRawJson(rawJson: RawInvoiceJsonDTO[]): Promise<any> {
+  private serializeRawJson(rawJson: RawInvoiceJsonDTO[]): Promise<any[]> {
     return new Promise((resolve, reject) => {
       const formattedTransfers = [];
       const promises = [];
@@ -60,11 +80,8 @@ export class TransferService {
         for (let i = 0; i < response.length; i++) {
           if (response[i].length === 0) {
             formattedTransfers.push({
-              transfer: {
-                hash: hash(rawJson[i]),
-                accountNumber: rawJson[i].Rekeningnummer,
-              },
-              mutation: this.rawMutationToMutation(rawJson[i]),
+              transfer: this.rawTransferToTransfer(rawJson[i]),
+              mutation: this.rawTransferToTransferMutation(rawJson[i]),
             });
           }
         }
@@ -73,19 +90,26 @@ export class TransferService {
     });
   }
 
-  private rawMutationToMutation(mutation: RawInvoiceJsonDTO) {
+  private rawTransferToTransfer(rawTransfer: RawInvoiceJsonDTO): object {
     return {
-      currencyCode: mutation.Muntsoort,
+      hash: hash(rawTransfer),
+      accountNumber: rawTransfer.Rekeningnummer,
+      currencyCode: rawTransfer.Muntsoort,
       transactionDate: new Date().setUTCFullYear(
-        Number(String(mutation.Transactiedatum).slice(0, 4)),
-        Number(String(mutation.Transactiedatum).slice(4, 6)),
-        Number(String(mutation.Transactiedatum).slice(6, 8)),
+        Number(String(rawTransfer.Transactiedatum).slice(0, 4)),
+        Number(String(rawTransfer.Transactiedatum).slice(4, 6)),
+        Number(String(rawTransfer.Transactiedatum).slice(6, 8)),
       ),
       valueDate: new Date().setUTCFullYear(
-        Number(String(mutation.Rentedatum).slice(0, 4)),
-        Number(String(mutation.Rentedatum).slice(4, 6)),
-        Number(String(mutation.Rentedatum).slice(6, 8)),
+        Number(String(rawTransfer.Rentedatum).slice(0, 4)),
+        Number(String(rawTransfer.Rentedatum).slice(4, 6)),
+        Number(String(rawTransfer.Rentedatum).slice(6, 8)),
       ),
+    };
+  }
+
+  private rawTransferToTransferMutation(mutation: RawInvoiceJsonDTO): object {
+    return {
       startBalance: mutation.Beginsaldo,
       endBalance: mutation.Eindsaldo,
       description: mutation.Omschrijving,

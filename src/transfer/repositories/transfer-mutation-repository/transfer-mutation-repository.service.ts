@@ -10,11 +10,11 @@ export class TransferMutationRepositoryService {
   ) {
   }
 
-  async getMutations(id?: number) {
-    return await this.repository.find(id ? { where: [{ id }] } : null);
+  async getMutations(id?: number): Promise<TransferMutation[]> {
+    return await this.repository.find(id ? { where: [{ id }, {active: true}] } : null);
   }
 
-  async save(mutation) {
+  async save(mutation: TransferMutation): Promise<TransferMutation> {
     return await this.repository.save(mutation);
   }
 }
