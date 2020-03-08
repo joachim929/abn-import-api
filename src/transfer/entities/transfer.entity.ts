@@ -1,0 +1,23 @@
+import { Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import { TransferMutation } from './transfer-mutation.entity';
+
+@Entity()
+export class Transfer {
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
+
+  @Column()
+  hash: string;
+
+  @Column()
+  accountNumber: number;
+
+  @OneToMany(type => TransferMutation, mutation => mutation.transfer)
+  mutations: TransferMutation[];
+
+  @CreateDateColumn()
+  createdAt: Date;
+
+  @UpdateDateColumn()
+  updatedAt: Date;
+}

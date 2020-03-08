@@ -11,6 +11,7 @@ import { InvoiceModule } from './invoice/invoice.module';
 import { AuthModule } from './auth/auth.module';
 import { AmountModule } from './amount/amount.module';
 import { DescriptionModule } from './description/description.module';
+import { TransferModule } from './transfer/transfer.module';
 
 @Module({
   imports: [
@@ -27,7 +28,8 @@ import { DescriptionModule } from './description/description.module';
     InvoiceModule,
     AuthModule,
     AmountModule,
-    DescriptionModule
+    DescriptionModule,
+    TransferModule
   ],
   controllers: [AppController],
   providers: [AppService],
