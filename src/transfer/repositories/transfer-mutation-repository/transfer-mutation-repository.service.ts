@@ -10,8 +10,8 @@ export class TransferMutationRepositoryService {
   ) {
   }
 
-  async get() {
-    return await this.repository.find({relations: ['transfer']});
+  async getMutations(id?: number) {
+    return await this.repository.find(id ? { where: [{ id }] } : null);
   }
 
   async save(mutation) {
