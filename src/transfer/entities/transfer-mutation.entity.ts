@@ -26,6 +26,9 @@ export class TransferMutation {
   @Column({nullable: true})
   comment: string;
 
+  @Column()
+  amount: number;
+
   @Column({ default: true })
   active: boolean;
 

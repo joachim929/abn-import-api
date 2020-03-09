@@ -6,6 +6,7 @@ import { TransferMutationRepositoryService } from './repositories/transfer-mutat
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Transfer } from './entities/transfer.entity';
 import { TransferMutation } from './entities/transfer-mutation.entity';
+import { TransferImportService } from './services/transfer-import/transfer-import.service';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { TransferMutation } from './entities/transfer-mutation.entity';
     TransferService,
     TransferRepositoryService,
     TransferMutationRepositoryService,
+    TransferImportService,
   ],
 })
 export class TransferModule {
