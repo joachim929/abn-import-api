@@ -15,12 +15,6 @@ export class TransferMutation {
   id: number;
 
   @Column()
-  startBalance: number;
-
-  @Column()
-  endBalance: number;
-
-  @Column()
   description: string;
 
   @Column({nullable: true})

@@ -13,6 +13,12 @@ export class Transfer {
   accountNumber: number;
 
   @Column()
+  startBalance: number;
+
+  @Column()
+  endBalance: number;
+
+  @Column()
   currencyCode: string;
 
   @Column()

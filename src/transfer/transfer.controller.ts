@@ -1,4 +1,15 @@
-import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post } from '@nestjs/common';
+import {
+  Body,
+  ClassSerializerInterceptor,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  ParseIntPipe,
+  Patch,
+  Post,
+  SerializeOptions, UseInterceptors,
+} from '@nestjs/common';
 import { TransferService } from './services/transfer.service';
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { RawInvoiceJsonDTO } from '../invoice/dtos/raw-invoice-json.dto';
@@ -95,7 +106,25 @@ export class TransferController {
    *  Create DTO
    *  If duplicate, return as feedback and confirmation
    */
-  @Post('upload/excel')
+  // @Post('upload/excel')
+  // @ApiOperation({
+  //   operationId: 'postInvoiceMultiExcel',
+  // })
+  // @ApiResponse({
+  //   status: 201, description: 'Records created', // todo: Create return DTO
+  // })
+  // @ApiResponse({
+  //   status: 400, description: 'Bad request',
+  // })
+  // @ApiResponse({
+  //   status: 401, description: 'Unauthorized',
+  // })
+  // @ApiBody({ type: [RawInvoiceJsonDTO] })
+  // postExcel(@Body() transfer: [RawInvoiceJsonDTO]) {
+  //   return this.importService.postMultiExcel(transfer);
+  // }
+
+  @Post('upload/excel/test')
   @ApiOperation({
     operationId: 'postInvoiceMultiExcel',
   })
@@ -109,7 +138,7 @@ export class TransferController {
     status: 401, description: 'Unauthorized',
   })
   @ApiBody({ type: [RawInvoiceJsonDTO] })
-  postExcel(@Body() transfer: [RawInvoiceJsonDTO]) {
-    return this.importService.postMultiExcel(transfer);
+  postExcelTest(@Body() transfer: [RawInvoiceJsonDTO]) {
+    return this.importService.test(transfer);
   }
 }
