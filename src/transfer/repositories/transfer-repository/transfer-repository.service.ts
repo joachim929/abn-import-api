@@ -27,7 +27,6 @@ export class TransferRepositoryService {
     } else {
       query.where = [{ mutations: { active: true } }];
     }
-    console.log(query.where);
 
     return await this.repository.find(query);
   }

@@ -1,6 +1,5 @@
 import {
   Body,
-  ClassSerializerInterceptor,
   Controller,
   Delete,
   Get,
@@ -8,7 +7,6 @@ import {
   ParseIntPipe,
   Patch,
   Post,
-  SerializeOptions, UseInterceptors,
 } from '@nestjs/common';
 import { TransferService } from './services/transfer.service';
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
@@ -16,7 +14,6 @@ import { RawInvoiceJsonDTO } from '../invoice/dtos/raw-invoice-json.dto';
 import { InvoiceDTO } from '../invoice/dtos/invoice.dto';
 import { TransferImportService } from './services/transfer-import/transfer-import.service';
 import { TransferBatchImportDto } from './dtos/transfer-batch-import.dto';
-import { Observable } from 'rxjs';
 import { Transfer } from './entities/transfer.entity';
 
 @ApiTags('TransferApi')
