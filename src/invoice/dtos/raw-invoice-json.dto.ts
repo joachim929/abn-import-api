@@ -36,21 +36,16 @@ export class RawTransferSerializerDTO {
     this.currencyCode = rawTransfer.Muntsoort;
     this.description = rawTransfer.Omschrijving;
     this.accountNumber = rawTransfer.Rekeningnummer;
-    const tempValueDate = new Date();
-    tempValueDate.setUTCFullYear(
-        Number(String(rawTransfer.Rentedatum).slice(0, 4)),
-        Number(String(rawTransfer.Rentedatum).slice(4, 6)),
-        Number(String(rawTransfer.Rentedatum).slice(6, 8)),
+    this.valueDate = new Date(
+      Number(String(rawTransfer.Rentedatum).slice(0, 4)),
+      Number(String(rawTransfer.Rentedatum).slice(4, 6)) - 1,
+      Number(String(rawTransfer.Rentedatum).slice(6, 8)),
     );
-    this.valueDate = tempValueDate;
     this.amount = rawTransfer.Transactiebedrag;
-
-    const tempTransactionDate = new Date();
-    tempTransactionDate.setUTCFullYear(
+    this.transactionDate = new Date(
       Number(String(rawTransfer.Transactiedatum).slice(0, 4)),
-      Number(String(rawTransfer.Transactiedatum).slice(4, 6)),
+      Number(String(rawTransfer.Transactiedatum).slice(4, 6)) - 1,
       Number(String(rawTransfer.Transactiedatum).slice(6, 8)),
     );
-    this.transactionDate = tempTransactionDate;
   }
 }

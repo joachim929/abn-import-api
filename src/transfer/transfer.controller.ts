@@ -139,6 +139,6 @@ export class TransferController {
   })
   @ApiBody({ type: [RawInvoiceJsonDTO] })
   postExcelTest(@Body() transfer: [RawInvoiceJsonDTO]) {
-    return this.importService.test(transfer);
+    return this.importService.postExcelImport(transfer);
   }
 }

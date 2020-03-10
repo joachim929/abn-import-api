@@ -1,11 +1,5 @@
-import { RawInvoiceJsonDTO } from '../../invoice/dtos/raw-invoice-json.dto';
 import { Transform } from 'class-transformer';
 import { IsDate, IsOptional, IsString } from 'class-validator';
-
-export class TransferBatchImportResponseDTO {
-  duplicates: RawInvoiceJsonDTO[];
-  transfers: TransferDTO[];
-}
 
 export class TransferDTO {
   @Transform(id => Number(id))
