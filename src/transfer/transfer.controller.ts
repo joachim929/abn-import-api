@@ -15,6 +15,9 @@ import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { RawInvoiceJsonDTO } from '../invoice/dtos/raw-invoice-json.dto';
 import { InvoiceDTO } from '../invoice/dtos/invoice.dto';
 import { TransferImportService } from './services/transfer-import/transfer-import.service';
+import { TransferBatchImportDto } from './dtos/transfer-batch-import.dto';
+import { Observable } from 'rxjs';
+import { Transfer } from './entities/transfer.entity';
 
 @ApiTags('TransferApi')
 @Controller('transfer')
@@ -27,7 +30,10 @@ export class TransferController {
 
   @Get()
   @ApiOperation({
-    operationId: 'getTransactions',
+    operationId: 'getTransfer',
+  })
+  @ApiResponse({
+    status: 200, description: 'Get all transfers', type: [Transfer],
   })
   get() {
     return this.service.getTransfersWithMutations();
@@ -52,7 +58,7 @@ export class TransferController {
 
   @Delete(':id')
   @ApiOperation({
-    operationId: 'Transfer deleted',
+    operationId: 'deleteTransfer',
   })
   @ApiResponse({
     status: 204, description: 'Record deleted',
@@ -101,35 +107,12 @@ export class TransferController {
     return 'splitTransfer wip';
   }
 
-  /**
-   * todo:
-   *  Create DTO
-   *  If duplicate, return as feedback and confirmation
-   */
-  // @Post('upload/excel')
-  // @ApiOperation({
-  //   operationId: 'postInvoiceMultiExcel',
-  // })
-  // @ApiResponse({
-  //   status: 201, description: 'Records created', // todo: Create return DTO
-  // })
-  // @ApiResponse({
-  //   status: 400, description: 'Bad request',
-  // })
-  // @ApiResponse({
-  //   status: 401, description: 'Unauthorized',
-  // })
-  // @ApiBody({ type: [RawInvoiceJsonDTO] })
-  // postExcel(@Body() transfer: [RawInvoiceJsonDTO]) {
-  //   return this.importService.postMultiExcel(transfer);
-  // }
-
-  @Post('upload/excel/test')
+  @Post('upload/excel')
   @ApiOperation({
-    operationId: 'postInvoiceMultiExcel',
+    operationId: 'postExcelTransfer',
   })
   @ApiResponse({
-    status: 201, description: 'Records created', // todo: Create return DTO
+    status: 201, description: 'Records created', type: TransferBatchImportDto,
   })
   @ApiResponse({
     status: 400, description: 'Bad request',

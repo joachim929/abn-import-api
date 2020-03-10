@@ -6,37 +6,17 @@ import { RawInvoiceJsonDTO, RawTransferSerializerDTO } from '../../../invoice/dt
 import { Transfer } from '../../entities/transfer.entity';
 import { TransferMutation } from '../../entities/transfer-mutation.entity';
 import { validate } from 'class-validator';
+import {
+  PreSaveDTO,
+  PreSaveTransferDTO,
+  TransferBatchImportDto,
+  ValidatedRawTransfersDTO,
+} from '../../dtos/transfer-batch-import.dto';
 
 /**
  * todo: This is a mess, but it works
  *  feel free to clean up
  */
-export class ValidatedRawTransfersDTO {
-  validTransfers?: RawTransferSerializerDTO[];
-  invalidTransfers?: RawTransferSerializerDTO[];
-}
-
-export class PreSaveTransferDTO {
-  hash: string;
-  accountNumber: number;
-  currencyCode: string;
-  valueDate: Date;
-  transactionDate: Date;
-  startBalance: number;
-  endBalance: number;
-}
-
-export class PreSaveTransferMutationDTO {
-  amount: number;
-  description: string;
-  transfer?: PreSaveTransferDTO;
-}
-
-export class PreSaveDTO {
-  transfer: PreSaveTransferDTO;
-  mutation: PreSaveTransferMutationDTO;
-}
-
 @Injectable()
 export class TransferImportService {
   constructor(
@@ -45,10 +25,7 @@ export class TransferImportService {
   ) {
   }
 
-  postExcelImport(file: RawInvoiceJsonDTO[]): Promise<{
-    existingTransfers: RawTransferSerializerDTO[],
-    savedTransfers: Transfer[]
-  }> {
+  postExcelImport(file: RawInvoiceJsonDTO[]): Promise<TransferBatchImportDto> {
     return new Promise((resolve) => {
       // Serialize
       let existingHash = [];
