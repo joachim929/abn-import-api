@@ -27,6 +27,7 @@ export class PreSaveTransferDTO {
 export class PreSaveTransferMutationDTO {
   amount: number;
   description: string;
+  transfer?: PreSaveTransferDTO;
 }
 
 export class PreSaveDTO {
@@ -39,6 +40,12 @@ export class ValidatedHashRawTransferDTO extends ValidatedRawTransfersDTO {
   preSavedTransfers?: PreSaveDTO[];
 }
 
+/**
+ * todo:
+ *  return saved and existing hashes
+ *  something goes wrong, new hashes are constantly created
+ */
+
 @Injectable()
 export class TransferImportService {
   constructor(
@@ -50,55 +57,90 @@ export class TransferImportService {
   test(file: RawInvoiceJsonDTO[]): Promise<any> {
     return new Promise((resolve) => {
       // Serialize
+      const hashExists = [];
       this.serializationValidation(file).then((serializedTransfers) => {
         return serializedTransfers;
       }).then((serializedTransfers) => {
+        const preSavedTransferItems: PreSaveDTO[] = [];
         // Check for hash
-        this.getHashPromises(serializedTransfers.validTransfers).then((hasHashResults) => {
-          if (hasHashResults.length !== serializedTransfers.validTransfers.length) {
+        return this.getHashPromises(serializedTransfers.validTransfers).then((hasHashResults) => {
+          if (hasHashResults.hasHashResponse.length !== serializedTransfers.validTransfers.length) {
             console.log('something went wrong');
           }
-
-          const preSavedTransferItems = [];
-          for (let i = 0; i < hasHashResults.length; i++) {
-            if (hasHashResults[i].length === 0) {
-              preSavedTransferItems.push(this.buildPreSavedTransfers(serializedTransfers.validTransfers[i]));
+          for (let i = 0; i < hasHashResults.hasHashResponse.length; i++) {
+            if (hasHashResults.hasHashResponse[i].length === 0) {
+              preSavedTransferItems.push(this.buildPreSavedTransfers(serializedTransfers.validTransfers[i], hasHashResults.usedHashes[i]));
+            } else {
+              hashExists.push(hasHashResults.hasHashResponse[i]);
             }
           }
 
-          resolve(preSavedTransferItems);
+          return preSavedTransferItems;
+        })
+      }).then((preSaved) => {
+        const savedTransfersPromises: Promise<Transfer>[] = [];
+        for (let i = 0; i < preSaved.length; i++) {
+          savedTransfersPromises.push(this.transferRepository.save(preSaved[i].transfer as Transfer));
+        }
+        Promise.all(savedTransfersPromises).then((savedResults) => {
+          if (savedResults.length !== preSaved.length) {
+            console.log('something went wrong');
+          }
+          const savedMutations = [];
+          for (let i = 0; i < savedResults.length; i++) {
+            savedMutations.push(this.transferMutationRepository.save(preSaved[i].mutation as TransferMutation));
+          }
+
+          Promise.all(savedMutations).then((savedTransferMutations: TransferMutation[]) => {
+            if (savedTransferMutations.length !== preSaved.length || savedTransferMutations.length !== savedResults.length) {
+              console.log('something went wrong');
+            }
+            for (let i = 0; i < savedTransferMutations.length; i++) {
+              delete savedTransferMutations[i].transfer;
+              savedResults[i].mutations = [savedTransferMutations[i]];
+            }
+
+            resolve({
+              hashExists: hashExists,
+              savedTransfers: savedResults
+            });
+          })
         });
       });
     });
   }
 
-  getHashPromises(validTransfers: RawTransferSerializerDTO[]): Promise<Transfer[][]> {
+  getHashPromises(validTransfers: RawTransferSerializerDTO[]): Promise<{hasHashResponse: Transfer[][], usedHashes: string[]}> {
     return new Promise((resolve) => {
       const hashPromises: Promise<Transfer[]>[] = [];
+      const usedHashes = [];
       for (let i = 0; i < validTransfers.length; i++) {
         const newHash = hash(validTransfers[i]);
+        usedHashes.push(newHash);
         hashPromises.push(this.transferRepository.hashExists(newHash));
       }
       Promise.all(hashPromises).then((hasHashResponse) => {
-        resolve(hasHashResponse);
+        resolve({hasHashResponse, usedHashes});
       });
     });
   }
 
-  buildPreSavedTransfers(item: RawTransferSerializerDTO): PreSaveDTO {
+  buildPreSavedTransfers(item: RawTransferSerializerDTO, hash): PreSaveDTO {
+    const transfer: PreSaveTransferDTO = {
+      hash,
+      accountNumber: item.accountNumber,
+      currencyCode: item.currencyCode,
+      valueDate: item.valueDate,
+      transactionDate: item.transactionDate,
+      startBalance: item.startBalance,
+      endBalance: item.endBalance,
+    };
     return {
-      transfer: {
-        hash: hash(item),
-        accountNumber: item.accountNumber,
-        currencyCode: item.currencyCode,
-        valueDate: item.valueDate,
-        transactionDate: item.transactionDate,
-        startBalance: item.startBalance,
-        endBalance: item.endBalance,
-      },
+      transfer: transfer,
       mutation: {
         amount: item.amount,
         description: item.description,
+        transfer: transfer
       },
     };
   }
