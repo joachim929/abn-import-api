@@ -29,60 +29,55 @@ export class TransferImportService {
     return new Promise((resolve) => {
       // Serialize
       let existingHash = [];
-      this.serializationValidation(file).then((serializedTransfers) => {
-        return serializedTransfers;
+      this.serializationValidation(file)
+        .then((serializedTransfers) => {
 
-      }).then((serializedTransfers) => {
+          return this.validateHash(serializedTransfers)
+            .then((next) => {
+              existingHash = next.existingHash;
+              return next.preSavedTransferItems;
+            });
 
-        return this.validateHash(serializedTransfers).then((next) => {
-          existingHash = next.existingHash;
-          return next.preSavedTransferItems;
-        });
+        }).then((preSaved) => {
 
-      }).then((preSaved) => {
+        return this.savedTransfers(preSaved)
+          .then((savedTransferMutations) => {
 
-        return this.saveTransfers(preSaved).then((savedTransfers) => {
-          return { savedTransfers, preSaved };
-        });
+            const formattedTransfers: Transfer[] = [];
 
-      }).then((_savedTransfers) => {
-        const preSaved = _savedTransfers.preSaved;
-        const savedTransfers = _savedTransfers.savedTransfers;
-        const savedMutations = [];
-        for (let i = 0; i < savedTransfers.length; i++) {
-          savedMutations.push(this.transferMutationRepository.save(preSaved[i].mutation as TransferMutation));
-        }
+            for (const transferMutation of savedTransferMutations) {
+              const transfer: Transfer = { ...transferMutation.transfer };
+              delete transferMutation.transfer;
+              transfer.mutations = [
+                transferMutation,
+              ];
+              formattedTransfers.push(transfer);
+            }
 
-        Promise.all(savedMutations).then((savedTransferMutations: TransferMutation[]) => {
-          if (savedTransferMutations.length !== preSaved.length || savedTransferMutations.length !== savedTransfers.length) {
-            throw new HttpException('Something went wrong', HttpStatus.INTERNAL_SERVER_ERROR);
-          }
-          for (let i = 0; i < savedTransferMutations.length; i++) {
-            delete savedTransferMutations[i].transfer;
-            savedTransfers[i].mutations = [savedTransferMutations[i]];
-          }
-
-          resolve({
-            existingTransfers: existingHash,
-            savedTransfers: savedTransfers,
+            return formattedTransfers;
           });
+
+      }).then((savedTransfers) => {
+        resolve({
+          existingTransfers: existingHash,
+          savedTransfers,
         });
       });
     });
   }
 
-  private saveTransfers(preSaved): Promise<Transfer[]> {
+  private savedTransfers(preSaveDTOS: PreSaveDTO[]): Promise<TransferMutation[]> {
     return new Promise((resolve) => {
-      const savedTransferPromise: Promise<Transfer>[] = [];
-      for (let i = 0; i < preSaved.length; i++) {
-        savedTransferPromise.push(this.transferRepository.save(preSaved[i].transfer as Transfer));
+      const savedTransfers: Promise<TransferMutation>[] = [];
+      for (let i = 0; i < preSaveDTOS.length; i++) {
+        savedTransfers.push(this.transferRepository.save(preSaveDTOS[i].transfer as Transfer).then((response) => {
+          return this.transferMutationRepository.save(preSaveDTOS[i].mutation as TransferMutation);
+        }));
       }
 
-      Promise.all(savedTransferPromise).then((savedTransfers) => {
-        if (savedTransfers.length !== preSaved.length) {
-          throw new HttpException('Something went wrong', HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-        resolve(savedTransfers);
+      Promise.all(savedTransfers).then((response) => {
+        console.log(response);
+        resolve(response);
       });
     });
   }
