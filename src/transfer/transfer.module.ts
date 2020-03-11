@@ -7,6 +7,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Transfer } from './entities/transfer.entity';
 import { TransferMutation } from './entities/transfer-mutation.entity';
 import { TransferImportService } from './services/transfer-import/transfer-import.service';
+import { TransferSplitService } from './services/transfer-split/transfer-split.service';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { TransferImportService } from './services/transfer-import/transfer-impor
     TransferRepositoryService,
     TransferMutationRepositoryService,
     TransferImportService,
+    TransferSplitService,
   ],
 })
 export class TransferModule {

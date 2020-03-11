@@ -15,13 +15,15 @@ import { InvoiceDTO } from '../invoice/dtos/invoice.dto';
 import { TransferImportService } from './services/transfer-import/transfer-import.service';
 import { TransferBatchImportDto } from './dtos/transfer-batch-import.dto';
 import { Transfer } from './entities/transfer.entity';
+import { TransferSplitService } from './services/transfer-split/transfer-split.service';
 
 @ApiTags('TransferApi')
 @Controller('transfer')
 export class TransferController {
   constructor(
     private service: TransferService,
-    private importService: TransferImportService
+    private importService: TransferImportService,
+    private splitService: TransferSplitService
   ) {
   }
 
@@ -101,7 +103,7 @@ export class TransferController {
     status: 401, description: 'Unauthorized',
   })
   splitTransfer(@Body() body) {
-    return 'splitTransfer wip';
+    return this.splitService.splitTransfer(body);
   }
 
   @Post('upload/excel')

@@ -6,8 +6,8 @@ import { Transfer } from '../entities/transfer.entity';
 @Injectable()
 export class TransferService {
   constructor(
-    private transferRepository: TransferRepositoryService,
-    private transferMutationRepository: TransferMutationRepositoryService,
+    protected transferRepository: TransferRepositoryService,
+    protected transferMutationRepository: TransferMutationRepositoryService,
   ) {
   }
 

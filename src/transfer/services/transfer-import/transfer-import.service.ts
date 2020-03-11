@@ -12,18 +12,14 @@ import {
   TransferBatchImportDto,
   ValidatedRawTransfersDTO,
 } from '../../dtos/transfer-batch-import.dto';
+import { TransferService } from '../transfer.service';
 
 /**
  * todo: This is a mess, but it works
  *  feel free to clean up
  */
 @Injectable()
-export class TransferImportService {
-  constructor(
-    private transferRepository: TransferRepositoryService,
-    private transferMutationRepository: TransferMutationRepositoryService,
-  ) {
-  }
+export class TransferImportService extends TransferService {
 
   postExcelImport(file: RawInvoiceJsonDTO[]): Promise<TransferBatchImportDto> {
     return new Promise((resolve) => {
@@ -70,13 +66,11 @@ export class TransferImportService {
     return new Promise((resolve) => {
       const savedTransfers: Promise<TransferMutation>[] = [];
       for (let i = 0; i < preSaveDTOS.length; i++) {
-        savedTransfers.push(this.transferRepository.save(preSaveDTOS[i].transfer as Transfer).then((response) => {
-          return this.transferMutationRepository.save(preSaveDTOS[i].mutation as TransferMutation);
-        }));
+        savedTransfers.push(this.transferRepository.save(preSaveDTOS[i].transfer as Transfer)
+          .then(() => this.transferMutationRepository.save(preSaveDTOS[i].mutation as TransferMutation)));
       }
 
       Promise.all(savedTransfers).then((response) => {
-        console.log(response);
         resolve(response);
       });
     });
