@@ -1,5 +1,7 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { TransferService } from '../transfer.service';
+import { SplitTransferMutationDto } from '../../dtos/split-transfer-mutation.dto';
+import { validate } from 'class-validator';
 
 /**
  * todo: Before I can really get started on this I need to decide how the front end gets data
@@ -22,7 +24,28 @@ import { TransferService } from '../transfer.service';
 @Injectable()
 export class TransferSplitService extends TransferService {
 
-  splitTransfer(body) {
-    return new Promise((resolve) => resolve('WIP'));
+  splitTransfer(body: SplitTransferMutationDto) {
+    return new Promise((resolve) => {
+      this.validateBody(body)
+        .then(() => {
+          resolve('Valid body, WIP');
+        }).catch(() => {
+        throw new HttpException('Invalid body', HttpStatus.BAD_REQUEST);
+      });
+    });
+  }
+
+  private validateBody(body: SplitTransferMutationDto): Promise<void> {
+    return new Promise((resolve, reject) => {
+      validate(body.new).then((res) => {
+        if (res.length === 0) {
+          validate(body.patch).then((response) => {
+            response.length === 0 ? resolve() : reject();
+          });
+        } else {
+          reject();
+        }
+      });
+    });
   }
 }

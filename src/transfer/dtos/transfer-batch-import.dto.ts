@@ -1,11 +1,11 @@
 import { Transform } from 'class-transformer';
-import { IsDate, IsOptional, IsString } from 'class-validator';
+import { IsDate, IsNumber, IsOptional, IsString } from 'class-validator';
 import { RawTransferSerializerDTO } from '../../invoice/dtos/raw-invoice-json.dto';
 import { Transfer } from '../entities/transfer.entity';
-import { ApiProperty } from '@nestjs/swagger';
 import { ApiModelProperty } from '@nestjs/swagger/dist/decorators/api-model-property.decorator';
+import { TransferMutation } from '../entities/transfer-mutation.entity';
 
-export class TransferDTO {
+export class TransferMutationDTO {
   @Transform(id => Number(id))
   id: string;
   @Transform(accountNumber => Number(accountNumber))
@@ -16,23 +16,40 @@ export class TransferDTO {
   valueDate: Date;
   @IsDate()
   transactionDate: Date;
-
-  mutations: TransferMutationDTO[];
-}
-
-export class TransferMutationDTO {
-  @Transform(balance => Number(balance))
-  startBalance: number;
-  @Transform(balance => Number(balance))
-  endBalance: number;
+  @IsOptional()
+  @IsNumber()
+  mutationId?: number;
   @IsString()
   description: string;
   @IsOptional()
   @IsString()
   comment?: string;
-  @Transform(id => Number(id))
-  id: number;
+  @IsNumber()
+  amount: number;
+  @IsOptional()
+  @IsNumber()
+  categoryId?: number;
+  @IsNumber()
+  startBalance: number;
+  @IsNumber()
+  endBalance: number;
+
+  constructor(transfer: Transfer, mutation: TransferMutation) {
+    this.id = transfer.id;
+    this.accountNumber = transfer.accountNumber;
+    this.currencyCode = transfer.currencyCode;
+    this.valueDate = transfer.valueDate;
+    this.transactionDate = transfer.transactionDate;
+    this.mutationId = mutation.id;
+    this.description = mutation.description;
+    this.comment = mutation.comment || null;
+    this.amount = mutation.amount;
+    this.categoryId = mutation.categoryId || null;
+    this.startBalance = transfer.startBalance;
+    this.endBalance = transfer.endBalance;
+  }
 }
+
 
 export class TransferBatchImportDto {
   @ApiModelProperty({ type: [RawTransferSerializerDTO] })

@@ -13,9 +13,10 @@ import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { RawInvoiceJsonDTO } from '../invoice/dtos/raw-invoice-json.dto';
 import { InvoiceDTO } from '../invoice/dtos/invoice.dto';
 import { TransferImportService } from './services/transfer-import/transfer-import.service';
-import { TransferBatchImportDto } from './dtos/transfer-batch-import.dto';
+import { TransferBatchImportDto, TransferMutationDTO } from './dtos/transfer-batch-import.dto';
 import { Transfer } from './entities/transfer.entity';
 import { TransferSplitService } from './services/transfer-split/transfer-split.service';
+import { SplitTransferMutationDto } from './dtos/split-transfer-mutation.dto';
 
 @ApiTags('TransferApi')
 @Controller('transfer')
@@ -32,7 +33,13 @@ export class TransferController {
     operationId: 'getTransfer',
   })
   @ApiResponse({
-    status: 200, description: 'Get all transfers', type: [Transfer],
+    status: 200, description: 'Get all transfers', type: [TransferMutationDTO],
+  })
+  @ApiResponse({
+    status: 400, description: 'Bad request',
+  })
+  @ApiResponse({
+    status: 401, description: 'Unauthorized', // Not logged in
   })
   get() {
     return this.service.getTransfersWithMutations();
@@ -94,7 +101,7 @@ export class TransferController {
     operationId: 'splitTransfer',
   })
   @ApiResponse({
-    status: 201, description: 'Record created and patched',
+    status: 201, description: 'Record created and patched', type: SplitTransferMutationDto
   })
   @ApiResponse({
     status: 400, description: 'Bad request',
@@ -102,7 +109,7 @@ export class TransferController {
   @ApiResponse({
     status: 401, description: 'Unauthorized',
   })
-  splitTransfer(@Body() body) {
+  splitTransfer(@Body() body: SplitTransferMutationDto) {
     return this.splitService.splitTransfer(body);
   }
 

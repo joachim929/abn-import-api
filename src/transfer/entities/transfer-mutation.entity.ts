@@ -26,6 +26,9 @@ export class TransferMutation {
   @Column({ default: true })
   active: boolean;
 
+  @Column({nullable: true})
+  categoryId?: number;
+
   @ManyToOne(type => Transfer, transfer => transfer.mutations)
   transfer: Transfer;
 

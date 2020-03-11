@@ -1,7 +1,5 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import * as hash from 'object-hash';
-import { TransferRepositoryService } from '../../repositories/transfer-repository/transfer-repository.service';
-import { TransferMutationRepositoryService } from '../../repositories/transfer-mutation-repository/transfer-mutation-repository.service';
 import { RawInvoiceJsonDTO, RawTransferSerializerDTO } from '../../../invoice/dtos/raw-invoice-json.dto';
 import { Transfer } from '../../entities/transfer.entity';
 import { TransferMutation } from '../../entities/transfer-mutation.entity';
@@ -25,33 +23,31 @@ export class TransferImportService extends TransferService {
     return new Promise((resolve) => {
       // Serialize
       let existingHash = [];
-      this.serializationValidation(file)
-        .then((serializedTransfers) => {
+      this.serializationValidation(file).then((serializedTransfers) => {
 
-          return this.validateHash(serializedTransfers)
-            .then((next) => {
-              existingHash = next.existingHash;
-              return next.preSavedTransferItems;
-            });
-
-        }).then((preSaved) => {
-
-        return this.savedTransfers(preSaved)
-          .then((savedTransferMutations) => {
-
-            const formattedTransfers: Transfer[] = [];
-
-            for (const transferMutation of savedTransferMutations) {
-              const transfer: Transfer = { ...transferMutation.transfer };
-              delete transferMutation.transfer;
-              transfer.mutations = [
-                transferMutation,
-              ];
-              formattedTransfers.push(transfer);
-            }
-
-            return formattedTransfers;
+        return this.validateHash(serializedTransfers)
+          .then((next) => {
+            existingHash = next.existingHash;
+            return next.preSavedTransferItems;
           });
+
+      }).then((preSaved) => {
+
+        return this.savedTransfers(preSaved).then((savedTransferMutations) => {
+
+          const formattedTransfers: Transfer[] = [];
+
+          for (const transferMutation of savedTransferMutations) {
+            const transfer: Transfer = { ...transferMutation.transfer };
+            delete transferMutation.transfer;
+            transfer.mutations = [
+              transferMutation,
+            ];
+            formattedTransfers.push(transfer);
+          }
+
+          return formattedTransfers;
+        });
 
       }).then((savedTransfers) => {
         resolve({
