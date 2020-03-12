@@ -23,27 +23,29 @@ import { TransferMutation } from '../../entities/transfer-mutation.entity';
  *      - comment
  *      - amount
  */
+export interface OnReject {
+  reason: string;
+  status: HttpStatus;
+}
 
 @Injectable()
 export class TransferSplitService extends TransferService {
 
   splitTransfer(body: SplitTransferMutationDto) {
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       if (!body.patch.id) {
-        throw new HttpException('No transferMutationId given', HttpStatus.BAD_REQUEST);
+        reject({reason: 'No transferMutationId given', status: HttpStatus.BAD_REQUEST});
       }
       this.formatBody(body).then((formattedTransferMutations) => {
-        console.log(formattedTransferMutations);
-        resolve();
-        return;
         const promises = [
           this.transferMutationRepository.save(formattedTransferMutations[0] as TransferMutation),
           this.transferMutationRepository.save(formattedTransferMutations[1] as TransferMutation),
         ];
         Promise.all(promises).then((result) => {
-          console.log(result);
           resolve(result);
         });
+      }).catch((reason) => {
+        reject(reason);
       });
 
       // this.validateBody(body).then((validBody) => {
@@ -60,19 +62,29 @@ export class TransferSplitService extends TransferService {
       //    *  inserted how they are at the moment
       //    */
       // });
-    }).catch(() => {
-      throw new HttpException('Invalid body', HttpStatus.BAD_REQUEST);
+    }).catch((reject: OnReject) => {
+      throw new HttpException(reject.reason, reject.status);
     });
   }
 
+  getOneMutation(id: number): Promise<TransferMutation> {
+    return this.transferMutationRepository.getOne(id);
+  }
+
   private formatBody(body: SplitTransferMutationDto): Promise<NewTransferMutationChild[]> {
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       this.transferMutationRepository.getOne(body.patch.mutationId).then((mutation) => {
         const splitTransferMutation = new NewTransferMutationChild(body.new, mutation);
-        console.log(splitTransferMutation);
         const patchTransferMutation = new NewTransferMutationChild(body.patch, mutation);
-        console.log(patchTransferMutation);
-        resolve([splitTransferMutation, patchTransferMutation]);
+        if (mutation.amount !== splitTransferMutation.amount + patchTransferMutation.amount) {
+          reject({reason: 'Amount doesn\'t add up to original', status: HttpStatus.BAD_REQUEST});
+        }
+        mutation.active = false;
+        delete mutation.children;
+        this.transferMutationRepository.updateMutation(mutation).then((result) => {
+          console.log(result);
+          resolve([splitTransferMutation, patchTransferMutation]);
+        });
       });
     });
   }

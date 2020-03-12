@@ -32,10 +32,10 @@ export class TransferMutation {
   @ManyToOne(type => Transfer, transfer => transfer.mutations)
   transfer: Transfer;
 
-  @ManyToOne(type => TransferMutation, mutation => mutation.children)
+  @ManyToOne(type => TransferMutation, mutation => mutation.children, {cascade: ['insert']})
   parent: TransferMutation;
 
-  @OneToMany(type => TransferMutation, mutation => mutation.parent)
+  @OneToMany(type => TransferMutation, mutation => mutation.parent, {cascade: ['insert']})
   children: TransferMutation[];
 
   @CreateDateColumn()

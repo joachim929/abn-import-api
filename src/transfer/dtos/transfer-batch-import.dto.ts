@@ -65,6 +65,7 @@ export class NewTransferMutationChild {
   categoryId: number;
   transfer: Transfer;
   parent: TransferMutation;
+  children: TransferMutation[];
 
   constructor(transferMutation: TransferMutationDTO, parent: TransferMutation) {
     this.description = transferMutation.description;
@@ -74,6 +75,7 @@ export class NewTransferMutationChild {
     this.categoryId = transferMutation.categoryId || null;
     this.transfer = parent.transfer;
     this.parent = parent;
+    this.children = [];
   }
 }
 

@@ -14,9 +14,9 @@ import { RawInvoiceJsonDTO } from '../invoice/dtos/raw-invoice-json.dto';
 import { InvoiceDTO } from '../invoice/dtos/invoice.dto';
 import { TransferImportService } from './services/transfer-import/transfer-import.service';
 import { TransferBatchImportDto, TransferMutationDTO } from './dtos/transfer-batch-import.dto';
-import { Transfer } from './entities/transfer.entity';
 import { TransferSplitService } from './services/transfer-split/transfer-split.service';
 import { SplitTransferMutationDto } from './dtos/split-transfer-mutation.dto';
+import { TransferMutation } from './entities/transfer-mutation.entity';
 
 @ApiTags('TransferApi')
 @Controller('transfer')
@@ -45,23 +45,6 @@ export class TransferController {
     return this.service.getTransfersWithMutations();
   }
 
-  @Patch()
-  @ApiOperation({
-    operationId: 'patchTransfer',
-  })
-  @ApiResponse({
-    status: 200, description: 'Transfer patched', type: InvoiceDTO,
-  })
-  @ApiResponse({
-    status: 400, description: 'Bad request',
-  })
-  @ApiResponse({
-    status: 401, description: 'Unauthorized', // Not logged in
-  })
-  patch(@Body() body) {
-    return 'patchTransfer WIP';
-  }
-
   @Delete(':id')
   @ApiOperation({
     operationId: 'deleteTransfer',
@@ -77,6 +60,23 @@ export class TransferController {
   })
   delete(@Param('id', new ParseIntPipe()) id: number) {
     return 'delete WIP';
+  }
+
+  @Patch()
+  @ApiOperation({
+    operationId: 'patchTransfer',
+  })
+  @ApiResponse({
+    status: 200, description: 'Transfer patched', type: InvoiceDTO,
+  })
+  @ApiResponse({
+    status: 400, description: 'Bad request',
+  })
+  @ApiResponse({
+    status: 401, description: 'Unauthorized', // Not logged in
+  })
+  patch(@Body() body) {
+    return 'patchTransfer WIP';
   }
 
   @Post('/filtered')
@@ -96,6 +96,23 @@ export class TransferController {
     return 'filteredTransfers WIP';
   }
 
+  @Get('mutation/:id')
+  @ApiOperation({
+    operationId: 'getTransferMutation'
+  })
+  @ApiResponse({
+    status: 201, description: 'Got records', type: TransferMutation
+  })
+  @ApiResponse({
+    status: 400, description: 'Bad request',
+  })
+  @ApiResponse({
+    status: 401, description: 'Unauthorized', // Not logged in
+  })
+  getTransferMutation(@Param('id', new ParseIntPipe()) id: number) {
+    return this.splitService.getOneMutation(id);
+  }
+
   @Post('/split')
   @ApiOperation({
     operationId: 'splitTransfer',
@@ -110,7 +127,7 @@ export class TransferController {
     status: 401, description: 'Unauthorized',
   })
   splitTransfer(@Body() body: SplitTransferMutationDto) {
-    return this.splitService.splitTransfer(body);
+    return this.splitService.splitTransfer(body).catch((reason) => reason);
   }
 
   @Post('upload/excel')
