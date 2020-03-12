@@ -127,7 +127,7 @@ export class TransferController {
     status: 401, description: 'Unauthorized',
   })
   splitTransfer(@Body() body: SplitTransferMutationDto) {
-    return this.splitService.splitTransfer(body).catch((reason) => reason);
+    return this.splitService.splitTransfer(body);
   }
 
   @Post('upload/excel')
