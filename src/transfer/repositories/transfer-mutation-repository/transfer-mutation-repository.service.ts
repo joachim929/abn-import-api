@@ -13,7 +13,7 @@ export class TransferMutationRepositoryService {
   async getOne(id: number): Promise<TransferMutation> {
     return await this.repository.findOneOrFail({
       where: [{ id }],
-      relations: ['children', 'parent'],
+      relations: ['children', 'parent', 'transfer'],
     });
   }
 

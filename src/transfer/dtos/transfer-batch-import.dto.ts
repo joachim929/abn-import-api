@@ -1,5 +1,5 @@
 import { Transform } from 'class-transformer';
-import { IsDate, IsNumber, IsOptional, IsString } from 'class-validator';
+import { IsBoolean, IsDate, IsNumber, IsObject, IsOptional, IsString } from 'class-validator';
 import { RawTransferSerializerDTO } from '../../invoice/dtos/raw-invoice-json.dto';
 import { Transfer } from '../entities/transfer.entity';
 import { ApiModelProperty } from '@nestjs/swagger/dist/decorators/api-model-property.decorator';
@@ -49,6 +49,34 @@ export class TransferMutationDTO {
     this.endBalance = transfer.endBalance;
   }
 }
+
+export class NewTransferMutationChild {
+  @IsString()
+  description: string;
+  @IsOptional()
+  @IsString()
+  comment: string;
+  @IsBoolean()
+  active: boolean;
+  @IsNumber()
+  amount: number;
+  @IsOptional()
+  @IsNumber()
+  categoryId: number;
+  transfer: Transfer;
+  parent: TransferMutation;
+
+  constructor(transferMutation: TransferMutationDTO, parent: TransferMutation) {
+    this.description = transferMutation.description;
+    this.comment = transferMutation.comment || null;
+    this.amount = transferMutation.amount;
+    this.active = true;
+    this.categoryId = transferMutation.categoryId || null;
+    this.transfer = parent.transfer;
+    this.parent = parent;
+  }
+}
+
 export class IncomingTransferMutation {
   @IsString()
   id: string;
@@ -80,7 +108,7 @@ export class IncomingTransferMutation {
 
   constructor(transferMutation: TransferMutationDTO) {
     this.id = transferMutation.id;
-    this.accountNumber =transferMutation.accountNumber;
+    this.accountNumber = transferMutation.accountNumber;
     this.currencyCode = transferMutation.currencyCode;
     this.valueDate = new Date(transferMutation.valueDate);
     this.transactionDate = new Date(transferMutation.transactionDate);

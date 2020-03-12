@@ -2,7 +2,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { TransferService } from '../transfer.service';
 import { SplitTransferMutationDto, ValidIncomingTransferMutations } from '../../dtos/split-transfer-mutation.dto';
 import { validate } from 'class-validator';
-import { IncomingTransferMutation } from '../../dtos/transfer-batch-import.dto';
+import { IncomingTransferMutation, NewTransferMutationChild } from '../../dtos/transfer-batch-import.dto';
 import { Transfer } from '../../entities/transfer.entity';
 import { TransferMutation } from '../../entities/transfer-mutation.entity';
 
@@ -28,25 +28,52 @@ import { TransferMutation } from '../../entities/transfer-mutation.entity';
 export class TransferSplitService extends TransferService {
 
   splitTransfer(body: SplitTransferMutationDto) {
-    let patchMutation: IncomingTransferMutation;
-    let newMutation: IncomingTransferMutation;
     return new Promise((resolve) => {
-      this.validateBody(body).then((validBody) => {
-        patchMutation = validBody.patch;
-        newMutation = validBody.new;
-        return this.getTransfer(validBody.patch.id);
-      }).then((transfer) => {
-        this.getTransferMutation(patchMutation.mutationId).then((result) => resolve(result));
-        /**
-         * todo:
-         *  Add patch and new to transferMutation children,
-         *  if other children, set inactive
-         *  Maybe re-write how patch and new are represented as they can't be
-         *  inserted how they are at the moment
-         */
+      if (!body.patch.id) {
+        throw new HttpException('No transferMutationId given', HttpStatus.BAD_REQUEST);
+      }
+      this.formatBody(body).then((formattedTransferMutations) => {
+        console.log(formattedTransferMutations);
+        resolve();
+        return;
+        const promises = [
+          this.transferMutationRepository.save(formattedTransferMutations[0] as TransferMutation),
+          this.transferMutationRepository.save(formattedTransferMutations[1] as TransferMutation),
+        ];
+        Promise.all(promises).then((result) => {
+          console.log(result);
+          resolve(result);
+        });
       });
+
+      // this.validateBody(body).then((validBody) => {
+      //   patchMutation = validBody.patch;
+      //   newMutation = validBody.new;
+      //   return this.getTransfer(validBody.patch.id);
+      // }).then((transfer) => {
+      //   this.getTransferMutation(patchMutation.mutationId).then((result) => resolve(result));
+      //   /**
+      //    * todo:
+      //    *  Add patch and new to transferMutation children,
+      //    *  if other children, set inactive
+      //    *  Maybe re-write how patch and new are represented as they can't be
+      //    *  inserted how they are at the moment
+      //    */
+      // });
     }).catch(() => {
       throw new HttpException('Invalid body', HttpStatus.BAD_REQUEST);
+    });
+  }
+
+  private formatBody(body: SplitTransferMutationDto): Promise<NewTransferMutationChild[]> {
+    return new Promise((resolve) => {
+      this.transferMutationRepository.getOne(body.patch.mutationId).then((mutation) => {
+        const splitTransferMutation = new NewTransferMutationChild(body.new, mutation);
+        console.log(splitTransferMutation);
+        const patchTransferMutation = new NewTransferMutationChild(body.patch, mutation);
+        console.log(patchTransferMutation);
+        resolve([splitTransferMutation, patchTransferMutation]);
+      });
     });
   }
 
