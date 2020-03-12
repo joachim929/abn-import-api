@@ -10,8 +10,15 @@ export class TransferMutationRepositoryService {
   ) {
   }
 
+  async getOne(id: number): Promise<TransferMutation> {
+    return await this.repository.findOneOrFail({
+      where: [{ id }],
+      relations: ['children', 'parent'],
+    });
+  }
+
   async getMutations(id?: number): Promise<TransferMutation[]> {
-    return await this.repository.find(id ? { where: [{ id }, {active: true}] } : null);
+    return await this.repository.find(id ? { where: [{ id }, { active: true }] } : null);
   }
 
   async save(mutation: TransferMutation): Promise<TransferMutation> {

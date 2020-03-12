@@ -1,7 +1,10 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { TransferService } from '../transfer.service';
-import { SplitTransferMutationDto } from '../../dtos/split-transfer-mutation.dto';
+import { SplitTransferMutationDto, ValidIncomingTransferMutations } from '../../dtos/split-transfer-mutation.dto';
 import { validate } from 'class-validator';
+import { IncomingTransferMutation } from '../../dtos/transfer-batch-import.dto';
+import { Transfer } from '../../entities/transfer.entity';
+import { TransferMutation } from '../../entities/transfer-mutation.entity';
 
 /**
  * todo: Before I can really get started on this I need to decide how the front end gets data
@@ -25,27 +28,51 @@ import { validate } from 'class-validator';
 export class TransferSplitService extends TransferService {
 
   splitTransfer(body: SplitTransferMutationDto) {
+    let patchMutation: IncomingTransferMutation;
+    let newMutation: IncomingTransferMutation;
     return new Promise((resolve) => {
-      this.validateBody(body)
-        .then(() => {
-          resolve('Valid body, WIP');
-        }).catch(() => {
-        throw new HttpException('Invalid body', HttpStatus.BAD_REQUEST);
+      this.validateBody(body).then((validBody) => {
+        patchMutation = validBody.patch;
+        newMutation = validBody.new;
+        return this.getTransfer(validBody.patch.id);
+      }).then((transfer) => {
+        this.getTransferMutation(patchMutation.mutationId).then((result) => resolve(result));
+        /**
+         * todo:
+         *  Add patch and new to transferMutation children,
+         *  if other children, set inactive
+         *  Maybe re-write how patch and new are represented as they can't be
+         *  inserted how they are at the moment
+         */
       });
+    }).catch(() => {
+      throw new HttpException('Invalid body', HttpStatus.BAD_REQUEST);
     });
   }
 
-  private validateBody(body: SplitTransferMutationDto): Promise<void> {
+  private getTransferMutation(id: number): Promise<TransferMutation> {
+    return new Promise((resolve) => {
+      this.transferMutationRepository.getOne(id).then((result) => resolve(result));
+    });
+  }
+
+  private getTransfer(id: string): Promise<Transfer> {
+    return new Promise((resolve) => {
+      this.transferRepository.getOne(id).then((result) => resolve(result));
+    });
+  }
+
+  private validateBody(body: SplitTransferMutationDto): Promise<ValidIncomingTransferMutations> {
     return new Promise((resolve, reject) => {
-      validate(body.new).then((res) => {
+      validate(new IncomingTransferMutation(body.patch)).then((res) => {
         if (res.length === 0) {
-          validate(body.patch).then((response) => {
-            response.length === 0 ? resolve() : reject();
-          });
+          validate(new IncomingTransferMutation(body.new)).then((response) => {
+            response.length === 0 ? resolve(body) : reject();
+          }).catch(() => reject());
         } else {
           reject();
         }
-      });
+      }).catch(() => reject());
     });
   }
 }

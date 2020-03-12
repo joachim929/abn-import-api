@@ -14,6 +14,10 @@ export class TransferRepositoryService {
     return await this.repository.save(transfer);
   }
 
+  async getOne(id: string): Promise<Transfer> {
+    return await this.repository.findOneOrFail({where: [{id}]});
+  }
+
   async getTransfers(id?: string): Promise<Transfer[]> {
     return await this.repository.find(id ? { where: [{ id }] } : null);
   }

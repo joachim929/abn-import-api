@@ -49,7 +49,50 @@ export class TransferMutationDTO {
     this.endBalance = transfer.endBalance;
   }
 }
+export class IncomingTransferMutation {
+  @IsString()
+  id: string;
+  @IsNumber()
+  accountNumber: number;
+  @IsString()
+  currencyCode: string;
+  @IsDate()
+  valueDate: Date;
+  @IsDate()
+  transactionDate: Date;
+  @IsOptional()
+  @IsNumber()
+  mutationId?: number;
+  @IsString()
+  description: string;
+  @IsOptional()
+  @IsString()
+  comment?: string;
+  @IsNumber()
+  amount: number;
+  @IsOptional()
+  @IsNumber()
+  categoryId?: number;
+  @IsNumber()
+  startBalance: number;
+  @IsNumber()
+  endBalance: number;
 
+  constructor(transferMutation: TransferMutationDTO) {
+    this.id = transferMutation.id;
+    this.accountNumber =transferMutation.accountNumber;
+    this.currencyCode = transferMutation.currencyCode;
+    this.valueDate = new Date(transferMutation.valueDate);
+    this.transactionDate = new Date(transferMutation.transactionDate);
+    this.mutationId = transferMutation.mutationId || null;
+    this.description = transferMutation.description;
+    this.comment = transferMutation.comment || null;
+    this.amount = transferMutation.amount;
+    this.categoryId = transferMutation.categoryId || null;
+    this.startBalance = transferMutation.startBalance;
+    this.endBalance = transferMutation.endBalance;
+  }
+}
 
 export class TransferBatchImportDto {
   @ApiModelProperty({ type: [RawTransferSerializerDTO] })
