@@ -18,13 +18,6 @@ export class TransferSplitService extends TransferService {
     });
   }
 
-  /**
-   * todo: This needs to move
-   */
-  getOneMutation(id: number): Promise<TransferMutation> {
-    return this.transferMutationRepository.getOne(id);
-  }
-
   private formatBody(body: SplitTransferMutationDto): Promise<NewTransferMutationChild[]> {
     return new Promise((resolve, reject) => {
       this.transferMutationRepository.getOne(body.patch.mutationId).then((mutation) => {

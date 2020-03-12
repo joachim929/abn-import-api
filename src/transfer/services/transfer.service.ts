@@ -3,6 +3,7 @@ import { TransferRepositoryService } from '../repositories/transfer-repository/t
 import { TransferMutationRepositoryService } from '../repositories/transfer-mutation-repository/transfer-mutation-repository.service';
 import { Transfer } from '../entities/transfer.entity';
 import { TransferMutationDTO } from '../dtos/transfer-batch-import.dto';
+import { TransferMutation } from '../entities/transfer-mutation.entity';
 
 @Injectable()
 export class TransferService {
@@ -25,6 +26,10 @@ export class TransferService {
         resolve(formattedResponse);
       });
     });
+  }
+
+  getOneMutation(id: number): Promise<TransferMutation> {
+    return this.transferMutationRepository.getOne(id);
   }
 
   protected badRequest(reason: string) {
