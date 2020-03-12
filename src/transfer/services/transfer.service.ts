@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { TransferRepositoryService } from '../repositories/transfer-repository/transfer-repository.service';
 import { TransferMutationRepositoryService } from '../repositories/transfer-mutation-repository/transfer-mutation-repository.service';
 import { Transfer } from '../entities/transfer.entity';
@@ -25,5 +25,13 @@ export class TransferService {
         resolve(formattedResponse);
       });
     });
+  }
+
+  protected badRequest(reason: string) {
+    throw new HttpException(reason, HttpStatus.BAD_REQUEST);
+  }
+
+  protected internalError(reason: string) {
+    throw new HttpException(reason, HttpStatus.INTERNAL_SERVER_ERROR);
   }
 }

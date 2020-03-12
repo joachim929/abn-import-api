@@ -20,7 +20,9 @@ export class TransferMutationRepositoryService {
   }
 
   async updateMutation(mutation: TransferMutation): Promise<UpdateResult> {
-    return await this.repository.update(mutation.id, mutation);
+    return await this.repository.update(mutation.id, mutation).catch((reason) => {
+      throw new HttpException(reason, HttpStatus.INTERNAL_SERVER_ERROR);
+    });
   }
 
   async getMutations(id?: number): Promise<TransferMutation[]> {
@@ -28,6 +30,8 @@ export class TransferMutationRepositoryService {
   }
 
   async save(mutation: TransferMutation): Promise<TransferMutation> {
-    return await this.repository.save(mutation);
+    return await this.repository.save(mutation).catch((reason) => {
+      throw new HttpException(reason, HttpStatus.INTERNAL_SERVER_ERROR);
+    });
   }
 }
