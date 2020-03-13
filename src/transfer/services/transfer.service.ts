@@ -7,6 +7,14 @@ import { TransferMutation } from '../entities/transfer-mutation.entity';
 
 @Injectable()
 export class TransferService {
+  /**
+   * todo:
+   *    - Create transferBaseService and make that the extendable one, this should be meant
+   *    purely for transfer logic
+   *    - No create or edit (outside of delete) functionality, transfers should only be
+   *    created via imports and all values should stay constant other than relationships
+   */
+
   constructor(
     protected transferRepository: TransferRepositoryService,
     protected transferMutationRepository: TransferMutationRepositoryService,
@@ -29,8 +37,21 @@ export class TransferService {
     });
   }
 
-  getOneMutation(id: number): Promise<TransferMutation> {
-    return this.transferMutationRepository.getOne(id);
+  getFilteredTransfers(filter) {
+    return new Promise((resolve) => {
+      resolve('WIP');
+    })
+  }
+
+  /**
+   * todo:
+   *    All relations to this transfer should be set to inactive
+   *    Add active: boolean to transfer.entity
+   */
+  deleteTransfer(id: string): Promise<void> {
+    return new Promise((resolve) => {
+      resolve();
+    });
   }
 
   protected badRequest(reason: string) {

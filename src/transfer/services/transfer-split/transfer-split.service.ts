@@ -58,6 +58,9 @@ export class TransferSplitService extends TransferService {
             this.transferMutationRepository.save(patchTransferMutation as TransferMutation),
           ];
           Promise.all(promises).then((response) => {
+            // todo: Response should be preferable to NewTransferMutationChild as return
+            //    better still would be to return TransferMutationDTO's so it is consistent
+            //    with the front end
             delete mutation.children;
             return this.transferMutationRepository.updateMutation(mutation).then((result) => {
               resolve([splitTransferMutation, patchTransferMutation]);
