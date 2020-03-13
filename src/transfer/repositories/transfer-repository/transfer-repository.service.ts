@@ -14,9 +14,6 @@ export class TransferRepositoryService {
     return await this.repository.save(transfer);
   }
 
-  /**
-   * Needed for admin maybe?
-   */
   async findOneWithMutations(id: string, active?: boolean): Promise<Transfer> {
     return await this.repository.findOneOrFail({
       where: [active ? { id, active, mutations: { active } } : { id }],

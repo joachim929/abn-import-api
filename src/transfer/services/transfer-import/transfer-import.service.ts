@@ -10,14 +10,14 @@ import {
   TransferBatchImportDto,
   ValidatedRawTransfersDTO,
 } from '../../dtos/transfer-batch-import.dto';
-import { TransferService } from '../transfer.service';
+import { TransferBaseService } from '../transfer-base/transfer-base.service';
 
 /**
  * todo: This is a mess, but it works
  *  feel free to clean up
  */
 @Injectable()
-export class TransferImportService extends TransferService {
+export class TransferImportService extends TransferBaseService {
 
   postExcelImport(file: RawInvoiceJsonDTO[]): Promise<TransferBatchImportDto> {
     return new Promise((resolve) => {

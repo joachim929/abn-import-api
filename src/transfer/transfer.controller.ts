@@ -56,9 +56,6 @@ export class TransferController {
     return this.service.getTransfer(id);
   }
 
-  /**
-   * todo: Need to set all mutations to inactive
-   */
   @Delete(':id')
   @ApiOperation({
     operationId: 'deleteTransfer',
@@ -76,6 +73,9 @@ export class TransferController {
     return this.service.deleteTransfer(id);
   }
 
+  /**
+   * todo: See invoices
+   */
   @Post('/filtered')
   @ApiOperation({
     operationId: 'filteredTransfers',

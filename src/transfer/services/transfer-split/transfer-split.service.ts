@@ -1,14 +1,14 @@
 import { Injectable } from '@nestjs/common';
-import { TransferService } from '../transfer.service';
 import { SplitTransferMutationDto } from '../../dtos/split-transfer-mutation.dto';
-import { NewTransferMutationChild } from '../../dtos/transfer-batch-import.dto';
+import { NewTransferMutationChild, TransferMutationDTO } from '../../dtos/transfer-batch-import.dto';
 import { TransferMutation } from '../../entities/transfer-mutation.entity';
 import { validate } from 'class-validator';
+import { TransferBaseService } from '../transfer-base/transfer-base.service';
 
 @Injectable()
-export class TransferSplitService extends TransferService {
+export class TransferSplitService extends TransferBaseService {
 
-  splitTransferMutation(body: SplitTransferMutationDto) {
+  splitTransferMutation(body: SplitTransferMutationDto): Promise<TransferMutationDTO[]> {
     return new Promise((resolve, reject) => {
       if (!body.patch.id || !body.new.id) {
         this.badRequest('No transferMutationId given');
@@ -23,7 +23,6 @@ export class TransferSplitService extends TransferService {
     return new Promise((resolve, reject) => {
       validate(mutations[0]).then((errors) => {
         if (errors.length > 0) {
-          console.log(errors);
           reject(this.badRequest('Invalid split params'));
         } else {
           return;
@@ -31,7 +30,6 @@ export class TransferSplitService extends TransferService {
       }).then(() => {
         validate(mutations[1]).then((errors) => {
           if (errors.length > 0) {
-            console.log(errors);
             reject(this.badRequest('Invalid split params'));
           } else {
             resolve();
@@ -41,7 +39,7 @@ export class TransferSplitService extends TransferService {
     });
   }
 
-  private formatBody(body: SplitTransferMutationDto): Promise<NewTransferMutationChild[]> {
+  private formatBody(body: SplitTransferMutationDto): Promise<TransferMutationDTO[]> {
     return new Promise((resolve, reject) => {
       this.transferMutationRepository.getOne(body.patch.mutationId).then((mutation) => {
 
@@ -58,12 +56,14 @@ export class TransferSplitService extends TransferService {
             this.transferMutationRepository.save(patchTransferMutation as TransferMutation),
           ];
           Promise.all(promises).then((response) => {
-            // todo: Response should be preferable to NewTransferMutationChild as return
-            //    better still would be to return TransferMutationDTO's so it is consistent
-            //    with the front end
+            new TransferMutationDTO(mutation.transfer, response[0]);
+            new TransferMutationDTO(mutation.transfer, response[1]);
             delete mutation.children;
             return this.transferMutationRepository.updateMutation(mutation).then((result) => {
-              resolve([splitTransferMutation, patchTransferMutation]);
+              resolve([
+                new TransferMutationDTO(mutation.transfer, response[0]),
+                new TransferMutationDTO(mutation.transfer, response[1]),
+              ]);
             });
           });
         }).catch((reason) => reject(reason));

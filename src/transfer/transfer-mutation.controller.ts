@@ -91,7 +91,7 @@ export class TransferMutationController {
     operationId: 'splitTransferMutation',
   })
   @ApiResponse({
-    status: 201, description: 'Record created and patched', type: SplitTransferMutationDto,
+    status: 201, description: 'Record created and patched', type: [TransferMutationDTO],
   })
   @ApiResponse({
     status: 400, description: 'Bad request',

@@ -10,6 +10,7 @@ import { TransferImportService } from './services/transfer-import/transfer-impor
 import { TransferSplitService } from './services/transfer-split/transfer-split.service';
 import { TransferMutationService } from './services/transfer-mutation/transfer-mutation.service';
 import { TransferMutationController } from './transfer-mutation.controller';
+import { TransferBaseService } from './services/transfer-base/transfer-base.service';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { TransferMutationController } from './transfer-mutation.controller';
     TransferImportService,
     TransferSplitService,
     TransferMutationService,
+    TransferBaseService,
   ],
 })
 export class TransferModule {
