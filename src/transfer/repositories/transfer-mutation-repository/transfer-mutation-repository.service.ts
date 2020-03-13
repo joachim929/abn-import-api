@@ -14,8 +14,8 @@ export class TransferMutationRepositoryService {
     return await this.repository.findOneOrFail({
       where: [{ id, active }],
       relations: ['children', 'parent', 'transfer'],
-    }).catch(() => {
-      throw new HttpException(`Mutation where { id:${id}, active:${active} } not found`, HttpStatus.BAD_REQUEST);
+    }).catch(reason => {
+      throw new HttpException(reason, HttpStatus.BAD_REQUEST);
     });
   }
 
@@ -26,14 +26,16 @@ export class TransferMutationRepositoryService {
   }
 
   async getMutations(id?: number): Promise<TransferMutation[]> {
-    return await this.repository.find(id ? { where: [{ id }, { active: true }] } : null).catch((reason) => {
-      throw new HttpException(reason, HttpStatus.INTERNAL_SERVER_ERROR);
-    });
+    return await this.repository.find(id ? { where: [{ id }, { active: true }] } : null)
+      .catch(reason => {
+        throw new HttpException(reason, HttpStatus.INTERNAL_SERVER_ERROR);
+      });
   }
 
   async save(mutation: TransferMutation): Promise<TransferMutation> {
-    return await this.repository.save(mutation).catch((reason) => {
-      throw new HttpException(reason, HttpStatus.INTERNAL_SERVER_ERROR);
-    });
+    return await this.repository.save(mutation)
+      .catch(reason => {
+        throw new HttpException(reason, HttpStatus.INTERNAL_SERVER_ERROR);
+      });
   }
 }

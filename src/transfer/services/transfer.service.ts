@@ -17,6 +17,7 @@ export class TransferService {
     return new Promise((resolve) => {
       this.transferRepository.getTransfersWithMutations().then((response: Transfer[]) => {
         const formattedResponse = [];
+
         for (const transfer of response) {
           for (const mutation of transfer.mutations) {
             formattedResponse.push(new TransferMutationDTO(transfer, mutation));

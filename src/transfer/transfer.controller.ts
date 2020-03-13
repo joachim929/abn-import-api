@@ -17,6 +17,7 @@ import { TransferBatchImportDto, TransferMutationDTO } from './dtos/transfer-bat
 import { TransferSplitService } from './services/transfer-split/transfer-split.service';
 import { SplitTransferMutationDto } from './dtos/split-transfer-mutation.dto';
 import { TransferMutation } from './entities/transfer-mutation.entity';
+import { TransferMutationService } from './services/transfer-mutation/transfer-mutation.service';
 
 @ApiTags('TransferApi')
 @Controller('transfer')
@@ -24,7 +25,8 @@ export class TransferController {
   constructor(
     private service: TransferService,
     private importService: TransferImportService,
-    private splitService: TransferSplitService
+    private splitService: TransferSplitService,
+    private transferMutationService: TransferMutationService,
   ) {
   }
 
@@ -45,6 +47,9 @@ export class TransferController {
     return this.service.getTransfersWithMutations();
   }
 
+  /**
+   * todo: Need to set all mutations to inactive
+   */
   @Delete(':id')
   @ApiOperation({
     operationId: 'deleteTransfer',
@@ -59,7 +64,7 @@ export class TransferController {
     status: 401, description: 'Unauthorized', // Not logged in
   })
   delete(@Param('id', new ParseIntPipe()) id: number) {
-    return 'delete WIP';
+    return 'WIP';
   }
 
   @Patch()
@@ -96,12 +101,12 @@ export class TransferController {
     return 'filteredTransfers WIP';
   }
 
-  @Get('mutation/:id')
+  @Get(':id')
   @ApiOperation({
-    operationId: 'getTransferMutation'
+    operationId: 'getTransfer',
   })
   @ApiResponse({
-    status: 201, description: 'Got records', type: TransferMutation
+    status: 201, description: 'Got records', type: TransferMutation,
   })
   @ApiResponse({
     status: 400, description: 'Bad request',
@@ -109,25 +114,8 @@ export class TransferController {
   @ApiResponse({
     status: 401, description: 'Unauthorized', // Not logged in
   })
-  getTransferMutation(@Param('id', new ParseIntPipe()) id: number) {
-    return this.splitService.getOneMutation(id);
-  }
-
-  @Post('/split')
-  @ApiOperation({
-    operationId: 'splitTransfer',
-  })
-  @ApiResponse({
-    status: 201, description: 'Record created and patched', type: SplitTransferMutationDto
-  })
-  @ApiResponse({
-    status: 400, description: 'Bad request',
-  })
-  @ApiResponse({
-    status: 401, description: 'Unauthorized',
-  })
-  splitTransfer(@Body() body: SplitTransferMutationDto) {
-    return this.splitService.splitTransfer(body);
+  getTransfer(@Param('id') id: string) {
+    return 'WIP';
   }
 
   @Post('upload/excel')

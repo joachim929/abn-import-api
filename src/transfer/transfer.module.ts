@@ -8,18 +8,21 @@ import { Transfer } from './entities/transfer.entity';
 import { TransferMutation } from './entities/transfer-mutation.entity';
 import { TransferImportService } from './services/transfer-import/transfer-import.service';
 import { TransferSplitService } from './services/transfer-split/transfer-split.service';
+import { TransferMutationService } from './services/transfer-mutation/transfer-mutation.service';
+import { TransferMutationController } from './transfer-mutation.controller';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Transfer, TransferMutation]),
   ],
-  controllers: [TransferController],
+  controllers: [TransferController, TransferMutationController],
   providers: [
     TransferService,
     TransferRepositoryService,
     TransferMutationRepositoryService,
     TransferImportService,
     TransferSplitService,
+    TransferMutationService,
   ],
 })
 export class TransferModule {
