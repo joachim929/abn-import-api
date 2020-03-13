@@ -53,7 +53,7 @@ export class TransferController {
     status: 401, description: 'Unauthorized', // Not logged in
   })
   getTransfer(@Param('id') id: string) {
-    return 'WIP';
+    return this.service.getTransfer(id);
   }
 
   /**

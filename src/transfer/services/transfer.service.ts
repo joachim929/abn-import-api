@@ -3,7 +3,6 @@ import { TransferRepositoryService } from '../repositories/transfer-repository/t
 import { TransferMutationRepositoryService } from '../repositories/transfer-mutation-repository/transfer-mutation-repository.service';
 import { Transfer } from '../entities/transfer.entity';
 import { TransferMutationDTO } from '../dtos/transfer-batch-import.dto';
-import { TransferMutation } from '../entities/transfer-mutation.entity';
 
 @Injectable()
 export class TransferService {
@@ -19,6 +18,14 @@ export class TransferService {
     protected transferRepository: TransferRepositoryService,
     protected transferMutationRepository: TransferMutationRepositoryService,
   ) {
+  }
+
+  getTransfer(id: string): Promise<Transfer> {
+    return new Promise((resolve, reject) => {
+      this.transferRepository.getOne(id).then((response) => {
+        resolve(response);
+      }).catch((reason) => reject(reason));
+    });
   }
 
   getTransfersWithMutations(): Promise<TransferMutationDTO[]> {
@@ -40,7 +47,7 @@ export class TransferService {
   getFilteredTransfers(filter) {
     return new Promise((resolve) => {
       resolve('WIP');
-    })
+    });
   }
 
   /**

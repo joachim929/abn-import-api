@@ -27,6 +27,9 @@ export class Transfer {
   @Column()
   transactionDate: Date;
 
+  @Column({default: true})
+  active: boolean;
+
   @OneToMany(type => TransferMutation, mutation => mutation.transfer)
   mutations: TransferMutation[];
 
