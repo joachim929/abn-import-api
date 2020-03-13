@@ -3,6 +3,7 @@ import { TransferRepositoryService } from '../repositories/transfer-repository/t
 import { TransferMutationRepositoryService } from '../repositories/transfer-mutation-repository/transfer-mutation-repository.service';
 import { Transfer } from '../entities/transfer.entity';
 import { TransferMutationDTO } from '../dtos/transfer-batch-import.dto';
+import { TransferMutation } from '../entities/transfer-mutation.entity';
 
 @Injectable()
 export class TransferService {
@@ -22,7 +23,7 @@ export class TransferService {
 
   getTransfer(id: string): Promise<Transfer> {
     return new Promise((resolve, reject) => {
-      this.transferRepository.getOne(id).then((response) => {
+      this.transferRepository.findOneWithMutations(id, true).then((response) => {
         resolve(response);
       }).catch((reason) => reject(reason));
     });
@@ -55,9 +56,32 @@ export class TransferService {
    *    All relations to this transfer should be set to inactive
    *    Add active: boolean to transfer.entity
    */
-  deleteTransfer(id: string): Promise<void> {
-    return new Promise((resolve) => {
-      resolve();
+  deleteTransfer(id: string): Promise<any> {
+    return new Promise((resolve, reject) => {
+      this.transferRepository.findOne(id).then((transfer) => {
+        transfer.active = false;
+        this.transferRepository.findOneWithMutations(id).then((transferWithMutations) => {
+          return this.setMutationsInactive(transferWithMutations.mutations);
+        }).then(() => {
+          resolve(this.transferRepository.updateTransfer(transfer));
+        }).catch((reason) => reject(reason));
+      }).catch((reason) => reject(reason));
+    });
+  }
+
+  setMutationsInactive(mutations: TransferMutation[]): Promise<void> {
+    return new Promise((resolve, reject) => {
+      const mutationPromises = [];
+      for (const mutation of mutations) {
+        if (mutation.active === false) {
+          continue;
+        }
+        mutation.active = false;
+        mutationPromises.push(this.transferMutationRepository.updateMutation(mutation));
+      }
+      Promise.all(mutationPromises).then(() => {
+        resolve();
+      }).catch((reason) => reject(reason));
     });
   }
 

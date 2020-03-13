@@ -1,6 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, UpdateResult } from 'typeorm';
 import { Transfer } from '../../entities/transfer.entity';
 
 @Injectable()
@@ -17,10 +17,18 @@ export class TransferRepositoryService {
   /**
    * Needed for admin maybe?
    */
-  async getOne(id: string): Promise<Transfer> {
+  async findOneWithMutations(id: string, active?: boolean): Promise<Transfer> {
+    return await this.repository.findOneOrFail({
+      where: [active ? { id, active, mutations: { active } } : { id }],
+      relations: ['mutations'],
+    }).catch(() => {
+      throw new HttpException(`No transfer found with id: ${id}`, HttpStatus.BAD_REQUEST);
+    });
+  }
+
+  async findOne(id: string): Promise<Transfer> {
     return await this.repository.findOneOrFail({
       where: [{ id }],
-      relations: ['mutations'],
     }).catch(() => {
       throw new HttpException(`No transfer found with id: ${id}`, HttpStatus.BAD_REQUEST);
     });
@@ -29,7 +37,7 @@ export class TransferRepositoryService {
   /**
    * Needed for admin maybe?
    */
-  async getTransfers(id?: string): Promise<Transfer[]> {
+  async getTransfers(id?: string) {
     return await this.repository.find({
       where: id ? [{ id }] : null,
       relations: ['mutations'],
@@ -39,6 +47,12 @@ export class TransferRepositoryService {
       } else {
         throw new HttpException(reason, HttpStatus.INTERNAL_SERVER_ERROR);
       }
+    });
+  }
+
+  async updateTransfer(transfer: Transfer): Promise<UpdateResult> {
+    return await this.repository.update(transfer.id, transfer).catch((reason) => {
+      throw new HttpException(reason, HttpStatus.INTERNAL_SERVER_ERROR);
     });
   }
 
