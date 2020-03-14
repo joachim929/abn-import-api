@@ -7,7 +7,7 @@ import { validate } from 'class-validator';
 import {
   PreSaveDTO,
   PreSaveTransferDTO,
-  TransferBatchImportDto,
+  TransferBatchImportDto, TransferMutationDTO,
   ValidatedRawTransfersDTO,
 } from '../../dtos/transfer-batch-import.dto';
 import { TransferBaseService } from '../transfer-base/transfer-base.service';
@@ -35,18 +35,13 @@ export class TransferImportService extends TransferBaseService {
 
         return this.savedTransfers(preSaved).then((savedTransferMutations) => {
 
-          const formattedTransfers: Transfer[] = [];
+          const transferMutations: TransferMutationDTO[] = [];
 
           for (const transferMutation of savedTransferMutations) {
-            const transfer: Transfer = { ...transferMutation.transfer };
-            delete transferMutation.transfer;
-            transfer.mutations = [
-              transferMutation,
-            ];
-            formattedTransfers.push(transfer);
+            transferMutations.push(new TransferMutationDTO(transferMutation.transfer, transferMutation));
           }
 
-          return formattedTransfers;
+          return transferMutations;
         });
 
       }).then((savedTransfers) => {

@@ -24,6 +24,7 @@ export class TransferMutationService extends TransferBaseService {
 
   /**
    * todo:
+   *  Test it.
    *  Validation:
    *    - Check that at least amount || description || comment are different
    *      otherwise it shouldn't be allowed to be patched
@@ -32,27 +33,25 @@ export class TransferMutationService extends TransferBaseService {
   patchTransferMutation(body: TransferMutationDTO) {
     let transferMutation: TransferMutation;
     return new Promise((resolve, reject) => {
-
       validate(body).then((errors) => {
         if (errors.length > 0) {
-          reject(this.badRequest('Invalid transferMutationDTO params'));
+          this.badRequest('Invalid transferMutationDTO params');
         }
         return;
 
       }).then(() => {
-        this.transferMutationRepository.getOne(body.mutationId).then((_transferMutation) => {
+        this.transferMutationRepository.getOne(body.mutationId, true, false)
+          .then((_transferMutation) => {
+            transferMutation = _transferMutation;
 
-          transferMutation = _transferMutation;
+            if (this.checkForPatchDifferences(body, transferMutation)) {
+              transferMutation.active = false;
+              return this.transferMutationRepository.updateMutation(transferMutation);
+            } else {
+              this.badRequest('No changes found');
+            }
 
-          if (this.checkForPatchDifferences(body, transferMutation)) {
-            transferMutation.active = false;
-            return this.transferMutationRepository.updateMutation(transferMutation);
-          } else {
-            reject();
-          }
-
-        }).then(() => {
-
+          }).then(() => {
           const newMutation: TransferMutation = new TransferMutation();
           newMutation.description = body.description;
           newMutation.comment = body.comment;
@@ -128,7 +127,7 @@ export class TransferMutationService extends TransferBaseService {
         childPromises.push(this.transferMutationRepository.updateMutation(child));
       }
 
-      Promise.all(childPromises).then((result) => {
+      Promise.all(childPromises).then(() => {
         resolve();
       }).catch((reason) => reject(reason));
     });

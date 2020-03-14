@@ -1,6 +1,5 @@
 import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { TransferService } from './services/transfer.service';
 import { TransferImportService } from './services/transfer-import/transfer-import.service';
 import { TransferSplitService } from './services/transfer-split/transfer-split.service';
 import { TransferMutationService } from './services/transfer-mutation/transfer-mutation.service';

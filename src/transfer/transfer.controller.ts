@@ -13,6 +13,7 @@ import { TransferImportService } from './services/transfer-import/transfer-impor
 import { TransferBatchImportDto, TransferMutationDTO } from './dtos/transfer-batch-import.dto';
 import { TransferMutation } from './entities/transfer-mutation.entity';
 import { TransferListParams } from './dtos/transfer-list-params.dto';
+import { Transfer } from './entities/transfer.entity';
 
 @ApiTags('TransferApi')
 @Controller('transfer')
@@ -23,12 +24,15 @@ export class TransferController {
   ) {
   }
 
+  /**
+   * Debug/Admin route to get all data
+   */
   @Get()
   @ApiOperation({
     operationId: 'getTransfer',
   })
   @ApiResponse({
-    status: 200, description: 'Get all transfers', type: [TransferMutationDTO],
+    status: 200, description: 'Get all transfers', type: [Transfer],
   })
   @ApiResponse({
     status: 400, description: 'Bad request',

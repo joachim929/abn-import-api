@@ -127,8 +127,8 @@ export class IncomingTransferMutation {
 export class TransferBatchImportDto {
   @ApiModelProperty({ type: [RawTransferSerializerDTO] })
   existingTransfers?: RawTransferSerializerDTO[];
-  @ApiModelProperty({ type: [Transfer] })
-  savedTransfers?: Transfer[];
+  @ApiModelProperty({ type: [TransferMutationDTO] })
+  savedTransfers?: TransferMutationDTO[];
 }
 
 export class ValidatedRawTransfersDTO {

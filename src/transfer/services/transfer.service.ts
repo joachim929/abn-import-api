@@ -17,18 +17,13 @@ export class TransferService extends TransferBaseService {
     });
   }
 
-  getTransfersWithMutations(): Promise<TransferMutationDTO[]> {
+  /**
+   * Debug/admin route to get all data
+   */
+  getTransfersWithMutations(): Promise<Transfer[]> {
     return new Promise((resolve) => {
-      this.transferRepository.getTransfersWithMutations().then((response: Transfer[]) => {
-        const formattedResponse = [];
-
-        for (const transfer of response) {
-          for (const mutation of transfer.mutations) {
-            formattedResponse.push(new TransferMutationDTO(transfer, mutation));
-          }
-        }
-
-        resolve(formattedResponse);
+      this.transferRepository.getTransfers().then((response: Transfer[]) => {
+        resolve(response);
       });
     });
   }
