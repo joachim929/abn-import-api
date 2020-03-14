@@ -1,5 +1,5 @@
 import { Transform } from 'class-transformer';
-import { IsBoolean, IsDate, IsNumber, IsObject, IsOptional, IsString } from 'class-validator';
+import { IsBoolean, IsDate, IsNumber, IsOptional, IsString } from 'class-validator';
 import { RawTransferSerializerDTO } from '../../invoice/dtos/raw-invoice-json.dto';
 import { Transfer } from '../entities/transfer.entity';
 import { ApiModelProperty } from '@nestjs/swagger/dist/decorators/api-model-property.decorator';

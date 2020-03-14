@@ -10,9 +10,17 @@ export class TransferMutationRepositoryService {
   ) {
   }
 
+  async getOnePlain(id: number, active = true): Promise<TransferMutation> {
+    return await this.repository.findOneOrFail({
+      where: { id, active }
+    }).catch(reason => {
+      throw new HttpException(reason, HttpStatus.BAD_REQUEST);
+    });
+  }
+
   async getOne(id: number, active = true): Promise<TransferMutation> {
     return await this.repository.findOneOrFail({
-      where: [{ id, active }],
+      where: { id, active },
       relations: ['children', 'parent', 'transfer'],
     }).catch(reason => {
       throw new HttpException(reason, HttpStatus.BAD_REQUEST);
@@ -28,17 +36,21 @@ export class TransferMutationRepositoryService {
   async getMaxAmount() {
     const query = this.repository.createQueryBuilder('transferMutation');
     query.select('MAX(transferMutation.amount)', 'max');
-    query.where('transferMutation.active = :active', {active: true});
+    query.where('transferMutation.active = :active', { active: true });
     return await query.getRawOne();
   }
 
   async getMinAmount() {
     const query = this.repository.createQueryBuilder('transferMutation');
     query.select('MIN(transferMutation.amount)', 'min');
-    query.where('transferMutation.active = :active', {active: true});
+    query.where('transferMutation.active = :active', { active: true });
     return await query.getRawOne();
   }
 
+  /**
+   * todo:
+   *    Where with [] is OR, change to {} for a AND comparison
+   */
   async getMutations(id?: number): Promise<TransferMutation[]> {
     return await this.repository.find(id ? { where: [{ id }, { active: true }] } : null)
       .catch(reason => {

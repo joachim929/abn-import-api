@@ -1,7 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { TransferMutation } from '../../entities/transfer-mutation.entity';
 import { TransferMutationDTO } from '../../dtos/transfer-batch-import.dto';
 import { TransferBaseService } from '../transfer-base/transfer-base.service';
+import { validate } from 'class-validator';
 
 @Injectable()
 export class TransferMutationService extends TransferBaseService {
@@ -29,21 +30,126 @@ export class TransferMutationService extends TransferBaseService {
    *  Make sure the relationships are done correctly
    */
   patchTransferMutation(body: TransferMutationDTO) {
-    return 'WIP';
+    let transferMutation: TransferMutation;
+    return new Promise((resolve, reject) => {
+
+      validate(body).then((errors) => {
+        if (errors.length > 0) {
+          reject(this.badRequest('Invalid transferMutationDTO params'));
+        }
+        return;
+
+      }).then(() => {
+        this.transferMutationRepository.getOne(body.mutationId).then((_transferMutation) => {
+
+          transferMutation = _transferMutation;
+
+          if (this.checkForPatchDifferences(body, transferMutation)) {
+            transferMutation.active = false;
+            return this.transferMutationRepository.updateMutation(transferMutation);
+          } else {
+            reject();
+          }
+
+        }).then(() => {
+
+          const newMutation: TransferMutation = new TransferMutation();
+          newMutation.description = body.description;
+          newMutation.comment = body.comment;
+          newMutation.amount = transferMutation.amount;
+          newMutation.active = true;
+          newMutation.categoryId = body.categoryId;
+          newMutation.transfer = transferMutation.transfer;
+          newMutation.parent = transferMutation;
+          this.transferMutationRepository.save(newMutation).then((response) => {
+            resolve(new TransferMutationDTO(transferMutation.transfer, response));
+          });
+        }).catch(reason => reject(reason));
+      }).catch(reason => reject(reason));
+    });
   }
 
-  /**
-   * todo:
-   *    Get parent, set to active, set children of parent to active=false
-   *    Validation:
-   *      - PatchTransferMutation is active
-   *      - Make sure to patch all parentTransferMutation's children
-   */
   undoTransferMutationPatch(body: TransferMutationDTO) {
-    return 'WIP'
+    let transferMutation: TransferMutation;
+    let parentMutation: TransferMutation;
+    return new Promise((resolve, reject) => {
+      this.getOneMutation(body.mutationId).then((_transferMutation) => {
+
+        transferMutation = _transferMutation;
+        return this.validateUndoTransferMutation(transferMutation);
+
+      }).then(() => {
+
+        return this.getOneMutation(transferMutation.parent.id).then((_transferMutation) => {
+          parentMutation = _transferMutation;
+          return;
+        }).catch((reason) => reject(reason));
+
+      }).then(() => {
+
+        this.setChildrenToInactive(parentMutation).then((result) => {
+          parentMutation.active = true;
+          this.transferMutationRepository.updateMutation(parentMutation).then(() => {
+            resolve(new TransferMutationDTO(parentMutation.transfer, parentMutation));
+          });
+
+        }).catch((reason) => reject(reason));
+      }).catch((reason) => reject(reason));
+    });
   }
 
   getOneMutation(id: number): Promise<TransferMutation> {
     return this.transferMutationRepository.getOne(id);
+  }
+
+  private checkForPatchDifferences(body: TransferMutationDTO, transferMutation: TransferMutation) {
+    let editableFieldChanged = false;
+
+    if (body.categoryId !== transferMutation.categoryId) {
+      editableFieldChanged = true;
+    }
+    if (body.comment !== transferMutation.comment) {
+      editableFieldChanged = true;
+    }
+    if (body.description !== transferMutation.description) {
+      editableFieldChanged = true;
+    }
+    if (body.amount !== transferMutation.amount) {
+      throw new HttpException('Amount can\'t be changed without splitting', HttpStatus.BAD_REQUEST);
+    }
+    return editableFieldChanged;
+  }
+
+  private setChildrenToInactive(transferMutation: TransferMutation): Promise<void> {
+    return new Promise((resolve, reject) => {
+      const childPromises = [];
+      for (const child of transferMutation.children) {
+        child.active = false;
+        childPromises.push(this.transferMutationRepository.updateMutation(child));
+      }
+
+      Promise.all(childPromises).then((result) => {
+        resolve();
+      }).catch((reason) => reject(reason));
+    });
+  }
+
+  private validateUndoTransferMutation(transferMutation: TransferMutation): Promise<void> {
+    return new Promise((resolve, reject) => {
+
+      if (transferMutation.transfer.active === false) {
+        reject(`Transfer with id: ${transferMutation.transfer.id} is not active`);
+      }
+
+      if (!transferMutation.parent) {
+        reject(`Nothing to undo`);
+      }
+
+      if (transferMutation.active === false) {
+        reject(`TransferMutation with id: ${transferMutation.id} is not active`);
+      }
+
+      resolve();
+    });
   }
 }
