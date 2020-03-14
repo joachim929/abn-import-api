@@ -7,7 +7,6 @@ import {
   OneToMany, JoinColumn, ManyToOne,
 } from 'typeorm';
 import { Category } from '../category/category.entity';
-import { User } from '../user/user.entity';
 
 @Entity()
 export class CategoryGroup {
@@ -22,10 +21,6 @@ export class CategoryGroup {
 
   @Column({nullable: true})
   description: string;
-
-  @ManyToOne(type => User)
-  @JoinColumn({name: 'userId', referencedColumnName: 'id'})
-  user: User;
 
   @CreateDateColumn()
   createdAt: Date;

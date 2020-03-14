@@ -1,4 +1,3 @@
-import { InvoiceDTO } from './invoice.dto';
 import { IsOptional, IsString } from 'class-validator';
 import { Transform } from 'class-transformer';
 
@@ -30,7 +29,7 @@ export class InvoiceFilteredDTO {
   minAmount?: number;
 
   @IsOptional()
-  records?: InvoiceDTO[];
+  records?: any[];
 
   @IsString()
   order?: OrderType;

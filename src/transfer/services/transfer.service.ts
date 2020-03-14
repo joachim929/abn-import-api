@@ -8,11 +8,6 @@ import { validate } from 'class-validator';
 
 @Injectable()
 export class TransferService extends TransferBaseService {
-  /**
-   * todo:
-   *    - No create or edit (outside of delete) functionality, transfers should only be
-   *    created via imports and all values should stay constant other than relationships
-   */
 
   getTransfer(id: string): Promise<Transfer> {
     return new Promise((resolve, reject) => {
@@ -64,19 +59,6 @@ export class TransferService extends TransferBaseService {
     });
   }
 
-  private getMinMax(): Promise<TransferListParams> {
-    const results: TransferListParams = {};
-    return new Promise((resolve) => {
-      this.transferMutationRepository.getMaxAmount().then((maxResult) => {
-        this.transferMutationRepository.getMinAmount().then((minResult) => {
-          results.maxAmount = maxResult.max;
-          results.minAmount = minResult.min;
-          resolve(results);
-        });
-      });
-    });
-  }
-
   deleteTransfer(id: string): Promise<any> {
     return new Promise((resolve, reject) => {
       this.transferRepository.findOne(id).then((transfer) => {
@@ -90,7 +72,7 @@ export class TransferService extends TransferBaseService {
     });
   }
 
-  setMutationsInactive(mutations: TransferMutation[]): Promise<void> {
+  private setMutationsInactive(mutations: TransferMutation[]): Promise<void> {
     return new Promise((resolve, reject) => {
       const mutationPromises = [];
       for (const mutation of mutations) {
@@ -103,6 +85,19 @@ export class TransferService extends TransferBaseService {
       Promise.all(mutationPromises).then(() => {
         resolve();
       }).catch((reason) => reject(reason));
+    });
+  }
+
+  private getMinMax(): Promise<TransferListParams> {
+    const results: TransferListParams = {};
+    return new Promise((resolve) => {
+      this.transferMutationRepository.getMaxAmount().then((maxResult) => {
+        this.transferMutationRepository.getMinAmount().then((minResult) => {
+          results.maxAmount = maxResult.max;
+          results.minAmount = minResult.min;
+          resolve(results);
+        });
+      });
     });
   }
 }
