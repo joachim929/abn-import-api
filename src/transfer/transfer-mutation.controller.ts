@@ -39,7 +39,7 @@ export class TransferMutationController {
     operationId: 'getTransferMutation'
   })
   @ApiResponse({
-    status: 201, description: 'Got records', type: TransferMutation
+    status: 200, description: 'Got records', type: TransferMutation
   })
   @ApiResponse({
     status: 400, description: 'Bad request',
@@ -56,7 +56,7 @@ export class TransferMutationController {
     operationId: 'patchTransferMutation'
   })
   @ApiResponse({
-    status: 201, description: 'Record patched', type: TransferMutationDTO
+    status: 200, description: 'Record patched', type: TransferMutationDTO
   })
   @ApiResponse({
     status: 400, description: 'Bad request',
@@ -73,7 +73,7 @@ export class TransferMutationController {
     operationId: 'undoTransferMutationPatch'
   })
   @ApiResponse({
-    status: 201, description: 'Record patched', type: TransferMutationDTO
+    status: 200, description: 'Record patched', type: TransferMutationDTO
   })
   @ApiResponse({
     status: 400, description: 'Bad request',

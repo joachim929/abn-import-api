@@ -76,6 +76,8 @@ export class TransferRepositoryService {
 
     if (filters.orderBy && filters.orderDirection) {
       query.orderBy(filters.orderBy, filters.orderDirection)
+    } else {
+      query.orderBy('transfer.transactionDate', 'ASC');
     }
 
     if (typeof filters.minAmount === 'number') {
