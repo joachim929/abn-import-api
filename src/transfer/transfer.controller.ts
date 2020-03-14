@@ -12,6 +12,7 @@ import { RawInvoiceJsonDTO } from '../invoice/dtos/raw-invoice-json.dto';
 import { TransferImportService } from './services/transfer-import/transfer-import.service';
 import { TransferBatchImportDto, TransferMutationDTO } from './dtos/transfer-batch-import.dto';
 import { TransferMutation } from './entities/transfer-mutation.entity';
+import { TransferListParams } from './dtos/transfer-list-params.dto';
 
 @ApiTags('TransferApi')
 @Controller('transfer')
@@ -81,15 +82,16 @@ export class TransferController {
     operationId: 'filteredTransfers',
   })
   @ApiResponse({
-    status: 201, description: 'Got records',
+    status: 201, description: 'Got records', type: TransferListParams
   })
   @ApiResponse({
     status: 400, description: 'Bad request',
   })
   @ApiResponse({
-    status: 401, description: 'Unauthorized', // Not logged in
+    status: 401, description: 'Unauthorized',
   })
-  getFilteredTransfers(@Body() body) {
+  getFilteredTransfers(@Body() body: TransferListParams) {
+    console.log('controller');
     return this.service.getFilteredTransfers(body);
   }
 

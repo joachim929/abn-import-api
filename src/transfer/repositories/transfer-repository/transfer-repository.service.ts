@@ -1,7 +1,8 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, UpdateResult } from 'typeorm';
+import { Between, LessThan, LessThanOrEqual, MoreThan, MoreThanOrEqual, Not, Repository, UpdateResult } from 'typeorm';
 import { Transfer } from '../../entities/transfer.entity';
+import { TransferListParams } from '../../dtos/transfer-list-params.dto';
 
 @Injectable()
 export class TransferRepositoryService {
@@ -64,6 +65,40 @@ export class TransferRepositoryService {
     }
 
     return await this.repository.find(query);
+  }
+
+  async getFilteredTransfersWithMutations(filters: TransferListParams): Promise<[Transfer[], number]> {
+
+    const query = this.repository.createQueryBuilder('transfer')
+      .leftJoinAndSelect('transfer.mutations', 'mutations')
+      .where('transfer.active = :active', {active: filters.active ? filters.active : true})
+      .andWhere('mutations.active = :active', {active: filters.active ? filters.active : true});
+
+    if (filters.orderBy && filters.orderDirection) {
+      query.orderBy(filters.orderBy, filters.orderDirection)
+    }
+
+    if (typeof filters.minAmount === 'number') {
+      query.andWhere('mutations.amount >= :minAmount', {minAmount: filters.minAmount});
+    }
+
+    if (typeof filters.maxAmount === 'number') {
+      query.andWhere('mutations.amount <= :maxAmount', {maxAmount: filters.maxAmount});
+    }
+
+    if (typeof filters.categoryId === 'number') {
+      query.andWhere('mutations.categoryId = :categoryId', {categoryId: filters.categoryId});
+    }
+
+    if (filters.endDate) {
+      query.andWhere('transfer.transactionDate <= :endDate', {endDate: filters.endDate});
+    }
+
+    if (filters.startDate) {
+      query.andWhere('transfer.transactionDate >= :startDate', {startDate: filters.startDate});
+    }
+
+    return await query.getManyAndCount();
   }
 
   async hashExists(hash: string): Promise<Transfer[]> {

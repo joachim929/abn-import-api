@@ -3,6 +3,8 @@ import { Transfer } from '../entities/transfer.entity';
 import { TransferMutationDTO } from '../dtos/transfer-batch-import.dto';
 import { TransferMutation } from '../entities/transfer-mutation.entity';
 import { TransferBaseService } from './transfer-base/transfer-base.service';
+import { TransferListParams } from '../dtos/transfer-list-params.dto';
+import { validate } from 'class-validator';
 
 @Injectable()
 export class TransferService extends TransferBaseService {
@@ -36,12 +38,42 @@ export class TransferService extends TransferBaseService {
     });
   }
 
-  /**
-   * todo: See invoices
-   */
-  getFilteredTransfers(filter) {
+  getFilteredTransfers(filter: TransferListParams) {
+    return new Promise((resolve, reject) => {
+      validate(filter).then((response) => {
+        if (response.length !== 0) {
+          reject('Bad filter params');
+        }
+
+        this.getMinMax().then((_results) => {
+          return _results;
+        }).then((results) => {
+          this.transferRepository.getFilteredTransfersWithMutations(filter).then((response) => {
+            results.count = response[1];
+            results.transferMutations = [];
+            const transfers: Transfer[] = response[0];
+            for (const transfer of transfers) {
+              for (const mutation of transfer.mutations) {
+                results.transferMutations.push(new TransferMutationDTO(transfer, mutation));
+              }
+            }
+            resolve(results);
+          }).catch((reason) => reject(reason));
+        }).catch((reason) => reject(reason));
+      }).catch((reason) => reject(reason));
+    });
+  }
+
+  private getMinMax(): Promise<TransferListParams> {
+    const results: TransferListParams = {};
     return new Promise((resolve) => {
-      resolve('WIP');
+      this.transferMutationRepository.getMaxAmount().then((maxResult) => {
+        this.transferMutationRepository.getMinAmount().then((minResult) => {
+          results.maxAmount = maxResult.max;
+          results.minAmount = minResult.min;
+          resolve(results);
+        });
+      });
     });
   }
 

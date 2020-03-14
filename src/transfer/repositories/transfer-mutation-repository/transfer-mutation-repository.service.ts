@@ -25,6 +25,20 @@ export class TransferMutationRepositoryService {
     });
   }
 
+  async getMaxAmount() {
+    const query = this.repository.createQueryBuilder('transferMutation');
+    query.select('MAX(transferMutation.amount)', 'max');
+    query.where('transferMutation.active = :active', {active: true});
+    return await query.getRawOne();
+  }
+
+  async getMinAmount() {
+    const query = this.repository.createQueryBuilder('transferMutation');
+    query.select('MIN(transferMutation.amount)', 'min');
+    query.where('transferMutation.active = :active', {active: true});
+    return await query.getRawOne();
+  }
+
   async getMutations(id?: number): Promise<TransferMutation[]> {
     return await this.repository.find(id ? { where: [{ id }, { active: true }] } : null)
       .catch(reason => {
