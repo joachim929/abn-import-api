@@ -102,6 +102,9 @@ export class TransferRepositoryService {
       query.andWhere('transfer.transactionDate >= :startDate', {startDate: Number(filters.startDate)});
     }
 
+    query.take(filters.limit);
+    query.skip(filters.skip);
+
     return await query.getManyAndCount();
   }
 
