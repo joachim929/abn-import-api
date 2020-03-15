@@ -15,6 +15,18 @@ export class TransferRepositoryService {
     return await this.repository.save(transfer);
   }
 
+  async findTransferWithAllRelationships(id: string, mutationId: number) {
+    const query = this.repository.createQueryBuilder('transfer')
+      .innerJoinAndSelect('transfer.mutations', 'mutations')
+      .innerJoinAndSelect('mutations.children', 'children')
+      .innerJoinAndSelect('mutations.parent', 'parent')
+      .andWhere('mutations.id = :id', { mutationId })
+      .where('transfer.id = :id', { id })
+      .orderBy('mutations.updatedAt', 'ASC');
+
+    return await query.getOne();
+  }
+
   async findOneWithMutations(id: string, active?: boolean): Promise<Transfer> {
     return await this.repository.findOneOrFail({
       where: [active ? { id, active, mutations: { active } } : { id }],
@@ -71,38 +83,27 @@ export class TransferRepositoryService {
 
     const query = this.repository.createQueryBuilder('transfer')
       .leftJoinAndSelect('transfer.mutations', 'mutations')
-      .where('transfer.active = :active', {active: filters.active ? filters.active : true})
-      .andWhere('mutations.active = :active', {active: filters.active ? filters.active : true});
+      .where('transfer.active = :active', { active: filters.active ? filters.active : true })
+      .andWhere('mutations.active = :active', { active: filters.active ? filters.active : true });
 
     if (filters.orderBy && filters.orderDirection) {
-      query.orderBy(filters.orderBy, filters.orderDirection)
+      query.orderBy(filters.orderBy, filters.orderDirection);
     } else {
       query.orderBy('transfer.transactionDate', 'ASC');
     }
 
     if (typeof filters.minAmount === 'number') {
-      query.andWhere('mutations.amount >= :minAmount', {minAmount: filters.minAmount});
+      query.andWhere('mutations.amount >= :minAmount', { minAmount: filters.minAmount });
     }
 
     if (typeof filters.maxAmount === 'number') {
-      query.andWhere('mutations.amount <= :maxAmount', {maxAmount: filters.maxAmount});
+      query.andWhere('mutations.amount <= :maxAmount', { maxAmount: filters.maxAmount });
     }
 
     if (typeof filters.categoryId === 'number') {
-      query.andWhere('mutations.categoryId = :categoryId', {categoryId: filters.categoryId});
+      query.andWhere('mutations.categoryId = :categoryId', { categoryId: filters.categoryId });
     }
 
-    // todo: Filtering by date in SQL doesn't seem to work at the moment, consider doing it in the service
-    if (filters.endDate) {
-      query.andWhere('transfer.transactionDate < :endDate', {endDate: Number(filters.endDate)});
-    }
-
-    // todo: Filtering by date in SQL doesn't seem to work at the moment, consider doing it in the service
-    if (filters.startDate) {
-      query.andWhere('transfer.transactionDate >= :startDate', {startDate: Number(filters.startDate)});
-    }
-
-    query.take(filters.limit);
     query.skip(filters.skip);
 
     return await query.getManyAndCount();

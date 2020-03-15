@@ -18,13 +18,21 @@ export class TransferMutationRepositoryService {
     });
   }
 
-  async getOne(id: number, active = true, children = true): Promise<TransferMutation> {
-    const relations = ['parent', 'transfer'];
+  async getOne(id: number, active = true, children = true, transfer = true): Promise<TransferMutation> {
+    const relations = ['parent'];
     if (children) {
       relations.push('children');
     }
+    if (transfer) {
+      relations.push('transfer');
+    }
+
+    let where: any = {id};
+    if (active === true) {
+      where = {id, active};
+    }
     return await this.repository.findOneOrFail({
-      where: { id, active },
+      where: where,
       relations: relations,
     }).catch(reason => {
       throw new HttpException(reason, HttpStatus.BAD_REQUEST);

@@ -3,6 +3,7 @@ import { TransferMutation } from '../../entities/transfer-mutation.entity';
 import { TransferMutationDTO } from '../../dtos/transfer-batch-import.dto';
 import { TransferBaseService } from '../transfer-base/transfer-base.service';
 import { validate } from 'class-validator';
+import { Transfer } from '../../entities/transfer.entity';
 
 @Injectable()
 export class TransferMutationService extends TransferBaseService {
@@ -65,6 +66,42 @@ export class TransferMutationService extends TransferBaseService {
           });
         }).catch(reason => reject(reason));
       }).catch(reason => reject(reason));
+    });
+  }
+
+  getTransferMutationHistory(id: number): Promise<Transfer> {
+    let transferHistory: Transfer;
+    return new Promise((resolve, reject) => {
+      this.transferMutationRepository.getOne(id, null, null).then((response) => {
+        transferHistory = response.transfer;
+        this.transferRepository.findTransferWithAllRelationships(transferHistory.id, id).then((transfer) => {
+          if (transfer.mutations.length > 0) {
+            const parent = { ...transfer.mutations[0].parent };
+            const child = { ...transfer.mutations[0] };
+            delete child.parent;
+            if (child.children) {
+              delete child.children;
+            }
+            parent.children = [child];
+            transfer.mutations.unshift(parent);
+          }
+
+          if (transfer.mutations.length > 2) {
+            const lastChildren = { ...transfer.mutations[transfer.mutations.length - 1].children };
+            const lastParent = { ...transfer.mutations[transfer.mutations.length - 1] };
+            delete lastParent.children;
+            if (lastParent.parent) {
+              delete lastParent.parent;
+            }
+            Object.keys(lastChildren).map(key => {
+              lastChildren[key].parent = lastParent;
+              transfer.mutations.push(lastChildren[key]);
+            });
+          }
+
+          resolve(transfer);
+        }).catch((reason) => reject(reason));
+      });
     });
   }
 

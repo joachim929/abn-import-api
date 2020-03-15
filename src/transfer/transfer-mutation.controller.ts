@@ -85,6 +85,23 @@ export class TransferMutationController {
     return this.transferMutationService.undoTransferMutationPatch(body);
   }
 
+  @Get('/history/:id')
+  @ApiOperation({
+    operationId: 'getTransferMutationHistory'
+  })
+  @ApiResponse({
+    status: 200, description: 'Transfer Mutation history found'
+  })
+  @ApiResponse({
+    status: 400, description: 'Bad request',
+  })
+  @ApiResponse({
+    status: 401, description: 'Unauthorized', // Not logged in
+  })
+  getTransferMutationHistory(@Param('id', new ParseIntPipe()) id: number) {
+    return this.transferMutationService.getTransferMutationHistory(id);
+  }
+
   @Post('/split')
   @ApiOperation({
     operationId: 'splitTransferMutation',

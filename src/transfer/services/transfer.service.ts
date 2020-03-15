@@ -5,7 +5,6 @@ import { TransferMutation } from '../entities/transfer-mutation.entity';
 import { TransferBaseService } from './transfer-base/transfer-base.service';
 import { TransferListParams } from '../dtos/transfer-list-params.dto';
 import { validate } from 'class-validator';
-import * as moment from 'moment';
 
 @Injectable()
 export class TransferService extends TransferBaseService {
@@ -46,12 +45,29 @@ export class TransferService extends TransferBaseService {
         }).then((response) => {
           results.count = response[1];
           results.transferMutations = [];
+          const startDate = filter.startDate ? new Date(Number(filter.startDate)) : null;
+          const endDate = filter.endDate ? new Date(Number(filter.endDate)) : null;
+
+
           const transfers: Transfer[] = response[0];
           for (const transfer of transfers) {
+            if (!this.filterTransferMutationsByDate(transfer.transactionDate, startDate, endDate)) {
+              if (results.count > transfer.mutations.length) {
+                results.count -= transfer.mutations.length;
+              } else {
+                this.internalError('Negative count?');
+              }
+              continue;
+            }
             for (const mutation of transfer.mutations) {
               results.transferMutations.push(new TransferMutationDTO(transfer, mutation));
             }
           }
+          const limit = filter.limit ? filter.limit : 20;
+          if (results.transferMutations.length > limit) {
+            results.transferMutations.splice(limit);
+          }
+
           resolve(results);
         }).catch((reason) => reject(reason));
       }).catch((reason) => reject(reason));
@@ -69,6 +85,24 @@ export class TransferService extends TransferBaseService {
         }).catch((reason) => reject(reason));
       }).catch((reason) => reject(reason));
     });
+  }
+
+  /**
+   * todo:
+   *    Remember to splice return to limit the filter limit
+   *    And remove limit from query
+   */
+  private filterTransferMutationsByDate(transactionDate: Date, startDate?: Date, endDate?: Date): boolean {
+    let transferValid = true;
+    if (startDate && startDate.getTime() >= transactionDate.getTime()) {
+      transferValid = false;
+    }
+
+    if (endDate && endDate.getTime() <= transactionDate.getTime()) {
+      transferValid = false;
+    }
+
+    return transferValid;
   }
 
   private setMutationsInactive(mutations: TransferMutation[]): Promise<void> {
