@@ -12,10 +12,6 @@ import {
 } from '../../dtos/transfer-batch-import.dto';
 import { TransferBaseService } from '../transfer-base/transfer-base.service';
 
-/**
- * todo: This is a mess, but it works
- *  feel free to clean up
- */
 @Injectable()
 export class TransferImportService extends TransferBaseService {
 

@@ -51,12 +51,8 @@ export class TransferMutationRepositoryService {
     return await query.getRawOne();
   }
 
-  /**
-   * todo:
-   *    Where with [] is OR, change to {} for a AND comparison
-   */
   async getMutations(id?: number): Promise<TransferMutation[]> {
-    return await this.repository.find(id ? { where: [{ id }, { active: true }] } : null)
+    return await this.repository.find(id ? { where: { id, active: true } } : null)
       .catch(reason => {
         throw new HttpException(reason, HttpStatus.INTERNAL_SERVER_ERROR);
       });

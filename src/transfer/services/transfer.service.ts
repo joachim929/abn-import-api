@@ -5,6 +5,7 @@ import { TransferMutation } from '../entities/transfer-mutation.entity';
 import { TransferBaseService } from './transfer-base/transfer-base.service';
 import { TransferListParams } from '../dtos/transfer-list-params.dto';
 import { validate } from 'class-validator';
+import * as moment from 'moment';
 
 @Injectable()
 export class TransferService extends TransferBaseService {
@@ -29,26 +30,29 @@ export class TransferService extends TransferBaseService {
   }
 
   getFilteredTransfers(filter: TransferListParams) {
+    let results;
     return new Promise((resolve, reject) => {
       validate(filter).then((response) => {
+
         if (response.length !== 0) {
           reject('Bad filter params');
         }
 
-        this.getMinMax().then((_results) => {
-          return _results;
-        }).then((results) => {
-          this.transferRepository.getFilteredTransfersWithMutations(filter).then((response) => {
-            results.count = response[1];
-            results.transferMutations = [];
-            const transfers: Transfer[] = response[0];
-            for (const transfer of transfers) {
-              for (const mutation of transfer.mutations) {
-                results.transferMutations.push(new TransferMutationDTO(transfer, mutation));
-              }
+        return this.getMinMax().then((_results) => {
+          results = _results;
+          return;
+        }).then(() => {
+          return this.transferRepository.getFilteredTransfersWithMutations(filter);
+        }).then((response) => {
+          results.count = response[1];
+          results.transferMutations = [];
+          const transfers: Transfer[] = response[0];
+          for (const transfer of transfers) {
+            for (const mutation of transfer.mutations) {
+              results.transferMutations.push(new TransferMutationDTO(transfer, mutation));
             }
-            resolve(results);
-          }).catch((reason) => reject(reason));
+          }
+          resolve(results);
         }).catch((reason) => reject(reason));
       }).catch((reason) => reject(reason));
     });

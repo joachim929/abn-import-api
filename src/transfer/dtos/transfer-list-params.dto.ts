@@ -1,5 +1,5 @@
 import { ListParams } from '../../shared/dtos/list-params.dto';
-import { IsArray, IsBoolean, IsDate, IsNumber, IsOptional } from 'class-validator';
+import { IsArray, IsBoolean, IsDate, IsDateString, IsNumber, IsOptional } from 'class-validator';
 import { TransferMutationDTO } from './transfer-batch-import.dto';
 
 export class TransferListParams extends ListParams {
@@ -20,7 +20,7 @@ export class TransferListParams extends ListParams {
   startDate?: Date;
 
   @IsOptional()
-  @IsDate()
+  @IsDateString()
   endDate?: Date;
 
   @IsOptional()

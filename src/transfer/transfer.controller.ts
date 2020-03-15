@@ -78,9 +78,6 @@ export class TransferController {
     return this.service.deleteTransfer(id);
   }
 
-  /**
-   * todo: See invoices
-   */
   @Post('/filtered')
   @ApiOperation({
     operationId: 'filteredTransfers',
@@ -95,7 +92,6 @@ export class TransferController {
     status: 401, description: 'Unauthorized',
   })
   getFilteredTransfers(@Body() body: TransferListParams) {
-    console.log('controller');
     return this.service.getFilteredTransfers(body);
   }
 

@@ -11,7 +11,7 @@ export class TransferMutationService extends TransferBaseService {
 
   deleteMutation(id: number): Promise<void> {
     return new Promise((resolve, reject) => {
-      this.transferMutationRepository.getOne(id).then((response) => {
+      this.transferMutationRepository.getOne(id, true, false).then((response) => {
         response.active = false;
         return response;
       }).then((mutation) => {
@@ -73,6 +73,9 @@ export class TransferMutationService extends TransferBaseService {
     let parentMutation: TransferMutation;
     return new Promise((resolve, reject) => {
       this.getOneMutation(body.mutationId).then((_transferMutation) => {
+        if (!_transferMutation) {
+          this.badRequest('Testing, findOneOrFail -> findOne');
+        }
 
         transferMutation = _transferMutation;
         return this.validateUndoTransferMutation(transferMutation);
@@ -80,6 +83,9 @@ export class TransferMutationService extends TransferBaseService {
       }).then(() => {
 
         return this.getOneMutation(transferMutation.parent.id).then((_transferMutation) => {
+          if (!_transferMutation) {
+            this.badRequest('No children, shouldn\'t happen');
+          }
           parentMutation = _transferMutation;
           return;
         }).catch((reason) => reject(reason));

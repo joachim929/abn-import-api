@@ -1,6 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Between, LessThan, LessThanOrEqual, MoreThan, MoreThanOrEqual, Not, Repository, UpdateResult } from 'typeorm';
+import { Repository, UpdateResult } from 'typeorm';
 import { Transfer } from '../../entities/transfer.entity';
 import { TransferListParams } from '../../dtos/transfer-list-params.dto';
 
@@ -92,12 +92,14 @@ export class TransferRepositoryService {
       query.andWhere('mutations.categoryId = :categoryId', {categoryId: filters.categoryId});
     }
 
+    // todo: Filtering by date in SQL doesn't seem to work at the moment, consider doing it in the service
     if (filters.endDate) {
-      query.andWhere('transfer.transactionDate <= :endDate', {endDate: filters.endDate});
+      query.andWhere('transfer.transactionDate < :endDate', {endDate: Number(filters.endDate)});
     }
 
+    // todo: Filtering by date in SQL doesn't seem to work at the moment, consider doing it in the service
     if (filters.startDate) {
-      query.andWhere('transfer.transactionDate >= :startDate', {startDate: filters.startDate});
+      query.andWhere('transfer.transactionDate >= :startDate', {startDate: Number(filters.startDate)});
     }
 
     return await query.getManyAndCount();

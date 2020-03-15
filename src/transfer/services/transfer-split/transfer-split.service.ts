@@ -47,7 +47,6 @@ export class TransferSplitService extends TransferBaseService {
         const splitTransferMutation = new NewTransferMutationChild(body.new, mutation);
         const patchTransferMutation = new NewTransferMutationChild(body.patch, mutation);
         this.validateTransferMutations([splitTransferMutation, patchTransferMutation]).then(() => {
-
           if (mutation.amount !== splitTransferMutation.amount + patchTransferMutation.amount) {
             this.badRequest('Amount doesn\'t add up to original');
           }
