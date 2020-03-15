@@ -20,10 +20,10 @@ export class TransferMutationRepositoryService {
 
   async getOne(id: number, active = true, children = true, transfer = true): Promise<TransferMutation> {
     const relations = ['parent'];
-    if (children) {
+    if (children === true) {
       relations.push('children');
     }
-    if (transfer) {
+    if (transfer === true) {
       relations.push('transfer');
     }
 

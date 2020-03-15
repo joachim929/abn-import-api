@@ -75,7 +75,7 @@ export class TransferMutationService extends TransferBaseService {
   getTransferMutationHistory(id: number): Promise<Transfer> {
     let transferHistory: Transfer;
     return new Promise((resolve, reject) => {
-      this.transferMutationRepository.getOne(id, null, null).then((response) => {
+      this.transferMutationRepository.getOne(id, null, false).then((response) => {
         transferHistory = response.transfer;
         this.transferRepository.findTransferWithAllRelationships(transferHistory.id, id).then((transfer) => {
           if (transfer.mutations.length > 0) {
