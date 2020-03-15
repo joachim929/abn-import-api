@@ -69,6 +69,9 @@ export class TransferMutationService extends TransferBaseService {
     });
   }
 
+  /**
+   * todo: Clean up and test
+   */
   getTransferMutationHistory(id: number): Promise<Transfer> {
     let transferHistory: Transfer;
     return new Promise((resolve, reject) => {
@@ -93,6 +96,7 @@ export class TransferMutationService extends TransferBaseService {
             if (lastParent.parent) {
               delete lastParent.parent;
             }
+            // For some reason children isn't iterable, comes back as objects
             Object.keys(lastChildren).map(key => {
               lastChildren[key].parent = lastParent;
               transfer.mutations.push(lastChildren[key]);
