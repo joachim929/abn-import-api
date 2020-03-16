@@ -17,10 +17,10 @@ export class TransferRepositoryService {
 
   async findTransferWithAllRelationships(id: string, mutationId: number) {
     const query = this.repository.createQueryBuilder('transfer')
-      .innerJoinAndSelect('transfer.mutations', 'mutations')
-      .innerJoinAndSelect('mutations.children', 'children')
-      .innerJoinAndSelect('mutations.parent', 'parent')
-      .andWhere('mutations.id = :id', { mutationId })
+      .leftJoinAndSelect('transfer.mutations', 'mutations')
+      .leftJoinAndSelect('mutations.children', 'children')
+      .leftJoinAndSelect('mutations.parent', 'parent')
+      // .andWhere('mutations.id = :id', { mutationId })
       .where('transfer.id = :id', { id })
       .orderBy('mutations.updatedAt', 'ASC');
 

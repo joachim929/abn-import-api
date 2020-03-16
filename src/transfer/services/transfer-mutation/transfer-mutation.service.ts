@@ -78,31 +78,6 @@ export class TransferMutationService extends TransferBaseService {
       this.transferMutationRepository.getOne(id, null, false).then((response) => {
         transferHistory = response.transfer;
         this.transferRepository.findTransferWithAllRelationships(transferHistory.id, id).then((transfer) => {
-          if (transfer.mutations.length > 0) {
-            const parent = { ...transfer.mutations[0].parent };
-            const child = { ...transfer.mutations[0] };
-            delete child.parent;
-            if (child.children) {
-              delete child.children;
-            }
-            parent.children = [child];
-            transfer.mutations.unshift(parent);
-          }
-
-          if (transfer.mutations.length > 2) {
-            const lastChildren = { ...transfer.mutations[transfer.mutations.length - 1].children };
-            const lastParent = { ...transfer.mutations[transfer.mutations.length - 1] };
-            delete lastParent.children;
-            if (lastParent.parent) {
-              delete lastParent.parent;
-            }
-            // For some reason children isn't iterable, comes back as objects
-            Object.keys(lastChildren).map(key => {
-              lastChildren[key].parent = lastParent;
-              transfer.mutations.push(lastChildren[key]);
-            });
-          }
-
           resolve(transfer);
         }).catch((reason) => reject(reason));
       });

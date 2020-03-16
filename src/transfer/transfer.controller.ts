@@ -29,7 +29,7 @@ export class TransferController {
    */
   @Get()
   @ApiOperation({
-    operationId: 'getTransfer',
+    operationId: 'adminGetTransfer',
   })
   @ApiResponse({
     status: 200, description: 'Get all transfers', type: [Transfer],

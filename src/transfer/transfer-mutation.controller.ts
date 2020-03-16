@@ -6,6 +6,7 @@ import { TransferMutationService } from './services/transfer-mutation/transfer-m
 import { TransferMutation } from './entities/transfer-mutation.entity';
 import { SplitTransferMutationDto } from './dtos/split-transfer-mutation.dto';
 import { TransferMutationDTO } from './dtos/transfer-batch-import.dto';
+import { Transfer } from './entities/transfer.entity';
 
 @ApiTags('TransferMutationApi')
 @Controller('transfer-mutation')
@@ -90,7 +91,7 @@ export class TransferMutationController {
     operationId: 'getTransferMutationHistory'
   })
   @ApiResponse({
-    status: 200, description: 'Transfer Mutation history found'
+    status: 200, description: 'Transfer Mutation history found', type: Transfer
   })
   @ApiResponse({
     status: 400, description: 'Bad request',
