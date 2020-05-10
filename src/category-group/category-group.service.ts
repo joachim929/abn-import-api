@@ -11,37 +11,46 @@ export class CategoryGroupService {
 
   getCategoryGroup(id: number): Promise<CategoryGroupDTO> {
     return new Promise((resolve, reject) => {
-      this.categoryGroupRepositoryService.getGroupsById(id).then((response: CategoryGroup[]) => {
-        if (response.length === 1) {
-          resolve(new CategoryGroupDTO(response[0]));
-        } else {
-          reject(response.length === 0 ? 'None found' : 'Too many found');
-        }
-      }).catch(reason => reject(reason));
+      this.categoryGroupRepositoryService.getGroupsById(id)
+        .then((response: CategoryGroup) => resolve(new CategoryGroupDTO(response[0])))
+        .catch(reason => reject(reason));
     });
   }
 
   getAll(): Promise<CategoryGroupDTO[]> {
     return new Promise((resolve, reject) => {
-      this.categoryGroupRepositoryService.getGroups().then((response: CategoryGroup[]) => {
-        resolve(response.map(categoryGroup => new CategoryGroupDTO(categoryGroup)));
-      }).catch(reason => reject(reason));
+      this.categoryGroupRepositoryService.getGroups()
+        .then((response: CategoryGroup[]) => resolve(response.map(categoryGroup => new CategoryGroupDTO(categoryGroup))),
+        ).catch(reason => reject(reason));
     });
   }
 
   getAllWithCategories() {
     return new Promise((resolve, reject) => {
-      this.categoryGroupRepositoryService.getGroupsWithCategories().then((response) => {
-        resolve(response);
-      }).catch(reason => reject(reason));
+      this.categoryGroupRepositoryService.getGroupsWithCategories()
+        .then((response) => resolve(response))
+        .catch(reason => reject(reason));
     });
   }
 
   patchCategoryGroup(categoryGroup: CategoryGroup) {
     return new Promise((resolve, reject) => {
-      this.categoryGroupRepositoryService.updateGroup(categoryGroup.id, categoryGroup).then((response: UpdateResult) => {
-        resolve(response);
-      }).catch(reason => reject(reason));
+      this.categoryGroupRepositoryService.updateGroup(categoryGroup.id, categoryGroup)
+        .then((response: UpdateResult) => resolve(response))
+        .catch(reason => reject(reason));
+    });
+  }
+
+  /**
+   * Todo: Test
+   */
+  patchCategoryGroups(categoryGroups: CategoryGroupDTO[]) {
+    return new Promise((resolve, reject) => {
+      const ocGroupPromises = categoryGroups.map((group) => this.categoryGroupRepositoryService.getGroupsById(group.id));
+      Promise.all(ocGroupPromises).then((result) => {
+        console.log(result);
+        resolve();
+      });
     });
   }
 

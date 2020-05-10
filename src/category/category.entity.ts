@@ -9,6 +9,9 @@ import {
 } from 'typeorm';
 import { CategoryGroup } from '../category-group/category-group.entity';
 
+/**
+ * Need to add ordering to this
+ */
 @Entity()
 export class Category {
   @PrimaryGeneratedColumn()

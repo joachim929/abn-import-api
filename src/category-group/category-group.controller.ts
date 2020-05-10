@@ -10,22 +10,6 @@ export class CategoryGroupController {
   constructor(private service: CategoryGroupService) {
   }
 
-  @Get(':id')
-  @ApiOperation({
-    operationId: 'getCategoryGroupById',
-  })
-  @ApiResponse({
-    status: 200, description: 'Found records', type: CategoryGroupDTO
-  })
-  @ApiResponse({
-    status: 204, description: 'No content'
-  })
-  @ApiResponse({
-    status: 401, description: 'Unauthorized', // When auth works
-  })
-  get(@Param() params) {
-    return this.service.getCategoryGroup(params.id).catch(reason => console.warn(reason));
-  }
 
   @Get()
   @ApiOperation({
@@ -41,7 +25,35 @@ export class CategoryGroupController {
     status: 401, description: 'Unauthorized', // When auth works
   })
   getAllWithCategories() {
+    console.log('getAllCategoryGroupsWithCategories');
     return this.service.getAllWithCategories().catch(reason => console.warn(reason));
+  }
+
+  @Post()
+  @ApiOperation({
+    operationId: 'createCategoryGroup',
+  })
+  create(@Body() categoryGroup: CategoryGroup) {
+    console.log('createCategoryGroup');
+    return this.service.createCategoryGroup(categoryGroup).catch(reason => console.warn(reason));
+  }
+
+  @Get(':id')
+  @ApiOperation({
+    operationId: 'getCategoryGroupById',
+  })
+  @ApiResponse({
+    status: 200, description: 'Found records', type: CategoryGroupDTO
+  })
+  @ApiResponse({
+    status: 204, description: 'No content'
+  })
+  @ApiResponse({
+    status: 401, description: 'Unauthorized', // When auth works
+  })
+  get(@Param() params) {
+    console.log('getCategoryGroupById');
+    return this.service.getCategoryGroup(params.id).catch(reason => console.warn(reason));
   }
 
   @Patch(':id')
@@ -49,6 +61,7 @@ export class CategoryGroupController {
     operationId: 'patchCategoryGroup',
   })
   patch(@Body() categoryGroup: CategoryGroup) {
+    console.log('patchCategoryGroup');
     return this.service.patchCategoryGroup(categoryGroup).catch(reason => console.warn(reason));
   }
 
@@ -57,31 +70,19 @@ export class CategoryGroupController {
     operationId: 'deleteCategoryGroup',
   })
   delete(@Param() params) {
+    console.log('deleteCategoryGroup');
     return this.service.deleteCategoryGroup(params.id).catch(reason => console.warn(reason));
   }
 
-  @Post()
-  @ApiOperation({
-    operationId: 'createCategoryGroup',
-  })
-  create(@Body() categoryGroup: CategoryGroup) {
-    return this.service.createCategoryGroup(categoryGroup).catch(reason => console.warn(reason));
-  }
 
-  @Get('all')
+  @Patch('multiple')
   @ApiOperation({
-    operationId: 'getAllCategoryGroups',
+    operationId: 'patchMultiple'
   })
   @ApiResponse({
-    status: 200, description: 'Found records', type: [CategoryGroupDTO]
+    status: 200
   })
-  @ApiResponse({
-    status: 204, description: 'No content'
-  })
-  @ApiResponse({
-    status: 401, description: 'Unauthorized', // When auth works
-  })
-  getAll() {
-    return this.service.getAll().catch(reason => console.warn(reason));
+  patchMultiple(@Body() categories: CategoryGroupDTO[]) {
+    return this.service.patchCategoryGroups(categories);
   }
 }

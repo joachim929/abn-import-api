@@ -15,14 +15,13 @@ export class TransferRepositoryService {
     return await this.repository.save(transfer);
   }
 
-  async findTransferWithAllRelationships(id: string, mutationId: number) {
+  async findTransferWithAllRelationships(id: string) {
     const query = this.repository.createQueryBuilder('transfer')
       .leftJoinAndSelect('transfer.mutations', 'mutations')
       .leftJoinAndSelect('mutations.children', 'children')
       .leftJoinAndSelect('mutations.parent', 'parent')
-      // .andWhere('mutations.id = :id', { mutationId })
       .where('transfer.id = :id', { id })
-      .orderBy('mutations.updatedAt', 'ASC');
+      .orderBy('mutations.createdAt', 'DESC');
 
     return await query.getOne();
   }

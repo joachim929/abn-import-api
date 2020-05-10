@@ -14,9 +14,9 @@ export class CategoryGroupRepositoryService {
     return await this.repository.find({});
   }
 
-  async getGroupsById(id: number): Promise<CategoryGroup[]> {
-    return await this.repository.find({
-      where: [{ id }],
+  async getGroupsById(id: number): Promise<CategoryGroup> {
+    return await this.repository.findOneOrFail({
+      where: { id },
     });
   }
 

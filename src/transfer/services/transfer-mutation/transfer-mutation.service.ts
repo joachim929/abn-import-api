@@ -77,7 +77,7 @@ export class TransferMutationService extends TransferBaseService {
     return new Promise((resolve, reject) => {
       this.transferMutationRepository.getOne(id, null, false).then((response) => {
         transferHistory = response.transfer;
-        this.transferRepository.findTransferWithAllRelationships(transferHistory.id, id).then((transfer) => {
+        this.transferRepository.findTransferWithAllRelationships(transferHistory.id).then((transfer) => {
           resolve(transfer);
         }).catch((reason) => reject(reason));
       });

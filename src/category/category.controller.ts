@@ -3,6 +3,7 @@ import { CategoryService } from './category.service';
 import { Category } from './category.entity';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { CategoryDTO } from './dtos/category.dto';
+import { CategoryGroupDTO } from '../category-group/dtos/category-group.dto';
 
 @ApiTags('CategoryApi')
 @Controller('category')
@@ -66,5 +67,4 @@ export class CategoryController {
   create(@Body() category: Category) {
     return this.service.createCategory(category);
   }
-
 }
