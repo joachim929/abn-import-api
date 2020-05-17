@@ -5,11 +5,14 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { CategoryGroup } from './category-group.entity';
 import { CategoryGroupRepositoryService } from './category-group-repository/category-group-repository.service';
+// import { CategoryRepositoryService } from '../category/category-repository/category-repository.service';
+import { CategoryModule } from '../category/category.module';
+import { CategoryService } from '../category/category.service';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([CategoryGroup])],
+  imports: [TypeOrmModule.forFeature([CategoryGroup]), CategoryModule],
   controllers: [CategoryGroupController],
-  providers: [CategoryGroupService, CategoryGroupRepositoryService],
+  providers: [CategoryGroupService, CategoryGroupRepositoryService, CategoryService],
 })
 export class CategoryGroupModule {
 }

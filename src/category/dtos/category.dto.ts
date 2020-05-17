@@ -12,12 +12,16 @@ export class CategoryDTO {
   description?: string;
 
   @ApiProperty()
-  categoryGroupId: number;
+  categoryGroupId: string;
+
+  @ApiProperty()
+  order: number;
 
   constructor(category: Category) {
     this.id = category.id;
     this.name = category.name;
-    this.categoryGroupId = category.categoryGroupId;
+    this.categoryGroupId = category.categoryGroup.id;
+    this.order = category.id;
     if (category.description) {
       this.description = category.description;
     }

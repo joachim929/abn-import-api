@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CategoryGroup } from '../category-group.entity';
 import { DeepPartial, DeleteResult, Repository, SaveOptions, UpdateResult } from 'typeorm';
+import { CategoryGroupDTO } from '../dtos/category-group.dto';
 
 @Injectable()
 export class CategoryGroupRepositoryService {
@@ -11,13 +12,11 @@ export class CategoryGroupRepositoryService {
   }
 
   async getGroups(): Promise<CategoryGroup[]> {
-    return await this.repository.find({});
+    return await this.repository.find();
   }
 
-  async getGroupsById(id: number): Promise<CategoryGroup> {
-    return await this.repository.findOneOrFail({
-      where: { id },
-    });
+  async getGroupById(id: string): Promise<CategoryGroup> {
+    return await this.repository.findOneOrFail(id);
   }
 
   async getGroupsWithCategories(): Promise<CategoryGroup[]> {
@@ -29,11 +28,11 @@ export class CategoryGroupRepositoryService {
     return await this.repository.save(group);
   }
 
-  async updateGroup(id: number, group: CategoryGroup): Promise<UpdateResult> {
+  async updateGroup(id: string, group: CategoryGroup): Promise<UpdateResult> {
     return await this.repository.update(id, group);
   }
 
-  async deleteGroup(id: number): Promise<DeleteResult> {
+  async deleteGroup(id: string): Promise<DeleteResult> {
     return await this.repository.delete(id);
   }
 }

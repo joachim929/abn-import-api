@@ -29,8 +29,8 @@ export class Category {
   @UpdateDateColumn()
   editedAt: Date;
 
-  @Column()
-  categoryGroupId: number;
+  @Column({default: 0})
+  order: number;
 
   @ManyToOne(type => CategoryGroup)
   @JoinColumn({name: 'categoryGroupId', referencedColumnName: 'id'})

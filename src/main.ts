@@ -4,7 +4,8 @@ import { AppModule } from './app.module';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
-    cors: true // todo: implement environment like angular
+    cors: true, // todo: implement environment like angular,
+    logger: ['error', 'warn', 'log']
   });
 
   const options = new DocumentBuilder()

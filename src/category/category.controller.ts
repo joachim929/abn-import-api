@@ -62,9 +62,9 @@ export class CategoryController {
     operationId: 'createCategory',
   })
   @ApiResponse({
-    status: 200, type: CategoryDTO
+    status: 201, type: CategoryDTO
   })
-  create(@Body() category: Category) {
+  create(@Body() category: CategoryDTO) {
     return this.service.createCategory(category);
   }
 }

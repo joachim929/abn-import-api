@@ -13,12 +13,8 @@ export class CategoryService {
 
   getCategory(id: number): Promise<CategoryDTO> {
     return new Promise((resolve, reject) => {
-      this.repositoryService.getCategoryById(id).then((response: Category[]) => {
-        if (response.length === 1) {
-          resolve(new CategoryDTO(response[0]));
-        } else {
-          reject(`Found unexpected amount of entries for category.id: ${id}`);
-        }
+      this.repositoryService.getCategoryById(id).then((response: Category) => {
+        resolve(new CategoryDTO(response));
       }).catch(reason => reject(reason));
     });
   }
@@ -55,7 +51,7 @@ export class CategoryService {
     });
   }
 
-  createCategory(category: Category): Promise<CategoryDTO> {
+  createCategory(category: CategoryDTO): Promise<CategoryDTO> {
     return new Promise((resolve, reject) => {
       this.repositoryService.createCategory(category).then((response: Category) => {
         resolve(new CategoryDTO(response));

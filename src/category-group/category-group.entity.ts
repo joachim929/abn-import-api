@@ -10,14 +10,11 @@ import { Category } from '../category/category.entity';
 
 @Entity()
 export class CategoryGroup {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
   @Column()
   name: string;
-
-  @Column()
-  userId: number;
 
   @Column({nullable: true})
   description: string;

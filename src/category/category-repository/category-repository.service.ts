@@ -14,9 +14,9 @@ export class CategoryRepositoryService {
     return await this.repository.find({});
   }
 
-  async getCategoryById(id: number): Promise<Category[]> {
-    return await this.repository.find({
-      where: [{ id }],
+  async getCategoryById(id: number): Promise<Category> {
+    return await this.repository.findOneOrFail({
+      where: { id },
     });
   }
 
