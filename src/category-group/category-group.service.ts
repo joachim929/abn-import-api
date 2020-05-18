@@ -2,10 +2,10 @@ import { Injectable } from '@nestjs/common';
 import { CategoryGroup } from './category-group.entity';
 import { CategoryGroupRepositoryService } from './category-group-repository/category-group-repository.service';
 import { CategoryGroupDTO } from './dtos/category-group.dto';
-import { UpdateResult } from 'typeorm';
 import { CategoryDTO } from '../category/dtos/category.dto';
 import { CategoryService } from '../category/category.service';
 import { CategoryRepositoryService } from '../category/category-repository/category-repository.service';
+import { Category } from '../category/category.entity';
 
 @Injectable()
 export class CategoryGroupService {
@@ -59,35 +59,66 @@ export class CategoryGroupService {
         return this.categoryGroupRepositoryService.getGroupById(group.id);
       });
       Promise.all(ocGroupPromises).then((ocCategoryGroups) => {
-        const categoryGroupUpdatePromises = [];
-        ocCategoryGroups.map(ocCategoryGroup => {
-          categoryGroups.map(patchedGroup => {
-            if (patchedGroup.id === ocCategoryGroup.id) {
-              ocCategoryGroup.name = patchedGroup.name;
-              ocCategoryGroup.description = patchedGroup.description;
-              categoryGroupUpdatePromises.push(this.categoryGroupRepositoryService.updateGroup(ocCategoryGroup.id, ocCategoryGroup));
+        this.updateCategoryGroup(ocCategoryGroups, categoryGroups).then((updatedGroups) => {
+          updatedGroups.map(item => item.categories = []);
+          const updatedSubCategories: Promise<Category>[] = [];
+          for (const categoryGroup of categoryGroups) {
+            for (const category of categoryGroup.categories) {
+              updatedSubCategories.push(new Promise((resolve, reject) => {
+                this.categoryRepositoryService.getCategoryById(category.id).then((ocCategory) => {
+                  ocCategory = {
+                    ...ocCategory, name: category.name, description: category.description, order: category.order,
+                  };
+                  const parent = ocCategoryGroups.find((ocCategoryGroup) => ocCategoryGroup.id === categoryGroup.id);
+                  if (parent) {
+                    ocCategory = { ...ocCategory, categoryGroup: parent };
+                  }
+                  this.categoryRepositoryService.updateCategory(ocCategory.id, ocCategory).then(() => resolve(ocCategory));
+                });
+              }));
             }
-          });
-        });
-        Promise.all(categoryGroupUpdatePromises).then(() => {
-          const categoryPromises = [];
+          }
 
-          categoryGroups.map((group) => group.categories.map((category) =>
-            this.categoryRepositoryService.getCategoryById(category.id).then((ocCategory) => {
-              ocCategory.name = category.name;
-              ocCategory.description = category.description;
-              ocCategory.order = category.order;
-              const parent = ocCategoryGroups.find((ocCategoryGroup) => ocCategoryGroup.id === group.id);
-              if (parent) {
-                ocCategory.categoryGroup = { ...parent };
+          Promise.all(updatedSubCategories).then((result) => {
+            for (const updatedCategory of result) {
+              for (const updatedGroup of updatedGroups) {
+                if (updatedGroup.id === updatedCategory.categoryGroup.id) {
+                  const temp = {
+                    id: updatedCategory.id,
+                    name: updatedCategory.name,
+                    description: updatedCategory.description,
+                    order: updatedCategory.order
+                  } as Category; // todo still need to fix returning the data
+                  updatedGroup.categories.push(temp);
+                  break;
+                }
               }
-              categoryPromises.push(this.categoryRepositoryService.updateCategory(ocCategory.id, ocCategory));
-            })));
-          Promise.all(categoryPromises).then((result) => {
-            resolve(categoryGroups);
+            }
+            resolve(updatedGroups);
           });
         });
+
       }).catch((reason) => reject(reason));
+    });
+  }
+
+  private updateCategoryGroup(ocCategoryGroups: CategoryGroup[], groupsToPatch: CategoryGroupDTO[]): Promise<CategoryGroup[]> {
+    return new Promise((resolve, reject) => {
+      const promises = [];
+      for (let ocGroup of ocCategoryGroups) {
+        const groupToPatch = groupsToPatch.find(groupToPatch => groupToPatch.id === ocGroup.id);
+        if (groupToPatch) {
+          ocGroup = {
+            ...ocGroup,
+            name: groupToPatch.name,
+            description: groupToPatch.description,
+          };
+          promises.push(this.categoryGroupRepositoryService.updateGroup(ocGroup.id, ocGroup));
+        }
+      }
+      Promise.all(promises).then(() => {
+        resolve(ocCategoryGroups);
+      }).catch(e => reject(e));
     });
   }
 
