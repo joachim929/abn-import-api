@@ -38,14 +38,6 @@ export class CategoryGroupService {
     });
   }
 
-  getAll(): Promise<CategoryGroupDTO[]> {
-    return new Promise((resolve, reject) => {
-      this.categoryGroupRepositoryService.getGroups()
-        .then((response: CategoryGroup[]) => resolve(response.map(categoryGroup => new CategoryGroupDTO(categoryGroup))),
-        ).catch(reason => reject(reason));
-    });
-  }
-
   getAllWithCategories() {
     return new Promise((resolve, reject) => {
       this.categoryGroupRepositoryService.getGroupsWithCategories()
@@ -68,71 +60,32 @@ export class CategoryGroupService {
   }
 
   patchCategoryGroups(categoryGroups: CategoryGroupDTO[]): Promise<CategoryGroupDTO[]> {
+    let _updatedGroups = [];
     return new Promise((resolve, reject) => {
-      const ocGroupPromises = categoryGroups.map((group) => this.categoryGroupRepositoryService.getGroupById(group.id));
+      this.categoryGroupRepositoryService.getByIds(categoryGroups.map(group => group.id))
+        .then((ocCategoryGroups) => {
 
-      Promise.all(ocGroupPromises).then((ocCategoryGroups) => {
-        this.updateCategoryGroup(ocCategoryGroups, categoryGroups).then((updatedGroups) => {
-          updatedGroups.map(item => item.categories = []);
-          const updatedSubCategories: Promise<Category>[] = flatten(categoryGroups.map((categoryGroup) =>
-            categoryGroup.categories.map((category) =>
-              this.updateCategory(category, ocCategoryGroups, categoryGroup.id))));
+          this.updateCategoryGroup(ocCategoryGroups, categoryGroups).then((updatedGroups) => {
 
-          Promise.all(updatedSubCategories).then((result) => {
-            const updatedResults = updatedGroups.map((group) => new CategoryGroupDTO({ ...group, categories: [] }));
-            result.map((updatedCategory) => updatedResults.map((updatedResultGroup) => {
-              if (updatedResultGroup.id === updatedCategory.categoryGroup.id) {
-                updatedResultGroup.categories.push(new CategoryDTO(updatedCategory));
-              }
-              return updatedResultGroup;
-            }));
+            _updatedGroups = updatedGroups;
 
-            resolve(updatedResults);
+            const promises: Promise<Category>[] =  flatten(categoryGroups.map((categoryGroup) =>
+              categoryGroup.categories.map((category) =>
+                this.updateCategory(category, ocCategoryGroups, categoryGroup.id))));
+            return Promise.all(promises);
+
+          }).then((result) => {
+              const updatedResults = _updatedGroups.map((group) => new CategoryGroupDTO({ ...group, categories: [] }));
+              result.map((updatedCategory) => updatedResults.map((updatedResultGroup) => {
+                if (updatedResultGroup.id === updatedCategory.categoryGroup.id) {
+                  updatedResultGroup.categories.push(new CategoryDTO(updatedCategory));
+                }
+                return updatedResultGroup;
+              }));
+
+              resolve(updatedResults);
           });
-        });
-
-      }).catch((reason) => reject(reason));
-    });
-  }
-
-  private updateCategory(category, ocCategoryGroups: CategoryGroup[], newCategoryId: string): Promise<Category> {
-    return new Promise((resolve, reject) => {
-      this.categoryRepositoryService.getCategoryById(category.id).then((ocCategory) => {
-        ocCategory = {
-          ...ocCategory,
-          name: category.name,
-          description: category.description,
-          order: category.order,
-        };
-        const parent = ocCategoryGroups.find((ocCategoryGroup) => ocCategoryGroup.id === newCategoryId);
-        if (parent) {
-          ocCategory = { ...ocCategory, categoryGroup: parent };
-        } else {
-          console.log('wut');
-          reject();
-        }
-        this.categoryRepositoryService.updateCategory(ocCategory.id, ocCategory).then(() => resolve(ocCategory));
-      });
-    });
-  }
-
-  private updateCategoryGroup(ocCategoryGroups: CategoryGroup[], groupsToPatch: CategoryGroupDTO[]): Promise<CategoryGroup[]> {
-    return new Promise((resolve, reject) => {
-      const promises = [];
-      for (let ocGroup of ocCategoryGroups) {
-        const groupToPatch = groupsToPatch.find(groupToPatch => groupToPatch.id === ocGroup.id);
-        if (groupToPatch) {
-          ocGroup = {
-            ...ocGroup,
-            name: groupToPatch.name,
-            description: groupToPatch.description,
-          };
-          promises.push(this.categoryGroupRepositoryService.updateGroup(ocGroup.id, ocGroup));
-        }
-      }
-      Promise.all(promises).then(() => {
-        resolve(ocCategoryGroups);
-      }).catch(e => reject(e));
+        }).catch((reason) => reject(reason));
     });
   }
 
@@ -144,6 +97,7 @@ export class CategoryGroupService {
     });
   }
 
+  // todo: Is an error in here, need to debug it
   createCategoryGroup(categoryGroup: CategoryGroupDTO): Promise<CategoryGroupDTO> {
     return new Promise((resolve, reject) => {
       let newCategoryGroup: CategoryGroupDTO;
@@ -165,4 +119,44 @@ export class CategoryGroupService {
     });
   }
 
+  private updateCategory(category, ocCategoryGroups: CategoryGroup[], newCategoryId: string): Promise<Category> {
+    return new Promise((resolve, reject) => {
+      this.categoryRepositoryService.getCategoryById(category.id).then((ocCategory) => {
+        ocCategory = {
+          ...ocCategory,
+          name: category.name,
+          description: category.description,
+          order: category.order,
+        };
+        const parent = ocCategoryGroups.find((ocCategoryGroup) => ocCategoryGroup.id === newCategoryId);
+
+        parent ? ocCategory = { ...ocCategory, categoryGroup: parent } : reject();
+
+        this.categoryRepositoryService.updateCategory(ocCategory.id, ocCategory).then(() => resolve(ocCategory));
+      });
+    });
+  }
+
+  // todo: Need to split this as shouldn't be looping over stuff to find it etc
+  private updateCategoryGroup(ocCategoryGroups: CategoryGroup[], groupsToPatch: CategoryGroupDTO[]): Promise<CategoryGroup[]> {
+    return new Promise((resolve, reject) => {
+      const promises: Promise<UpdateResult>[] = [];
+
+      for (let ocGroup of ocCategoryGroups) {
+        const groupToPatch = groupsToPatch.find(groupToPatch => groupToPatch.id === ocGroup.id);
+        if (groupToPatch) {
+          ocGroup = {
+            ...ocGroup,
+            name: groupToPatch.name,
+            description: groupToPatch.description,
+          };
+          promises.push(this.categoryGroupRepositoryService.updateGroup(ocGroup.id, ocGroup));
+        }
+      }
+
+      Promise.all(promises)
+        .then(() => resolve(ocCategoryGroups))
+        .catch(e => reject(e));
+    });
+  }
 }
