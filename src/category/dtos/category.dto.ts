@@ -21,9 +21,7 @@ export class CategoryDTO {
     this.id = category.id;
     this.name = category.name;
     this.categoryGroupId = category.categoryGroup.id;
-    this.order = category.id;
-    if (category.description) {
-      this.description = category.description;
-    }
+    this.order = category.order;
+    this.description = category?.description || null;
   }
 }

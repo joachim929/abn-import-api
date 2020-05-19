@@ -6,6 +6,20 @@ import { CategoryDTO } from '../category/dtos/category.dto';
 import { CategoryService } from '../category/category.service';
 import { CategoryRepositoryService } from '../category/category-repository/category-repository.service';
 import { Category } from '../category/category.entity';
+import { UpdateResult } from 'typeorm';
+import { flatten } from 'lodash';
+
+/**
+ * todo:
+ *    make generic functions for simple stuff like patching an entry
+ *    that can be re-usable instead of re-writing a lot of similar code
+ *    maybe also need to write something that only patches the found difference
+ *      - Should get original
+ *      - Compare to original? Or adjust original
+ *      - Return the changed result
+ *    Needs to be implemented for category and categoryGroup
+ *    Might also want to put in the same module
+ */
 
 @Injectable()
 export class CategoryGroupService {
@@ -42,63 +56,63 @@ export class CategoryGroupService {
 
   patchCategoryGroup(categoryGroup: CategoryGroupDTO) {
     return new Promise((resolve, reject) => {
-      // this.categoryGroupRepositoryService.getGroupById(categoryGroup.id).then((ocGroup: CategoryGroup) => {
-      //   ocGroup.name = categoryGroup.name;
-      //   ocGroup.description = categoryGroup.description;
-      //   this.categoryGroupRepositoryService.updateGroup(categoryGroup.id, ocGroup)
-      //     .then((response: UpdateResult) => resolve(response))
-      //     .catch(reason => reject(reason));
-      // });
+      this.categoryGroupRepositoryService.getGroupById(categoryGroup.id).then((ocGroup: CategoryGroup) => {
+        ocGroup.name = categoryGroup.name;
+        ocGroup.description = categoryGroup.description;
+        this.categoryGroupRepositoryService.updateGroup(categoryGroup.id, ocGroup)
+          .then((response: UpdateResult) => resolve(response))
+          .catch(reason => reject(reason));
+      });
       resolve();
     });
   }
 
-  patchCategoryGroups(categoryGroups: CategoryGroupDTO[]) {
+  patchCategoryGroups(categoryGroups: CategoryGroupDTO[]): Promise<CategoryGroupDTO[]> {
     return new Promise((resolve, reject) => {
-      const ocGroupPromises = categoryGroups.map((group) => {
-        return this.categoryGroupRepositoryService.getGroupById(group.id);
-      });
+      const ocGroupPromises = categoryGroups.map((group) => this.categoryGroupRepositoryService.getGroupById(group.id));
+
       Promise.all(ocGroupPromises).then((ocCategoryGroups) => {
         this.updateCategoryGroup(ocCategoryGroups, categoryGroups).then((updatedGroups) => {
           updatedGroups.map(item => item.categories = []);
-          const updatedSubCategories: Promise<Category>[] = [];
-          for (const categoryGroup of categoryGroups) {
-            for (const category of categoryGroup.categories) {
-              updatedSubCategories.push(new Promise((resolve, reject) => {
-                this.categoryRepositoryService.getCategoryById(category.id).then((ocCategory) => {
-                  ocCategory = {
-                    ...ocCategory, name: category.name, description: category.description, order: category.order,
-                  };
-                  const parent = ocCategoryGroups.find((ocCategoryGroup) => ocCategoryGroup.id === categoryGroup.id);
-                  if (parent) {
-                    ocCategory = { ...ocCategory, categoryGroup: parent };
-                  }
-                  this.categoryRepositoryService.updateCategory(ocCategory.id, ocCategory).then(() => resolve(ocCategory));
-                });
-              }));
-            }
-          }
+          const updatedSubCategories: Promise<Category>[] = flatten(categoryGroups.map((categoryGroup) =>
+            categoryGroup.categories.map((category) =>
+              this.updateCategory(category, ocCategoryGroups, categoryGroup.id))));
 
           Promise.all(updatedSubCategories).then((result) => {
-            for (const updatedCategory of result) {
-              for (const updatedGroup of updatedGroups) {
-                if (updatedGroup.id === updatedCategory.categoryGroup.id) {
-                  const temp = {
-                    id: updatedCategory.id,
-                    name: updatedCategory.name,
-                    description: updatedCategory.description,
-                    order: updatedCategory.order
-                  } as Category; // todo still need to fix returning the data
-                  updatedGroup.categories.push(temp);
-                  break;
-                }
+            const updatedResults = updatedGroups.map((group) => new CategoryGroupDTO({ ...group, categories: [] }));
+            result.map((updatedCategory) => updatedResults.map((updatedResultGroup) => {
+              if (updatedResultGroup.id === updatedCategory.categoryGroup.id) {
+                updatedResultGroup.categories.push(new CategoryDTO(updatedCategory));
               }
-            }
-            resolve(updatedGroups);
+              return updatedResultGroup;
+            }));
+
+            resolve(updatedResults);
           });
         });
 
       }).catch((reason) => reject(reason));
+    });
+  }
+
+  private updateCategory(category, ocCategoryGroups: CategoryGroup[], newCategoryId: string): Promise<Category> {
+    return new Promise((resolve, reject) => {
+      this.categoryRepositoryService.getCategoryById(category.id).then((ocCategory) => {
+        ocCategory = {
+          ...ocCategory,
+          name: category.name,
+          description: category.description,
+          order: category.order,
+        };
+        const parent = ocCategoryGroups.find((ocCategoryGroup) => ocCategoryGroup.id === newCategoryId);
+        if (parent) {
+          ocCategory = { ...ocCategory, categoryGroup: parent };
+        } else {
+          console.log('wut');
+          reject();
+        }
+        this.categoryRepositoryService.updateCategory(ocCategory.id, ocCategory).then(() => resolve(ocCategory));
+      });
     });
   }
 

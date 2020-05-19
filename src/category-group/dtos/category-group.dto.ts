@@ -1,6 +1,6 @@
 import { CategoryDTO } from '../../category/dtos/category.dto';
 import { CategoryGroup } from '../category-group.entity';
-import { ApiProperty, ApiPropertyOptional, getSchemaPath } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 export class CategoryGroupDTO {
   @ApiProperty()
@@ -21,12 +21,9 @@ export class CategoryGroupDTO {
   constructor(categoryGroup: CategoryGroup) {
     this.id = categoryGroup.id;
     this.name = categoryGroup.name;
-    if (categoryGroup.description) {
-      this.description = categoryGroup.description;
-    }
-
+    this.description = categoryGroup?.description || null;
     this.categories = [];
-    for (const category of categoryGroup.categories) {
+    for (const category of categoryGroup?.categories) {
       this.categories.push(new CategoryDTO(category));
     }
 

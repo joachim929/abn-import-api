@@ -24,7 +24,6 @@ export class CategoryGroupController {
     status: 401, description: 'Unauthorized', // When auth works
   })
   getAllWithCategories() {
-    console.log('getAllCategoryGroupsWithCategories');
     return this.service.getAllWithCategories().catch(reason => console.warn(reason));
   }
 
@@ -37,7 +36,6 @@ export class CategoryGroupController {
   })
   @ApiBody({ type: [CategoryGroupDTO] })
   patchMultiple(@Body() categories: [CategoryGroupDTO]) {
-    console.log('patchMultiple');
     return this.service.patchCategoryGroups(categories).catch(reason => console.warn(reason));
   }
 
