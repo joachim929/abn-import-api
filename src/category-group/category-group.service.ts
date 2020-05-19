@@ -59,6 +59,13 @@ export class CategoryGroupService {
     });
   }
 
+  /**
+   * todo:
+   *    should loop over categoryGroups
+   *      - patch each group in a separate function
+   *      - patch each category in a separate function
+   *      - return updated results
+   */
   patchCategoryGroups(categoryGroups: CategoryGroupDTO[]): Promise<CategoryGroupDTO[]> {
     let _updatedGroups = [];
     return new Promise((resolve, reject) => {
