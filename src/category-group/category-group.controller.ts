@@ -50,31 +50,6 @@ export class CategoryGroupController {
     return this.service.createCategoryGroup(categoryGroup);
   }
 
-  @Get(':id')
-  @ApiOperation({
-    operationId: 'getCategoryGroupById',
-  })
-  @ApiResponse({
-    status: 200, description: 'Found records', type: CategoryGroupDTO
-  })
-  @ApiResponse({
-    status: 204, description: 'No content'
-  })
-  @ApiResponse({
-    status: 401, description: 'Unauthorized', // When auth works
-  })
-  get(@Param() params) {
-    return this.service.getCategoryGroup(params.id);
-  }
-
-  @Patch(':id')
-  @ApiOperation({
-    operationId: 'patchCategoryGroup',
-  })
-  patch(@Body() categoryGroup: CategoryGroupDTO) {
-    return this.service.patchCategoryGroup(categoryGroup);
-  }
-
   @Delete(':id')
   @ApiOperation({
     operationId: 'deleteCategoryGroup',

@@ -1,7 +1,7 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CategoryGroup } from '../category-group.entity';
-import { DeepPartial, DeleteResult, In, Repository, SaveOptions, UpdateResult } from 'typeorm';
+import { DeepPartial, DeleteResult, Repository, SaveOptions, UpdateResult } from 'typeorm';
 
 @Injectable()
 export class CategoryGroupRepositoryService {
@@ -12,13 +12,6 @@ export class CategoryGroupRepositoryService {
 
   async getByIds(ids: string[]): Promise<CategoryGroup[]> {
     return await this.repository.findByIds(ids).catch((reason) => {
-      console.log(reason);
-      throw new HttpException(reason.message, HttpStatus.NOT_FOUND);
-    });
-  }
-
-  async getGroupById(id: string): Promise<CategoryGroup> {
-    return await this.repository.findOneOrFail(id).catch((reason) => {
       throw new HttpException(reason.message, HttpStatus.NOT_FOUND);
     });
   }
@@ -33,10 +26,14 @@ export class CategoryGroupRepositoryService {
   }
 
   async updateGroup(id: string, group: CategoryGroup): Promise<UpdateResult> {
-    return await this.repository.update(id, group);
+    return await this.repository.update(id, group).catch((reason) => {
+      throw new HttpException(reason.message, HttpStatus.BAD_REQUEST);
+    });
   }
 
   async deleteGroup(id: string): Promise<DeleteResult> {
-    return await this.repository.delete(id);
+    return await this.repository.delete(id).catch((reason) => {
+      throw new HttpException(reason.message, HttpStatus.NOT_FOUND);
+    });
   }
 }
