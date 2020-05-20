@@ -1,8 +1,7 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CategoryGroup } from '../category-group.entity';
 import { DeepPartial, DeleteResult, In, Repository, SaveOptions, UpdateResult } from 'typeorm';
-import { CategoryGroupDTO } from '../dtos/category-group.dto';
 
 @Injectable()
 export class CategoryGroupRepositoryService {
@@ -11,18 +10,17 @@ export class CategoryGroupRepositoryService {
   ) {
   }
 
-  async getGroups(): Promise<CategoryGroup[]> {
-    return await this.repository.find();
-  }
-
   async getByIds(ids: string[]): Promise<CategoryGroup[]> {
-    return await this.repository.find({
-      where: ids.map(id => ({ id })),
+    return await this.repository.findByIds(ids).catch((reason) => {
+      console.log(reason);
+      throw new HttpException(reason.message, HttpStatus.NOT_FOUND);
     });
   }
 
   async getGroupById(id: string): Promise<CategoryGroup> {
-    return await this.repository.findOneOrFail(id);
+    return await this.repository.findOneOrFail(id).catch((reason) => {
+      throw new HttpException(reason.message, HttpStatus.NOT_FOUND);
+    });
   }
 
   async getGroupsWithCategories(): Promise<CategoryGroup[]> {

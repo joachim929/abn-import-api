@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CategoryGroup } from './category-group.entity';
 import { CategoryGroupRepositoryService } from './category-group-repository/category-group-repository.service';
 import { CategoryGroupDTO } from './dtos/category-group.dto';
@@ -34,7 +34,7 @@ export class CategoryGroupService {
     return new Promise((resolve, reject) => {
       this.categoryGroupRepositoryService.getGroupById(id)
         .then((response: CategoryGroup) => resolve(new CategoryGroupDTO(response)))
-        .catch(reason => reject(reason));
+        .catch(reject);
     });
   }
 
@@ -42,7 +42,7 @@ export class CategoryGroupService {
     return new Promise((resolve, reject) => {
       this.categoryGroupRepositoryService.getGroupsWithCategories()
         .then((response) => resolve(response))
-        .catch(reason => reject(reason));
+        .catch(reject);
     });
   }
 
@@ -53,7 +53,7 @@ export class CategoryGroupService {
         ocGroup.description = categoryGroup.description;
         this.categoryGroupRepositoryService.updateGroup(categoryGroup.id, ocGroup)
           .then((response: UpdateResult) => resolve(response))
-          .catch(reason => reject(reason));
+          .catch(reject);
       });
       resolve();
     });
@@ -92,7 +92,7 @@ export class CategoryGroupService {
 
               resolve(updatedResults);
           });
-        }).catch((reason) => reject(reason));
+        }).catch(reject);
     });
   }
 
@@ -100,7 +100,7 @@ export class CategoryGroupService {
     return new Promise((resolve, reject) => {
       this.categoryGroupRepositoryService.deleteGroup(id).then((response) => {
         resolve(response);
-      }).catch(reason => reject(reason));
+      }).catch(reject);
     });
   }
 
@@ -122,7 +122,7 @@ export class CategoryGroupService {
           });
         }
         resolve(new CategoryGroupDTO(response));
-      }).catch(reason => reject(reason));
+      }).catch(reject);
     });
   }
 
@@ -140,7 +140,7 @@ export class CategoryGroupService {
         parent ? ocCategory = { ...ocCategory, categoryGroup: parent } : reject();
 
         this.categoryRepositoryService.updateCategory(ocCategory.id, ocCategory).then(() => resolve(ocCategory));
-      });
+      }).catch(reject);
     });
   }
 
@@ -163,7 +163,7 @@ export class CategoryGroupService {
 
       Promise.all(promises)
         .then(() => resolve(ocCategoryGroups))
-        .catch(e => reject(e));
+        .catch(reject);
     });
   }
 }

@@ -24,7 +24,7 @@ export class CategoryGroupController {
     status: 401, description: 'Unauthorized', // When auth works
   })
   getAllWithCategories() {
-    return this.service.getAllWithCategories().catch(reason => console.warn(reason));
+    return this.service.getAllWithCategories();
   }
 
   @Patch()
@@ -36,7 +36,7 @@ export class CategoryGroupController {
   })
   @ApiBody({ type: [CategoryGroupDTO] })
   patchMultiple(@Body() categories: [CategoryGroupDTO]) {
-    return this.service.patchCategoryGroups(categories).catch(reason => console.warn(reason));
+    return this.service.patchCategoryGroups(categories);
   }
 
   @Post()
@@ -47,7 +47,7 @@ export class CategoryGroupController {
     status: 200, type: CategoryGroupDTO
   })
   create(@Body() categoryGroup: CategoryGroupDTO) {
-    return this.service.createCategoryGroup(categoryGroup).catch(reason => console.warn(reason));
+    return this.service.createCategoryGroup(categoryGroup);
   }
 
   @Get(':id')
@@ -64,7 +64,7 @@ export class CategoryGroupController {
     status: 401, description: 'Unauthorized', // When auth works
   })
   get(@Param() params) {
-    return this.service.getCategoryGroup(params.id).catch(reason => console.warn(reason));
+    return this.service.getCategoryGroup(params.id);
   }
 
   @Patch(':id')
@@ -72,7 +72,7 @@ export class CategoryGroupController {
     operationId: 'patchCategoryGroup',
   })
   patch(@Body() categoryGroup: CategoryGroupDTO) {
-    return this.service.patchCategoryGroup(categoryGroup).catch(reason => console.warn(reason));
+    return this.service.patchCategoryGroup(categoryGroup);
   }
 
   @Delete(':id')
@@ -80,7 +80,7 @@ export class CategoryGroupController {
     operationId: 'deleteCategoryGroup',
   })
   delete(@Param() params) {
-    return this.service.deleteCategoryGroup(params.id).catch(reason => console.warn(reason));
+    return this.service.deleteCategoryGroup(params.id);
   }
 
 }
