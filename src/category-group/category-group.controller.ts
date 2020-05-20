@@ -32,7 +32,7 @@ export class CategoryGroupController {
     operationId: 'patchMultiple'
   })
   @ApiResponse({
-    status: 200
+    status: 200, type: [CategoryGroupDTO]
   })
   @ApiBody({ type: [CategoryGroupDTO] })
   patchMultiple(@Body() categories: [CategoryGroupDTO]) {

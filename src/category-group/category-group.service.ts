@@ -28,11 +28,10 @@ export class CategoryGroupService {
     return new Promise((resolve, reject) => {
       this.categoryGroupRepositoryService.getByIds(categoryGroups.map(group => group.id))
         .then((ocCategoryGroups) => {
-          Promise.all(categoryGroups.map((categoryGroup) => {
+          return Promise.all(categoryGroups.map((categoryGroup) => {
             const ocGroup = ocCategoryGroups.find((ocGroup) => categoryGroup.id === ocGroup.id);
             return this.updateCategoryGroup(categoryGroup, ocGroup);
-          }))
-            .then(resolve)
+          })).then(resolve)
             .catch(reject);
         }).catch(reject);
     });
