@@ -4,7 +4,7 @@ import {
   PrimaryGeneratedColumn,
   CreateDateColumn,
   UpdateDateColumn,
-  OneToMany, JoinColumn, ManyToOne,
+  OneToMany,
 } from 'typeorm';
 import { Category } from '../category/category.entity';
 

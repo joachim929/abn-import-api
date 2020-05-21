@@ -1,6 +1,6 @@
 import { Category } from '../category.entity';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsBoolean, IsDate, IsNumber, IsOptional, IsString, MaxLength, MinLength, validateSync } from 'class-validator';
+import { IsNumber, IsOptional, IsString, MaxLength, MinLength, validateSync } from 'class-validator';
 
 export class CategoryDTO {
   @ApiProperty()
@@ -9,11 +9,13 @@ export class CategoryDTO {
 
   @ApiProperty()
   @IsString()
+  @MinLength(3)
+  @MaxLength(255)
   name: string;
 
   @ApiPropertyOptional()
-  @IsOptional()
   @IsString()
+  @IsOptional()
   description?: string;
 
   @ApiProperty()
@@ -30,6 +32,14 @@ export class CategoryDTO {
     this.categoryGroupId = category.categoryGroup.id;
     this.order = category.order;
     this.description = category?.description || null;
+    this.validate();
+  }
+
+  validate() {
+    const errors = validateSync(this);
+    if (errors.length > 0) {
+      console.log(errors);
+    }
   }
 }
 
@@ -47,7 +57,6 @@ export class CreateCategoryDTO {
 
   @ApiProperty()
   @IsNumber()
-  @IsOptional()
   order: number;
 
   constructor(category: CreateCategoryDTO) {

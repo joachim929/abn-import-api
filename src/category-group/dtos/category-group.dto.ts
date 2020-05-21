@@ -42,7 +42,7 @@ export class CategoryGroupDTO {
     this.id = categoryGroup.id;
     this.name = categoryGroup.name;
     this.description = categoryGroup?.description || null;
-    this.categories = categoryGroup?.categories.map(category => new CategoryDTO(category));
+    this.categories = categoryGroup?.categories.map(category => new CategoryDTO({...category, categoryGroup}));
     this.validate();
   }
 

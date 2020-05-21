@@ -1,9 +1,8 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { CategoryGroup } from './category-group.entity';
 import { CategoryGroupRepositoryService } from './category-group-repository/category-group-repository.service';
 import { CategoryGroupDTO, CreateCategoryGroupDTO } from './dtos/category-group.dto';
 import { CategoryDTO } from '../category/dtos/category.dto';
-import { CategoryService } from '../category/category.service';
 import { CategoryRepositoryService } from '../category/category-repository/category-repository.service';
 import { Category } from '../category/category.entity';
 
@@ -63,16 +62,15 @@ export class CategoryGroupService {
 
   private updateCategoryGroup(inputGroup: CategoryGroupDTO, ocGroup: CategoryGroup): Promise<CategoryGroupDTO> {
     return new Promise((resolve, reject) => {
-      this.checkForValue(ocGroup, `Category group "${inputGroup.name}" not found`, HttpStatus.NOT_FOUND);
-      this.checkForValue(inputGroup, 'Invalid patch params', HttpStatus.BAD_REQUEST);
+      const validatedInputGroup = new CategoryGroupDTO((inputGroup as unknown) as CategoryGroup);
 
-      ocGroup = { ...ocGroup, name: inputGroup.name, description: inputGroup.description };
+      ocGroup = { ...ocGroup, name: validatedInputGroup.name, description: validatedInputGroup.description };
 
       this.categoryGroupRepositoryService.updateGroup(ocGroup.id, ocGroup)
         .then(() =>
-          this.categoryRepositoryService.getCategoriesByIds(inputGroup.categories.map(category => category.id)))
+          this.categoryRepositoryService.getCategoriesByIds(validatedInputGroup.categories.map(category => category.id)))
         .then((ocCategories: Category[]) =>
-          Promise.all(inputGroup.categories.map(category =>
+          Promise.all(validatedInputGroup.categories.map(category =>
             this.updateCategory(category, ocGroup, ocCategories.find(ocCategory => ocCategory.id === category.id)))))
         .then((categories) => resolve(new CategoryGroupDTO({ ...ocGroup, categories })))
         .catch(reject);
@@ -82,7 +80,6 @@ export class CategoryGroupService {
 
   private updateCategory(inputCategory: CategoryDTO, ocGroup: CategoryGroup, ocCategory: Category): Promise<Category> {
     return new Promise((resolve, reject) => {
-      this.checkForValue(ocCategory, `Category "${inputCategory.name}" not found`, HttpStatus.NOT_FOUND);
 
       ocCategory = {
         ...ocCategory,
@@ -96,12 +93,5 @@ export class CategoryGroupService {
         .then(() => resolve(ocCategory))
         .catch(reject);
     });
-  }
-
-  // todo Probably should put this in a base service
-  private checkForValue(value: any, errorMessage: string, status: HttpStatus) {
-    if (!value) {
-      throw new HttpException(errorMessage, status)
-    }
   }
 }
