@@ -1,7 +1,7 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common';
 import { CategoryGroupService } from './category-group.service';
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { CategoryGroupDTO } from './dtos/category-group.dto';
+import { CategoryGroupDTO, CreateCategoryGroupDTO } from './dtos/category-group.dto';
 
 @ApiTags('CategoryGroupApi')
 @Controller('category-group')
@@ -46,7 +46,8 @@ export class CategoryGroupController {
   @ApiResponse({
     status: 200, type: CategoryGroupDTO
   })
-  create(@Body() categoryGroup: CategoryGroupDTO) {
+  @ApiBody({type: CreateCategoryGroupDTO})
+  create(@Body() categoryGroup: CreateCategoryGroupDTO) {
     return this.service.createCategoryGroup(categoryGroup);
   }
 

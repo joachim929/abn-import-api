@@ -1,11 +1,12 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CategoryGroup } from './category-group.entity';
 import { CategoryGroupRepositoryService } from './category-group-repository/category-group-repository.service';
-import { CategoryGroupDTO } from './dtos/category-group.dto';
+import { CategoryGroupDTO, CreateCategoryGroupDTO } from './dtos/category-group.dto';
 import { CategoryDTO } from '../category/dtos/category.dto';
 import { CategoryService } from '../category/category.service';
 import { CategoryRepositoryService } from '../category/category-repository/category-repository.service';
 import { Category } from '../category/category.entity';
+import { validate, ValidationError } from 'class-validator';
 
 @Injectable()
 export class CategoryGroupService {
@@ -45,23 +46,19 @@ export class CategoryGroupService {
     });
   }
 
-  createCategoryGroup(categoryGroup: CategoryGroupDTO): Promise<CategoryGroupDTO> {
+  createCategoryGroup(categoryGroup: CreateCategoryGroupDTO): Promise<CategoryGroupDTO> {
     return new Promise((resolve, reject) => {
-      let newCategoryGroup: CategoryGroupDTO;
-      this.categoryGroupRepositoryService.createGroup(categoryGroup).then((response: CategoryGroup) => {
-        newCategoryGroup = { ...response, categories: [] };
+      const validatedCategoryGroup = new CreateCategoryGroupDTO(categoryGroup);
 
-        if (categoryGroup.categories.length > 0) {
-          const promises = [];
-          categoryGroup.categories.map((category: CategoryDTO) => {
-            const newCategory = { ...category, categoryGroup: response };
-            promises.push(this.categoryService.createCategory(newCategory));
-          });
-          Promise.all(promises).then((response) => {
-            response.map(item => newCategoryGroup.categories.push(item));
-          });
-        }
-        resolve(new CategoryGroupDTO(response));
+      this.categoryGroupRepositoryService.createGroup(validatedCategoryGroup).then((createdCategoryGroup) => {
+
+        const promises = validatedCategoryGroup.categories.map((category) =>
+          this.categoryRepositoryService.createCategory({...category, categoryGroup: createdCategoryGroup}));
+
+        Promise.all(promises).then((createdCategories) => {
+          resolve(new CategoryGroupDTO({...createdCategoryGroup, categories: createdCategories}));
+        });
+
       }).catch(reject);
     });
   }
@@ -103,6 +100,7 @@ export class CategoryGroupService {
     });
   }
 
+  // todo Probably should put this in a base service
   private checkForValue(value: any, errorMessage: string, status: HttpStatus) {
     if (!value) {
       throw new HttpException(errorMessage, status)
