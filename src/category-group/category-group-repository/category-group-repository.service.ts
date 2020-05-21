@@ -33,7 +33,7 @@ export class CategoryGroupRepositoryService {
 
   async deleteGroup(id: string): Promise<DeleteResult> {
     return await this.repository.delete(id).catch((reason) => {
-      throw new HttpException(reason.message, HttpStatus.NOT_FOUND);
+      throw new HttpException(reason.message, HttpStatus.BAD_REQUEST);
     });
   }
 }

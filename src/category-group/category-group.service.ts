@@ -6,14 +6,12 @@ import { CategoryDTO } from '../category/dtos/category.dto';
 import { CategoryService } from '../category/category.service';
 import { CategoryRepositoryService } from '../category/category-repository/category-repository.service';
 import { Category } from '../category/category.entity';
-import { validate, ValidationError } from 'class-validator';
 
 @Injectable()
 export class CategoryGroupService {
   constructor(
     private categoryGroupRepositoryService: CategoryGroupRepositoryService,
     private categoryRepositoryService: CategoryRepositoryService,
-    private categoryService: CategoryService,
   ) {
   }
 
@@ -38,10 +36,10 @@ export class CategoryGroupService {
     });
   }
 
-  deleteCategoryGroup(id: string) {
+  deleteCategoryGroup(id: string): Promise<void> {
     return new Promise((resolve, reject) => {
-      this.categoryGroupRepositoryService.deleteGroup(id).then((response) => {
-        resolve(response);
+      this.categoryGroupRepositoryService.deleteGroup(id).then(() => {
+        resolve();
       }).catch(reject);
     });
   }

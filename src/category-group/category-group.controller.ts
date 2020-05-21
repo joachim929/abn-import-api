@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpException, Param, Patch, Post } from '@nestjs/common';
 import { CategoryGroupService } from './category-group.service';
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { CategoryGroupDTO, CreateCategoryGroupDTO } from './dtos/category-group.dto';
@@ -8,7 +8,6 @@ import { CategoryGroupDTO, CreateCategoryGroupDTO } from './dtos/category-group.
 export class CategoryGroupController {
   constructor(private service: CategoryGroupService) {
   }
-
 
   @Get()
   @ApiOperation({
@@ -55,8 +54,14 @@ export class CategoryGroupController {
   @ApiOperation({
     operationId: 'deleteCategoryGroup',
   })
-  delete(@Param() params) {
-    return this.service.deleteCategoryGroup(params.id);
+  @ApiResponse({
+    status: 204
+  })
+  @ApiResponse({
+    status: 400, type: HttpException
+  })
+  delete(@Param('id') id: string) {
+    return this.service.deleteCategoryGroup(id);
   }
 
 }
