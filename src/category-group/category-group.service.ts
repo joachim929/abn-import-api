@@ -14,11 +14,14 @@ export class CategoryGroupService {
   ) {
   }
 
-  getAllWithCategories() {
+  getAllWithCategories(): Promise<CategoryGroupDTO[]> {
     return new Promise((resolve, reject) => {
       this.categoryGroupRepositoryService.getGroupsWithCategories()
-        .then((response) => resolve(response))
-        .catch(reject);
+        .then((categoryGroups) => resolve(categoryGroups.map(group => new CategoryGroupDTO(group))))
+        .catch((reason) => {
+              console.log(reason);
+              reject(reason);
+            });
     });
   }
 
@@ -30,8 +33,14 @@ export class CategoryGroupService {
             const ocGroup = ocCategoryGroups.find((ocGroup) => categoryGroup.id === ocGroup.id);
             return this.updateCategoryGroup(categoryGroup, ocGroup);
           })).then(resolve)
-            .catch(reject);
-        }).catch(reject);
+            .catch((reason) => {
+              console.log(reason);
+              reject(reason);
+            });
+        }).catch((reason) => {
+              console.log(reason);
+              reject(reason);
+            });
     });
   }
 
@@ -39,7 +48,10 @@ export class CategoryGroupService {
     return new Promise((resolve, reject) => {
       this.categoryGroupRepositoryService.deleteGroup(id).then(() => {
         resolve();
-      }).catch(reject);
+      }).catch((reason) => {
+              console.log(reason);
+              reject(reason);
+            });
     });
   }
 
@@ -56,7 +68,10 @@ export class CategoryGroupService {
           resolve(new CategoryGroupDTO({...createdCategoryGroup, categories: createdCategories}));
         });
 
-      }).catch(reject);
+      }).catch((reason) => {
+              console.log(reason);
+              reject(reason);
+            });
     });
   }
 
@@ -73,7 +88,10 @@ export class CategoryGroupService {
           Promise.all(validatedInputGroup.categories.map(category =>
             this.updateCategory(category, ocGroup, ocCategories.find(ocCategory => ocCategory.id === category.id)))))
         .then((categories) => resolve(new CategoryGroupDTO({ ...ocGroup, categories })))
-        .catch(reject);
+        .catch((reason) => {
+              console.log(reason);
+              reject(reason);
+            });
     });
 
   }
@@ -91,7 +109,10 @@ export class CategoryGroupService {
 
       return this.categoryRepositoryService.updateCategory(ocCategory.id, ocCategory)
         .then(() => resolve(ocCategory))
-        .catch(reject);
+        .catch((reason) => {
+              console.log(reason);
+              reject(reason);
+            });
     });
   }
 }

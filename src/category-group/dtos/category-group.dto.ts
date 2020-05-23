@@ -43,6 +43,7 @@ export class CategoryGroupDTO {
     this.name = categoryGroup.name;
     this.description = categoryGroup?.description || null;
     this.categories = categoryGroup?.categories.map(category => new CategoryDTO({...category, categoryGroup}));
+    this.categories = [...this.categories].sort((a, b) => a.order - b.order);
     this.validate();
   }
 
