@@ -31,11 +31,15 @@ export class CategoryService {
     });
   }
 
-  patchCategory(category: Category) {
+  patchCategory(category: CategoryDTO) {
     return new Promise((resolve, reject) => {
-      this.repositoryService.updateCategory(category.id, category).then((response: UpdateResult) => {
-        resolve(response);
-      }).catch(reason => reject(reason));
+      const validatedCategory = new CategoryDTO((category as unknown) as Category);
+      this.repositoryService.getCategoryById(category.id).then((ocCategory) => {
+        ocCategory = {...ocCategory, description: validatedCategory.description, name: validatedCategory.name, order: validatedCategory.order};
+        this.repositoryService.updateCategory(ocCategory.id, ocCategory).then((response: UpdateResult) => {
+          resolve(new CategoryDTO(ocCategory));
+        }).catch(reason => reject(reason));
+      });
     });
   }
 

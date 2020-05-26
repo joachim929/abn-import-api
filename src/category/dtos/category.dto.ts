@@ -19,17 +19,12 @@ export class CategoryDTO {
   description?: string;
 
   @ApiProperty()
-  @IsString()
-  categoryGroupId: string;
-
-  @ApiProperty()
   @IsNumber()
   order: number;
 
   constructor(category: Category) {
     this.id = category.id;
     this.name = category.name;
-    this.categoryGroupId = category.categoryGroup.id;
     this.order = category.order;
     this.description = category?.description || null;
     this.validate();

@@ -24,6 +24,17 @@ export class CategoryController {
     return this.service.getAll();
   }
 
+  @Patch()
+  @ApiOperation({
+    operationId: 'patchCategory',
+  })
+  @ApiResponse({
+    status: 200, type: CategoryDTO
+  })
+  patch(@Body() category: CategoryDTO) {
+    return this.service.patchCategory(category);
+  }
+
   @Get(':id')
   @ApiOperation({
     operationId: 'getCategoryById',
@@ -33,17 +44,6 @@ export class CategoryController {
   })
   get(@Param() params) {
     return this.service.getCategory(params.id);
-  }
-
-  @Patch(':id')
-  @ApiOperation({
-    operationId: 'patchCategory',
-  })
-  @ApiResponse({
-    status: 204
-  })
-  patch(@Body() category: Category) {
-    return this.service.patchCategory(category);
   }
 
   @Delete(':id')
