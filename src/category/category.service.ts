@@ -7,7 +7,7 @@ import { CategoryDTO } from './dtos/category.dto';
 @Injectable()
 export class CategoryService {
   constructor(
-    private repositoryService: CategoryRepositoryService,
+    private repositoryService: CategoryRepositoryService
   ) {
   }
 
@@ -55,7 +55,8 @@ export class CategoryService {
     });
   }
 
-  createCategory(category: CategoryDTO): Promise<CategoryDTO> {
+  // todo: Get parent first, then set parent
+  createCategory(category: CategoryDTO, parentId: string): Promise<CategoryDTO> {
     return new Promise((resolve, reject) => {
       this.repositoryService.createCategory(category).then((response: Category) => {
         resolve(new CategoryDTO(response));

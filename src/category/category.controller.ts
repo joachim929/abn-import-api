@@ -57,14 +57,16 @@ export class CategoryController {
     return this.service.deleteCategory(params.id);
   }
 
-  @Post()
+  @Post(':parentId')
   @ApiOperation({
     operationId: 'createCategory',
   })
   @ApiResponse({
     status: 201, type: CategoryDTO
   })
-  create(@Body() category: CategoryDTO) {
-    return this.service.createCategory(category);
+  create(@Param('parentId') parentId: string, @Body() category: CategoryDTO) {
+    console.log(parentId);
+    return this.service.createCategory(category, parentId);
   }
+
 }

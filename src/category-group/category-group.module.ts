@@ -12,7 +12,11 @@ import { CategoryService } from '../category/category.service';
 @Module({
   imports: [TypeOrmModule.forFeature([CategoryGroup]), CategoryModule],
   controllers: [CategoryGroupController],
-  providers: [CategoryGroupService, CategoryGroupRepositoryService, CategoryService],
+  providers: [
+    CategoryGroupService,
+    CategoryGroupRepositoryService,
+    CategoryService
+  ],
 })
 export class CategoryGroupModule {
 }

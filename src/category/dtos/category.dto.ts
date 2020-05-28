@@ -1,6 +1,7 @@
 import { Category } from '../category.entity';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsNumber, IsOptional, IsString, MaxLength, MinLength, validateSync } from 'class-validator';
+import { HttpException, HttpStatus } from '@nestjs/common';
 
 export class CategoryDTO {
   @ApiProperty()
@@ -33,7 +34,7 @@ export class CategoryDTO {
   validate() {
     const errors = validateSync(this);
     if (errors.length > 0) {
-      console.log(errors);
+      throw new HttpException(errors, HttpStatus.BAD_REQUEST);
     }
   }
 }
@@ -64,7 +65,7 @@ export class CreateCategoryDTO {
   validate() {
     const errors = validateSync(this);
     if (errors.length > 0) {
-      console.log(errors);
+      throw new HttpException(errors, HttpStatus.BAD_REQUEST);
     }
   }
 }
