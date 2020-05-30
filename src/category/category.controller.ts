@@ -53,8 +53,8 @@ export class CategoryController {
   @ApiResponse({
     status: 204
   })
-  delete(@Param() params) {
-    return this.service.deleteCategory(params.id);
+  delete(@Param('id') id: number) {
+    return this.service.deleteCategory(id);
   }
 
   @Post(':parentId')
