@@ -1,5 +1,5 @@
 import { Body, Controller, Delete, Get, HttpException, Param, Patch, Post } from '@nestjs/common';
-import { CategoryGroupService } from './category-group.service';
+import { CategoryGroupService } from './services/category-group.service';
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { CategoryGroupDTO, CreateCategoryGroupDTO } from './dtos/category-group.dto';
 

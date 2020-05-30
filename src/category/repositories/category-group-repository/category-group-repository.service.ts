@@ -1,6 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { CategoryGroup } from '../category-group.entity';
+import { CategoryGroup } from '../../category-group.entity';
 import { DeepPartial, DeleteResult, Repository, SaveOptions, UpdateResult } from 'typeorm';
 
 @Injectable()
@@ -14,6 +14,12 @@ export class CategoryGroupRepositoryService {
     return await this.repository.findByIds(ids).catch((reason) => {
       throw new HttpException(reason.message, HttpStatus.NOT_FOUND);
     });
+  }
+
+  async findOneById(id: string): Promise<CategoryGroup> {
+    return await this.repository.findOneOrFail({where: {id}}).catch((reason) => {
+      throw new HttpException(reason.message, HttpStatus.NOT_FOUND);
+    })
   }
 
   async getGroupsWithCategories(): Promise<CategoryGroup[]> {

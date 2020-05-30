@@ -1,4 +1,4 @@
-import { CategoryDTO, CreateCategoryDTO } from '../../category/dtos/category.dto';
+import { CategoryDTO, CreateCategoryDTO } from './category.dto';
 import { CategoryGroup } from '../category-group.entity';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import {

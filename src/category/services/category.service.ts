@@ -1,13 +1,15 @@
 import { Injectable } from '@nestjs/common';
-import { CategoryRepositoryService } from './category-repository/category-repository.service';
-import { Category } from './category.entity';
+import { CategoryRepositoryService } from '../repositories/category-repository/category-repository.service';
+import { Category } from '../category.entity';
 import { DeleteResult, UpdateResult } from 'typeorm';
-import { CategoryDTO } from './dtos/category.dto';
+import { CategoryDTO, CreateCategoryDTO } from '../dtos/category.dto';
+import { CategoryGroupRepositoryService } from '../repositories/category-group-repository/category-group-repository.service';
 
 @Injectable()
 export class CategoryService {
   constructor(
-    private repositoryService: CategoryRepositoryService
+    private repositoryService: CategoryRepositoryService,
+    private categoryGroupRepositoryService: CategoryGroupRepositoryService
   ) {
   }
 
@@ -56,11 +58,14 @@ export class CategoryService {
   }
 
   // todo: Get parent first, then set parent
-  createCategory(category: CategoryDTO, parentId: string): Promise<CategoryDTO> {
+  createCategory(category: CreateCategoryDTO, parentId: string): Promise<CategoryDTO> {
     return new Promise((resolve, reject) => {
-      this.repositoryService.createCategory(category).then((response: Category) => {
-        resolve(new CategoryDTO(response));
-      }).catch(reason => reject(reason));
+      category = new CreateCategoryDTO(category);
+      this.categoryGroupRepositoryService.findOneById(parentId).then((parent) => {
+        this.repositoryService.createCategory({...category, categoryGroup: parent}).then((response: Category) => {
+          resolve(new CategoryDTO(response));
+        }).catch(reject);
+      }).catch(reject);
     });
   }
 }

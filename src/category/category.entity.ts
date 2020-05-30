@@ -7,7 +7,7 @@ import {
   ManyToOne,
   JoinColumn,
 } from 'typeorm';
-import { CategoryGroup } from '../category-group/category-group.entity';
+import { CategoryGroup } from './category-group.entity';
 
 /**
  * Need to add ordering to this

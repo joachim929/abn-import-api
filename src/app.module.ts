@@ -5,7 +5,6 @@ import { CategoryModule } from './category/category.module';
 import { RulesModule } from './rules/rules.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Connection } from 'typeorm';
-import { CategoryGroupModule } from './category-group/category-group.module';
 import { AmountModule } from './amount/amount.module';
 import { DescriptionModule } from './description/description.module';
 import { TransferModule } from './transfer/transfer.module';
@@ -31,7 +30,6 @@ export function DatabaseOrmModule(): DynamicModule {
     }),
     CategoryModule,
     RulesModule,
-    CategoryGroupModule,
     AmountModule,
     DescriptionModule,
     TransferModule,

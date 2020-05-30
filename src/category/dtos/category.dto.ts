@@ -2,6 +2,8 @@ import { Category } from '../category.entity';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsNumber, IsOptional, IsString, MaxLength, MinLength, validateSync } from 'class-validator';
 import { HttpException, HttpStatus } from '@nestjs/common';
+import { CategoryGroupDTO } from './category-group.dto';
+import { Type } from 'class-transformer';
 
 export class CategoryDTO {
   @ApiProperty()
@@ -52,13 +54,21 @@ export class CreateCategoryDTO {
   description?: string;
 
   @ApiProperty()
+  @IsOptional()
   @IsNumber()
   order: number;
+
+  @ApiPropertyOptional({
+    type: CategoryGroupDTO,
+  })
+  @IsOptional()
+  @Type(() => CategoryGroupDTO)
+  parent?: CategoryGroupDTO;
 
   constructor(category: CreateCategoryDTO) {
     this.name = category.name;
     this.description = category.description || null;
-    this.order = category.order;
+    this.order = category?.order || 0;
     this.validate();
   }
 
