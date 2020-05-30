@@ -2,20 +2,13 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, UpdateResult } from 'typeorm';
 import { TransferMutation } from '../../entities/transfer-mutation.entity';
+import { TransferListParams } from '../../dtos/transfer-list-params.dto';
 
 @Injectable()
 export class TransferMutationRepositoryService {
   constructor(
     @InjectRepository(TransferMutation) private repository: Repository<TransferMutation>,
   ) {
-  }
-
-  async getOnePlain(id: number, active = true): Promise<TransferMutation> {
-    return await this.repository.findOneOrFail({
-      where: { id, active }
-    }).catch(reason => {
-      throw new HttpException(reason, HttpStatus.BAD_REQUEST);
-    });
   }
 
   async getOne(id: number, active = true, children = true, transfer = true): Promise<TransferMutation> {
@@ -27,9 +20,9 @@ export class TransferMutationRepositoryService {
       relations.push('transfer');
     }
 
-    let where: any = {id};
+    let where: any = { id };
     if (active === true) {
-      where = {id, active};
+      where = { id, active };
     }
     return await this.repository.findOneOrFail({
       where: where,
@@ -59,17 +52,26 @@ export class TransferMutationRepositoryService {
     return await query.getRawOne();
   }
 
-  async getMutations(id?: number): Promise<TransferMutation[]> {
-    return await this.repository.find(id ? { where: { id, active: true } } : null)
-      .catch(reason => {
-        throw new HttpException(reason, HttpStatus.INTERNAL_SERVER_ERROR);
-      });
-  }
-
   async save(mutation: TransferMutation): Promise<TransferMutation> {
     return await this.repository.save(mutation)
       .catch(reason => {
         throw new HttpException(reason, HttpStatus.INTERNAL_SERVER_ERROR);
       });
+  }
+
+  async getByCategoryId(listParams: TransferListParams) {
+    let options: any = {
+      where: {
+        categoryId: listParams.categoryId ? listParams.categoryId : null,
+      },
+      relations: ['transfer']
+    };
+    if (listParams.skip) {
+      options = {...options, skip: listParams.skip};
+    }
+
+    return await this.repository.findAndCount(options).catch((reason) => {
+      throw new HttpException(reason, HttpStatus.INTERNAL_SERVER_ERROR);
+    });
   }
 }

@@ -4,6 +4,7 @@ import { TransferMutationDTO } from '../../dtos/transfer-batch-import.dto';
 import { TransferBaseService } from '../transfer-base/transfer-base.service';
 import { validate } from 'class-validator';
 import { Transfer } from '../../entities/transfer.entity';
+import { TransferListParams } from '../../dtos/transfer-list-params.dto';
 
 @Injectable()
 export class TransferMutationService extends TransferBaseService {
@@ -123,6 +124,18 @@ export class TransferMutationService extends TransferBaseService {
     return this.transferMutationRepository.getOne(id);
   }
 
+
+  getByCategoryId(listParams: TransferListParams): Promise<TransferListParams> {
+    return new Promise((resolve, reject) => {
+      this.transferMutationRepository.getByCategoryId(listParams).then((response) => {
+        const returnParams: TransferListParams = {};
+        returnParams.count = response[1];
+        returnParams.transferMutations = response[0].map(mutation => new TransferMutationDTO(mutation.transfer, mutation)).splice(0, listParams.limit);
+        resolve(returnParams);
+      }).catch(reject);
+    });
+  }
+
   private checkForPatchDifferences(body: TransferMutationDTO, transferMutation: TransferMutation) {
     let editableFieldChanged = false;
 
@@ -173,4 +186,5 @@ export class TransferMutationService extends TransferBaseService {
       resolve();
     });
   }
+
 }

@@ -48,7 +48,6 @@ export class TransferService extends TransferBaseService {
           const startDate = filter.startDate ? new Date(Number(filter.startDate)) : null;
           const endDate = filter.endDate ? new Date(Number(filter.endDate)) : null;
 
-
           const transfers: Transfer[] = response[0];
           for (const transfer of transfers) {
             if (!this.filterTransferMutationsByDate(transfer.transactionDate, startDate, endDate)) {
@@ -87,11 +86,6 @@ export class TransferService extends TransferBaseService {
     });
   }
 
-  /**
-   * todo:
-   *    Remember to splice return to limit the filter limit
-   *    And remove limit from query
-   */
   private filterTransferMutationsByDate(transactionDate: Date, startDate?: Date, endDate?: Date): boolean {
     let transferValid = true;
     if (startDate && startDate.getTime() >= transactionDate.getTime()) {
@@ -124,12 +118,11 @@ export class TransferService extends TransferBaseService {
   private getMinMax(): Promise<TransferListParams> {
     const results: TransferListParams = {};
     return new Promise((resolve) => {
-      this.transferMutationRepository.getMaxAmount().then((maxResult) => {
-        this.transferMutationRepository.getMinAmount().then((minResult) => {
-          results.maxAmount = maxResult.max;
-          results.minAmount = minResult.min;
-          resolve(results);
-        });
+      Promise.all([
+        this.transferMutationRepository.getMaxAmount(),
+        this.transferMutationRepository.getMinAmount(),
+      ]).then(([maxResult, minResult]) => {
+        resolve({ ...results, maxAmount: maxResult.max, minAmount: minResult.min });
       });
     });
   }

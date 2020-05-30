@@ -7,6 +7,7 @@ import { TransferMutation } from './entities/transfer-mutation.entity';
 import { SplitTransferMutationDto } from './dtos/split-transfer-mutation.dto';
 import { TransferMutationDTO } from './dtos/transfer-batch-import.dto';
 import { Transfer } from './entities/transfer.entity';
+import { TransferListParams } from './dtos/transfer-list-params.dto';
 
 @ApiTags('TransferMutationApi')
 @Controller('transfer-mutation')
@@ -17,6 +18,70 @@ export class TransferMutationController {
     private transferMutationService: TransferMutationService
   ) {
   }
+
+  @Post('/category')
+  @ApiOperation({
+    operationId: 'getByCategoryId'
+  })
+  @ApiResponse({
+    status: 200, type: TransferListParams
+  })
+  getTransferMutationsByCategoryId(@Body() body: TransferListParams) {
+    return this.transferMutationService.getByCategoryId(body);
+  }
+
+  @Get('/history/:id')
+  @ApiOperation({
+    operationId: 'getTransferMutationHistory'
+  })
+  @ApiResponse({
+    status: 200, description: 'Transfer Mutation history found', type: Transfer
+  })
+  @ApiResponse({
+    status: 400, description: 'Bad request',
+  })
+  @ApiResponse({
+    status: 401, description: 'Unauthorized', // Not logged in
+  })
+  getTransferMutationHistory(@Param('id', new ParseIntPipe()) id: number) {
+    return this.transferMutationService.getTransferMutationHistory(id);
+  }
+
+  @Patch('/undo')
+  @ApiOperation({
+    operationId: 'undoTransferMutationPatch'
+  })
+  @ApiResponse({
+    status: 200, description: 'Record patched', type: TransferMutationDTO
+  })
+  @ApiResponse({
+    status: 400, description: 'Bad request',
+  })
+  @ApiResponse({
+    status: 401, description: 'Unauthorized', // Not logged in
+  })
+  undoTransferMutationPatch(@Body() body: TransferMutationDTO) {
+    return this.transferMutationService.undoTransferMutationPatch(body);
+  }
+
+
+  @Post('/split')
+  @ApiOperation({
+    operationId: 'splitTransferMutation',
+  })
+  @ApiResponse({
+    status: 201, description: 'Record created and patched', type: [TransferMutationDTO],
+  })
+  @ApiResponse({
+    status: 400, description: 'Bad request',
+  })
+  @ApiResponse({
+    status: 401, description: 'Unauthorized',
+  })
+  splitTransferMutation(@Body() body: SplitTransferMutationDto) {
+    return this.splitService.splitTransferMutation(body);
+  }
+
 
   @Delete(':id')
   @ApiOperation({
@@ -67,56 +132,5 @@ export class TransferMutationController {
   })
   patchTransferMutation(@Body() body: TransferMutationDTO) {
     return this.transferMutationService.patchTransferMutation(body);
-  }
-
-  @Patch('/undo')
-  @ApiOperation({
-    operationId: 'undoTransferMutationPatch'
-  })
-  @ApiResponse({
-    status: 200, description: 'Record patched', type: TransferMutationDTO
-  })
-  @ApiResponse({
-    status: 400, description: 'Bad request',
-  })
-  @ApiResponse({
-    status: 401, description: 'Unauthorized', // Not logged in
-  })
-  undoTransferMutationPatch(@Body() body: TransferMutationDTO) {
-    return this.transferMutationService.undoTransferMutationPatch(body);
-  }
-
-  @Get('/history/:id')
-  @ApiOperation({
-    operationId: 'getTransferMutationHistory'
-  })
-  @ApiResponse({
-    status: 200, description: 'Transfer Mutation history found', type: Transfer
-  })
-  @ApiResponse({
-    status: 400, description: 'Bad request',
-  })
-  @ApiResponse({
-    status: 401, description: 'Unauthorized', // Not logged in
-  })
-  getTransferMutationHistory(@Param('id', new ParseIntPipe()) id: number) {
-    return this.transferMutationService.getTransferMutationHistory(id);
-  }
-
-  @Post('/split')
-  @ApiOperation({
-    operationId: 'splitTransferMutation',
-  })
-  @ApiResponse({
-    status: 201, description: 'Record created and patched', type: [TransferMutationDTO],
-  })
-  @ApiResponse({
-    status: 400, description: 'Bad request',
-  })
-  @ApiResponse({
-    status: 401, description: 'Unauthorized',
-  })
-  splitTransferMutation(@Body() body: SplitTransferMutationDto) {
-    return this.splitService.splitTransferMutation(body);
   }
 }
