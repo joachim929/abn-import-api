@@ -1,9 +1,7 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common';
 import { CategoryService } from './services/category.service';
-import { Category } from './category.entity';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { CategoryDTO, CreateCategoryDTO } from './dtos/category.dto';
-import { CategoryGroupDTO } from './dtos/category-group.dto';
 
 @ApiTags('CategoryApi')
 @Controller('category')
@@ -65,7 +63,6 @@ export class CategoryController {
     status: 201, type: CategoryDTO
   })
   create(@Param('parentId') parentId: string, @Body() category: CreateCategoryDTO) {
-    console.log(parentId);
     return this.service.createCategory(category, parentId);
   }
 
