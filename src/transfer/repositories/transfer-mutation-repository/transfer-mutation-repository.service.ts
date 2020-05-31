@@ -12,7 +12,7 @@ export class TransferMutationRepositoryService {
   }
 
   async getOne(id: number, active = true, children = true, transfer = true): Promise<TransferMutation> {
-    const relations = ['parent'];
+    const relations = ['parent', 'category'];
     if (children === true) {
       relations.push('children');
     }
@@ -59,16 +59,14 @@ export class TransferMutationRepositoryService {
       });
   }
 
-  async getByCategoryId(listParams: TransferListParams) {
-    let options: any = {
+  async getByCategoryId(listParams: TransferListParams): Promise<[TransferMutation[], number] | void> {
+    const options: any = {
       where: {
         categoryId: listParams.categoryId ? listParams.categoryId : null,
+        active: true
       },
       relations: ['transfer']
     };
-    if (listParams.skip) {
-      options = {...options, skip: listParams.skip};
-    }
 
     return await this.repository.findAndCount(options).catch((reason) => {
       throw new HttpException(reason, HttpStatus.INTERNAL_SERVER_ERROR);

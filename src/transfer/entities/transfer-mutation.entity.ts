@@ -27,12 +27,6 @@ export class TransferMutation {
   @Column({ default: true })
   active: boolean;
 
-  /**
-   * @deprecated
-   */
-  @Column({nullable: true})
-  categoryId: number;
-
   @ManyToOne(type => Category, category => category.mutations)
   category: Category;
 

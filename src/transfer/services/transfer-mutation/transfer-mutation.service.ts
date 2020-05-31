@@ -6,6 +6,7 @@ import { validate } from 'class-validator';
 import { Transfer } from '../../entities/transfer.entity';
 import { TransferListParams } from '../../dtos/transfer-list-params.dto';
 import { Category } from '../../../category/category.entity';
+import {orderBy} from 'lodash';
 
 @Injectable()
 export class TransferMutationService extends TransferBaseService {
@@ -15,7 +16,7 @@ export class TransferMutationService extends TransferBaseService {
       this.transferMutationRepository.getOne(id, true, false).then((response) => {
         return { ...response, active: false } as TransferMutation;
       }).then((mutation) => {
-        this.transferMutationRepository.updateMutation(mutation).then((response) => {
+        this.transferMutationRepository.updateMutation(mutation).then(() => {
           resolve();
         }).catch(reject);
       }).catch(reject);
@@ -118,9 +119,11 @@ export class TransferMutationService extends TransferBaseService {
   getByCategoryId(listParams: TransferListParams): Promise<TransferListParams> {
     return new Promise((resolve, reject) => {
       this.transferMutationRepository.getByCategoryId(listParams).then((response) => {
+        const orderedMutations = orderBy(response[0].map(mutation => new TransferMutationDTO(mutation.transfer, mutation)), 'transactionDate', 'ASC');
+        console.log(listParams);
         resolve({
           count: response[1],
-          transferMutations: response[0].map(mutation => new TransferMutationDTO(mutation.transfer, mutation)).splice(0, listParams.limit),
+          transferMutations: orderedMutations.splice(listParams.skip ? listParams.skip : 0, listParams.limit),
         });
 
       }).catch(reject);

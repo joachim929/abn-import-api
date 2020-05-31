@@ -6,6 +6,7 @@ import { ApiModelProperty } from '@nestjs/swagger/dist/decorators/api-model-prop
 import { TransferMutation } from '../entities/transfer-mutation.entity';
 import { HttpException, HttpStatus } from '@nestjs/common';
 import { CategoryDTO } from '../../category/dtos/category.dto';
+import { Category } from '../../category/category.entity';
 
 export class TransferMutationDTO {
   @Transform(id => Number(id))
@@ -28,9 +29,6 @@ export class TransferMutationDTO {
   comment?: string;
   @IsNumber()
   amount: number;
-  @IsOptional()
-  @IsNumber()
-  categoryId?: number;
   @IsNumber()
   startBalance: number;
   @IsNumber()
@@ -50,7 +48,6 @@ export class TransferMutationDTO {
     this.description = mutation.description;
     this.comment = mutation.comment || null;
     this.amount = mutation.amount;
-    this.categoryId = mutation.categoryId || null;
     this.category = mutation.category ? new CategoryDTO(mutation.category) : null;
     this.startBalance = transfer.startBalance;
     this.endBalance = transfer.endBalance;
@@ -78,8 +75,8 @@ export class NewTransferMutationChild {
   @IsNumber()
   amount: number;
   @IsOptional()
-  @IsNumber()
-  categoryId: number;
+  @Type(() => Category)
+  category: Category;
   transfer: Transfer;
   parent: TransferMutation;
   children: TransferMutation[];
@@ -89,10 +86,18 @@ export class NewTransferMutationChild {
     this.comment = transferMutation.comment || null;
     this.amount = transferMutation.amount;
     this.active = true;
-    this.categoryId = transferMutation.categoryId || null;
+    this.category = parent?.category || null;
     this.transfer = parent.transfer;
     this.parent = parent;
     this.children = [];
+    this.validate();
+  }
+
+  validate() {
+    const errors = validateSync(this);
+    if (errors.length > 0) {
+      throw new HttpException(errors, HttpStatus.BAD_REQUEST);
+    }
   }
 }
 

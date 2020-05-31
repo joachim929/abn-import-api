@@ -42,31 +42,33 @@ export class TransferSplitService extends TransferBaseService {
   private formatBody(body: SplitTransferMutationDto): Promise<TransferMutationDTO[]> {
     return new Promise((resolve, reject) => {
       this.transferMutationRepository.getOne(body.patch.mutationId).then((mutation) => {
+        this.categoryRepositoryService.getCategoryById(mutation.category.id).then((category) => {
+          mutation = { ...mutation, active: false, category };
 
-        mutation.active = false;
-        const splitTransferMutation = new NewTransferMutationChild(body.new, mutation);
-        const patchTransferMutation = new NewTransferMutationChild(body.patch, mutation);
-        this.validateTransferMutations([splitTransferMutation, patchTransferMutation]).then(() => {
-          if (mutation.amount !== splitTransferMutation.amount + patchTransferMutation.amount) {
-            this.badRequest('Amount doesn\'t add up to original');
-          }
-          const promises = [
-            this.transferMutationRepository.save(splitTransferMutation as TransferMutation),
-            this.transferMutationRepository.save(patchTransferMutation as TransferMutation),
-          ];
-          Promise.all(promises).then((response) => {
-            new TransferMutationDTO(mutation.transfer, response[0]);
-            new TransferMutationDTO(mutation.transfer, response[1]);
-            delete mutation.children;
-            return this.transferMutationRepository.updateMutation(mutation).then((result) => {
-              resolve([
-                new TransferMutationDTO(mutation.transfer, response[0]),
-                new TransferMutationDTO(mutation.transfer, response[1]),
-              ]);
+          const splitTransferMutation = new NewTransferMutationChild(body.new, mutation);
+          const patchTransferMutation = new NewTransferMutationChild(body.patch, mutation);
+          this.validateTransferMutations([splitTransferMutation, patchTransferMutation]).then(() => {
+            if (mutation.amount !== splitTransferMutation.amount + patchTransferMutation.amount) {
+              this.badRequest('Amount doesn\'t add up to original');
+            }
+            const promises = [
+              this.transferMutationRepository.save(splitTransferMutation as unknown as TransferMutation),
+              this.transferMutationRepository.save(patchTransferMutation as unknown as TransferMutation),
+            ];
+            Promise.all(promises).then((response) => {
+              new TransferMutationDTO(mutation.transfer, response[0]);
+              new TransferMutationDTO(mutation.transfer, response[1]);
+              delete mutation.children;
+              return this.transferMutationRepository.updateMutation(mutation).then(() => {
+                resolve([
+                  new TransferMutationDTO(mutation.transfer, response[0]),
+                  new TransferMutationDTO(mutation.transfer, response[1]),
+                ]);
+              });
             });
-          });
-        }).catch((reason) => reject(reason));
-      }).catch((reason) => reject(reason));
+          }).catch(reject);
+        }).catch(reject);
+      }).catch(reject);
     });
   }
 }
