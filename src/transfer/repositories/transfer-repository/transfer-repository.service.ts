@@ -56,6 +56,7 @@ export class TransferRepositoryService {
 
     const query = this.repository.createQueryBuilder('transfer')
       .leftJoinAndSelect('transfer.mutations', 'mutations')
+      .leftJoinAndSelect('mutations.category', 'category')
       .where('transfer.active = :active', { active: filters.active ? filters.active : true })
       .andWhere('mutations.active = :active', { active: filters.active ? filters.active : true });
 
@@ -74,7 +75,7 @@ export class TransferRepositoryService {
     }
 
     if (typeof filters.categoryId === 'number') {
-      query.andWhere('mutations.categoryId = :categoryId', { categoryId: filters.categoryId });
+      query.andWhere('category.id = :categoryId', { categoryId: filters.categoryId });
     }
 
     query.skip(filters.skip);

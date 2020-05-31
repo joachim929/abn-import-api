@@ -120,7 +120,6 @@ export class TransferMutationService extends TransferBaseService {
     return new Promise((resolve, reject) => {
       this.transferMutationRepository.getByCategoryId(listParams).then((response) => {
         const orderedMutations = orderBy(response[0].map(mutation => new TransferMutationDTO(mutation.transfer, mutation)), 'transactionDate', 'ASC');
-        console.log(listParams);
         resolve({
           count: response[1],
           transferMutations: orderedMutations.splice(listParams.skip ? listParams.skip : 0, listParams.limit),

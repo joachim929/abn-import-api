@@ -22,7 +22,7 @@ export class TransferMutationRepositoryService {
 
     let where: any = { id };
     if (active === true) {
-      where = { id, active };
+      where = { ...where, active: active };
     }
     return await this.repository.findOneOrFail({
       where: where,
@@ -62,10 +62,10 @@ export class TransferMutationRepositoryService {
   async getByCategoryId(listParams: TransferListParams): Promise<[TransferMutation[], number] | void> {
     const options: any = {
       where: {
-        categoryId: listParams.categoryId ? listParams.categoryId : null,
-        active: true
+        category: { id: listParams.categoryId ? listParams.categoryId : null },
+        active: true,
       },
-      relations: ['transfer']
+      relations: ['transfer', 'category'],
     };
 
     return await this.repository.findAndCount(options).catch((reason) => {
