@@ -1,6 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, UpdateResult } from 'typeorm';
+import { Repository } from 'typeorm';
 import { Transfer } from '../../entities/transfer.entity';
 import { TransferListParams } from '../../dtos/transfer-list-params.dto';
 
@@ -20,6 +20,7 @@ export class TransferRepositoryService {
       .leftJoinAndSelect('transfer.mutations', 'mutations')
       .leftJoinAndSelect('mutations.children', 'children')
       .leftJoinAndSelect('mutations.parent', 'parent')
+      .leftJoinAndSelect('mutations.category', 'category')
       .where('transfer.id = :id', { id })
       .orderBy('mutations.createdAt', 'DESC');
 
@@ -30,14 +31,6 @@ export class TransferRepositoryService {
     return await this.repository.findOneOrFail({
       where: [active ? { id, active, mutations: { active } } : { id }],
       relations: ['mutations'],
-    }).catch(() => {
-      throw new HttpException(`No transfer found with id: ${id}`, HttpStatus.BAD_REQUEST);
-    });
-  }
-
-  async findOne(id: string): Promise<Transfer> {
-    return await this.repository.findOneOrFail({
-      where: [{ id }],
     }).catch(() => {
       throw new HttpException(`No transfer found with id: ${id}`, HttpStatus.BAD_REQUEST);
     });
@@ -59,29 +52,11 @@ export class TransferRepositoryService {
     });
   }
 
-  async updateTransfer(transfer: Transfer): Promise<UpdateResult> {
-    return await this.repository.update(transfer.id, transfer).catch((reason) => {
-      throw new HttpException(reason, HttpStatus.INTERNAL_SERVER_ERROR);
-    });
-  }
-
-  async getTransfersWithMutations(id?: string): Promise<Transfer[]> {
-    const query: any = {
-      relations: ['mutations'],
-    };
-    if (id) {
-      query.where = [{ id, mutations: { active: true } }];
-    } else {
-      query.where = [{ mutations: { active: true } }];
-    }
-
-    return await this.repository.find(query);
-  }
-
   async getFilteredTransfersWithMutations(filters: TransferListParams): Promise<[Transfer[], number]> {
 
     const query = this.repository.createQueryBuilder('transfer')
       .leftJoinAndSelect('transfer.mutations', 'mutations')
+      .leftJoinAndSelect('mutations.category', 'category')
       .where('transfer.active = :active', { active: filters.active ? filters.active : true })
       .andWhere('mutations.active = :active', { active: filters.active ? filters.active : true });
 
@@ -100,7 +75,7 @@ export class TransferRepositoryService {
     }
 
     if (typeof filters.categoryId === 'number') {
-      query.andWhere('mutations.categoryId = :categoryId', { categoryId: filters.categoryId });
+      query.andWhere('category.id = :categoryId', { categoryId: filters.categoryId });
     }
 
     query.skip(filters.skip);

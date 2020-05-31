@@ -2,7 +2,6 @@ import { DynamicModule, Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { CategoryModule } from './category/category.module';
-import { RulesModule } from './rules/rules.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Connection } from 'typeorm';
 import { AmountModule } from './amount/amount.module';
@@ -29,7 +28,6 @@ export function DatabaseOrmModule(): DynamicModule {
       synchronize: true,
     }),
     CategoryModule,
-    RulesModule,
     AmountModule,
     DescriptionModule,
     TransferModule,

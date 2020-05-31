@@ -8,6 +8,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { Transfer } from './transfer.entity';
+import { Category } from '../../category/category.entity';
 
 @Entity()
 export class TransferMutation {
@@ -26,8 +27,8 @@ export class TransferMutation {
   @Column({ default: true })
   active: boolean;
 
-  @Column({nullable: true})
-  categoryId?: number;
+  @ManyToOne(type => Category, category => category.mutations)
+  category: Category;
 
   @ManyToOne(type => Transfer, transfer => transfer.mutations)
   transfer: Transfer;

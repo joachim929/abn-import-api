@@ -61,23 +61,6 @@ export class TransferController {
     return this.service.getTransfer(id);
   }
 
-  @Delete(':id')
-  @ApiOperation({
-    operationId: 'deleteTransfer',
-  })
-  @ApiResponse({
-    status: 204, description: 'Record deleted',
-  })
-  @ApiResponse({
-    status: 400, description: 'Bad request', // Id doesn't exist
-  })
-  @ApiResponse({
-    status: 401, description: 'Unauthorized', // Not logged in
-  })
-  delete(@Param('id') id: string) {
-    return this.service.deleteTransfer(id);
-  }
-
   @Post('/filtered')
   @ApiOperation({
     operationId: 'filteredTransfers',
