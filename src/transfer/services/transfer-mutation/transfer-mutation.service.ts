@@ -124,7 +124,6 @@ export class TransferMutationService extends TransferBaseService {
     return this.transferMutationRepository.getOne(id);
   }
 
-
   getByCategoryId(listParams: TransferListParams): Promise<TransferListParams> {
     return new Promise((resolve, reject) => {
       this.transferMutationRepository.getByCategoryId(listParams).then((response) => {
@@ -139,7 +138,7 @@ export class TransferMutationService extends TransferBaseService {
   private checkForPatchDifferences(body: TransferMutationDTO, transferMutation: TransferMutation) {
     let editableFieldChanged = false;
 
-    if (body.categoryId !== transferMutation.categoryId) {
+    if (body.categoryId !== transferMutation.category.id) {
       editableFieldChanged = true;
     }
     if (body.comment !== transferMutation.comment) {

@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Transfer } from '../entities/transfer.entity';
 import { TransferMutationDTO } from '../dtos/transfer-batch-import.dto';
-import { TransferMutation } from '../entities/transfer-mutation.entity';
 import { TransferBaseService } from './transfer-base/transfer-base.service';
 import { TransferListParams } from '../dtos/transfer-list-params.dto';
 import { validate } from 'class-validator';
@@ -73,19 +72,6 @@ export class TransferService extends TransferBaseService {
     });
   }
 
-  deleteTransfer(id: string): Promise<any> {
-    return new Promise((resolve, reject) => {
-      this.transferRepository.findOne(id).then((transfer) => {
-        transfer.active = false;
-        this.transferRepository.findOneWithMutations(id).then((transferWithMutations) => {
-          return this.setMutationsInactive(transferWithMutations.mutations);
-        }).then(() => {
-          resolve(this.transferRepository.updateTransfer(transfer));
-        }).catch((reason) => reject(reason));
-      }).catch((reason) => reject(reason));
-    });
-  }
-
   private filterTransferMutationsByDate(transactionDate: Date, startDate?: Date, endDate?: Date): boolean {
     let transferValid = true;
     if (startDate && startDate.getTime() >= transactionDate.getTime()) {
@@ -97,22 +83,6 @@ export class TransferService extends TransferBaseService {
     }
 
     return transferValid;
-  }
-
-  private setMutationsInactive(mutations: TransferMutation[]): Promise<void> {
-    return new Promise((resolve, reject) => {
-      const mutationPromises = [];
-      for (const mutation of mutations) {
-        if (mutation.active === false) {
-          continue;
-        }
-        mutation.active = false;
-        mutationPromises.push(this.transferMutationRepository.updateMutation(mutation));
-      }
-      Promise.all(mutationPromises).then(() => {
-        resolve();
-      }).catch((reason) => reject(reason));
-    });
   }
 
   private getMinMax(): Promise<TransferListParams> {

@@ -3,7 +3,6 @@ import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { TransferImportService } from './services/transfer-import/transfer-import.service';
 import { TransferSplitService } from './services/transfer-split/transfer-split.service';
 import { TransferMutationService } from './services/transfer-mutation/transfer-mutation.service';
-import { TransferMutation } from './entities/transfer-mutation.entity';
 import { SplitTransferMutationDto } from './dtos/split-transfer-mutation.dto';
 import { TransferMutationDTO } from './dtos/transfer-batch-import.dto';
 import { Transfer } from './entities/transfer.entity';
@@ -98,23 +97,6 @@ export class TransferMutationController {
   })
   delete(@Param('id', new ParseIntPipe()) id: number) {
     return this.transferMutationService.deleteMutation(id);
-  }
-
-  @Get(':id')
-  @ApiOperation({
-    operationId: 'getTransferMutation'
-  })
-  @ApiResponse({
-    status: 200, description: 'Got records', type: TransferMutation
-  })
-  @ApiResponse({
-    status: 400, description: 'Bad request',
-  })
-  @ApiResponse({
-    status: 401, description: 'Unauthorized', // Not logged in
-  })
-  getTransferMutation(@Param('id', new ParseIntPipe()) id: number) {
-    return this.transferMutationService.getOneMutation(id);
   }
 
   @Patch()
