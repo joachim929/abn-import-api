@@ -11,12 +11,17 @@ import { TransferSplitService } from './services/transfer-split/transfer-split.s
 import { TransferMutationService } from './services/transfer-mutation/transfer-mutation.service';
 import { TransferMutationController } from './transfer-mutation.controller';
 import { TransferBaseService } from './services/transfer-base/transfer-base.service';
+import { CategoryModule } from '../category/category.module';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Transfer, TransferMutation]),
+    CategoryModule,
+    TypeOrmModule.forFeature([Transfer, TransferMutation])
   ],
-  controllers: [TransferController, TransferMutationController],
+  controllers: [
+    TransferController,
+    TransferMutationController
+  ],
   providers: [
     TransferService,
     TransferRepositoryService,
@@ -24,7 +29,7 @@ import { TransferBaseService } from './services/transfer-base/transfer-base.serv
     TransferImportService,
     TransferSplitService,
     TransferMutationService,
-    TransferBaseService,
+    TransferBaseService
   ],
 })
 export class TransferModule {

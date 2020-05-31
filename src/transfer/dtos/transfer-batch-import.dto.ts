@@ -1,9 +1,11 @@
-import { Transform } from 'class-transformer';
-import { IsBoolean, IsDate, IsNumber, IsOptional, IsString } from 'class-validator';
+import { Transform, Type } from 'class-transformer';
+import { IsBoolean, IsDate, IsNumber, IsOptional, IsString, validateSync } from 'class-validator';
 import { RawTransferSerializerDTO } from '../../invoice/dtos/raw-invoice-json.dto';
 import { Transfer } from '../entities/transfer.entity';
 import { ApiModelProperty } from '@nestjs/swagger/dist/decorators/api-model-property.decorator';
 import { TransferMutation } from '../entities/transfer-mutation.entity';
+import { HttpException, HttpStatus } from '@nestjs/common';
+import { CategoryDTO } from '../../category/dtos/category.dto';
 
 export class TransferMutationDTO {
   @Transform(id => Number(id))
@@ -34,7 +36,11 @@ export class TransferMutationDTO {
   @IsNumber()
   endBalance: number;
 
-  constructor(transfer: Transfer, mutation: TransferMutation) {
+  @IsOptional()
+  @Type(() => CategoryDTO)
+  category: CategoryDTO;
+
+  constructor(transfer: Transfer, mutation: TransferMutation, validate = false) {
     this.id = transfer.id;
     this.accountNumber = transfer.accountNumber;
     this.currencyCode = transfer.currencyCode;
@@ -45,8 +51,19 @@ export class TransferMutationDTO {
     this.comment = mutation.comment || null;
     this.amount = mutation.amount;
     this.categoryId = mutation.categoryId || null;
+    this.category = mutation.category ? new CategoryDTO(mutation.category) : null;
     this.startBalance = transfer.startBalance;
     this.endBalance = transfer.endBalance;
+    if (validate) {
+      this.validate();
+    }
+  }
+
+  validate() {
+    const errors = validateSync(this);
+    if (errors.length > 0) {
+      throw new HttpException(errors, HttpStatus.BAD_REQUEST);
+    }
   }
 }
 
@@ -76,51 +93,6 @@ export class NewTransferMutationChild {
     this.transfer = parent.transfer;
     this.parent = parent;
     this.children = [];
-  }
-}
-
-export class IncomingTransferMutation {
-  @IsString()
-  id: string;
-  @IsNumber()
-  accountNumber: number;
-  @IsString()
-  currencyCode: string;
-  @IsDate()
-  valueDate: Date;
-  @IsDate()
-  transactionDate: Date;
-  @IsOptional()
-  @IsNumber()
-  mutationId?: number;
-  @IsString()
-  description: string;
-  @IsOptional()
-  @IsString()
-  comment?: string;
-  @IsNumber()
-  amount: number;
-  @IsOptional()
-  @IsNumber()
-  categoryId?: number;
-  @IsNumber()
-  startBalance: number;
-  @IsNumber()
-  endBalance: number;
-
-  constructor(transferMutation: TransferMutationDTO) {
-    this.id = transferMutation.id;
-    this.accountNumber = transferMutation.accountNumber;
-    this.currencyCode = transferMutation.currencyCode;
-    this.valueDate = new Date(transferMutation.valueDate);
-    this.transactionDate = new Date(transferMutation.transactionDate);
-    this.mutationId = transferMutation.mutationId || null;
-    this.description = transferMutation.description;
-    this.comment = transferMutation.comment || null;
-    this.amount = transferMutation.amount;
-    this.categoryId = transferMutation.categoryId || null;
-    this.startBalance = transferMutation.startBalance;
-    this.endBalance = transferMutation.endBalance;
   }
 }
 

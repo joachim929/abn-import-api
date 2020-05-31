@@ -5,22 +5,20 @@ import { TransferBaseService } from '../transfer-base/transfer-base.service';
 import { validate } from 'class-validator';
 import { Transfer } from '../../entities/transfer.entity';
 import { TransferListParams } from '../../dtos/transfer-list-params.dto';
+import { Category } from '../../../category/category.entity';
 
 @Injectable()
 export class TransferMutationService extends TransferBaseService {
-  // todo: Create probably not needed as the only way to create a transferMutation
-  //    should be via imports
 
   deleteMutation(id: number): Promise<void> {
     return new Promise((resolve, reject) => {
       this.transferMutationRepository.getOne(id, true, false).then((response) => {
-        response.active = false;
-        return response;
+        return { ...response, active: false } as TransferMutation;
       }).then((mutation) => {
         this.transferMutationRepository.updateMutation(mutation).then((response) => {
           resolve();
-        }).catch(reason => reject(reason));
-      }).catch(reason => reject(reason));
+        }).catch(reject);
+      }).catch(reject);
     });
   }
 
@@ -47,32 +45,25 @@ export class TransferMutationService extends TransferBaseService {
             transferMutation = _transferMutation;
 
             if (this.checkForPatchDifferences(body, transferMutation)) {
-              transferMutation.active = false;
-              return this.transferMutationRepository.updateMutation(transferMutation);
+              return this.transferMutationRepository.updateMutation({ ...transferMutation, active: false });
             } else {
               this.badRequest('No changes found');
             }
 
           }).then(() => {
-          const newMutation: TransferMutation = new TransferMutation();
-          newMutation.description = body.description;
-          newMutation.comment = body.comment;
-          newMutation.amount = transferMutation.amount;
-          newMutation.active = true;
-          newMutation.categoryId = body.categoryId;
-          newMutation.transfer = transferMutation.transfer;
-          newMutation.parent = transferMutation;
-          this.transferMutationRepository.save(newMutation).then((response) => {
-            resolve(new TransferMutationDTO(transferMutation.transfer, response));
-          });
-        }).catch(reason => reject(reason));
-      }).catch(reason => reject(reason));
+          if (body.category) {
+            return this.categoryRepositoryService.getCategoryById(body.category.id).then((category) => {
+              return this.createNewTransferMutation(body, transferMutation, category);
+            });
+          } else {
+            return this.createNewTransferMutation(body, transferMutation);
+          }
+        }).then((newTransferMutation) => resolve(new TransferMutationDTO(newTransferMutation.transfer, newTransferMutation)))
+          .catch(reject);
+      }).catch(reject);
     });
   }
 
-  /**
-   * todo: Clean up and test
-   */
   getTransferMutationHistory(id: number): Promise<Transfer> {
     let transferHistory: Transfer;
     return new Promise((resolve, reject) => {
@@ -80,7 +71,7 @@ export class TransferMutationService extends TransferBaseService {
         transferHistory = response.transfer;
         this.transferRepository.findTransferWithAllRelationships(transferHistory.id).then((transfer) => {
           resolve(transfer);
-        }).catch((reason) => reject(reason));
+        }).catch(reject);
       });
     });
   }
@@ -109,7 +100,7 @@ export class TransferMutationService extends TransferBaseService {
 
       }).then(() => {
 
-        this.setChildrenToInactive(parentMutation).then((result) => {
+        this.setChildrenToInactive(parentMutation).then(() => {
           parentMutation.active = true;
           this.transferMutationRepository.updateMutation(parentMutation).then(() => {
             resolve(new TransferMutationDTO(parentMutation.transfer, parentMutation));
@@ -127,10 +118,11 @@ export class TransferMutationService extends TransferBaseService {
   getByCategoryId(listParams: TransferListParams): Promise<TransferListParams> {
     return new Promise((resolve, reject) => {
       this.transferMutationRepository.getByCategoryId(listParams).then((response) => {
-        const returnParams: TransferListParams = {};
-        returnParams.count = response[1];
-        returnParams.transferMutations = response[0].map(mutation => new TransferMutationDTO(mutation.transfer, mutation)).splice(0, listParams.limit);
-        resolve(returnParams);
+        resolve({
+          count: response[1],
+          transferMutations: response[0].map(mutation => new TransferMutationDTO(mutation.transfer, mutation)).splice(0, listParams.limit),
+        });
+
       }).catch(reject);
     });
   }
@@ -138,7 +130,7 @@ export class TransferMutationService extends TransferBaseService {
   private checkForPatchDifferences(body: TransferMutationDTO, transferMutation: TransferMutation) {
     let editableFieldChanged = false;
 
-    if (body.categoryId !== transferMutation.category.id) {
+    if (body?.category?.id !== transferMutation?.category?.id) {
       editableFieldChanged = true;
     }
     if (body.comment !== transferMutation.comment) {
@@ -153,17 +145,26 @@ export class TransferMutationService extends TransferBaseService {
     return editableFieldChanged;
   }
 
+  private createNewTransferMutation(inputMutation: TransferMutationDTO, ocMutation: TransferMutation, category?: Category) {
+    return this.transferMutationRepository.save({
+      description: inputMutation.description,
+      comment: inputMutation.comment,
+      amount: ocMutation.amount,
+      active: true,
+      category,
+      transfer: ocMutation.transfer,
+      parent: ocMutation,
+    } as TransferMutation);
+  }
+
   private setChildrenToInactive(transferMutation: TransferMutation): Promise<void> {
     return new Promise((resolve, reject) => {
-      const childPromises = [];
-      for (const child of transferMutation.children) {
-        child.active = false;
-        childPromises.push(this.transferMutationRepository.updateMutation(child));
-      }
-
-      Promise.all(childPromises).then(() => {
-        resolve();
-      }).catch((reason) => reject(reason));
+      Promise.all(transferMutation.children.map((child) => {
+        child = { ...child, active: false };
+        return this.transferMutationRepository.updateMutation(child);
+      }))
+        .then(() => resolve())
+        .catch(reject);
     });
   }
 

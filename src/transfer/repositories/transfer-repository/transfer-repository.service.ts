@@ -20,6 +20,7 @@ export class TransferRepositoryService {
       .leftJoinAndSelect('transfer.mutations', 'mutations')
       .leftJoinAndSelect('mutations.children', 'children')
       .leftJoinAndSelect('mutations.parent', 'parent')
+      .leftJoinAndSelect('mutations.category', 'category')
       .where('transfer.id = :id', { id })
       .orderBy('mutations.createdAt', 'DESC');
 

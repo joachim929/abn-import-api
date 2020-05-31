@@ -24,7 +24,8 @@ import { CategoryGroupRepositoryService } from './repositories/category-group-re
     CategoryGroupRepositoryService
   ],
   exports: [
-    CategoryService, CategoryRepositoryService
+    CategoryService,
+    CategoryRepositoryService
   ]
 })
 export class CategoryModule {}
