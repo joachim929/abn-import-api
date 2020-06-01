@@ -163,18 +163,18 @@ export class TransferMutationService extends TransferBaseService {
   }
 
   private validateUndoTransferMutation(transferMutation: TransferMutation): Promise<void> {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
 
       if (transferMutation.transfer.active === false) {
-        reject(`Transfer with id: ${transferMutation.transfer.id} is not active`);
+        throw new HttpException(`Transfer with id: ${transferMutation.transfer.id} is not active`, HttpStatus.BAD_REQUEST);
       }
 
       if (!transferMutation.parent) {
-        reject(`Nothing to undo`);
+        throw new HttpException(`Nothing to undo`, HttpStatus.BAD_REQUEST);
       }
 
       if (transferMutation.active === false) {
-        reject(`TransferMutation with id: ${transferMutation.id} is not active`);
+        throw new HttpException(`TransferMutation with id: ${transferMutation.id} is not active`, HttpStatus.BAD_REQUEST);
       }
 
       resolve();
