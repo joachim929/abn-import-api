@@ -2,11 +2,10 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { TransferMutation } from '../../entities/transfer-mutation.entity';
 import { TransferMutationDTO } from '../../dtos/transfer-batch-import.dto';
 import { TransferBaseService } from '../transfer-base/transfer-base.service';
-import { validate } from 'class-validator';
 import { Transfer } from '../../entities/transfer.entity';
 import { TransferListParams } from '../../dtos/transfer-list-params.dto';
 import { Category } from '../../../category/category.entity';
-import {orderBy} from 'lodash';
+import { orderBy } from 'lodash';
 
 @Injectable()
 export class TransferMutationService extends TransferBaseService {
@@ -24,43 +23,41 @@ export class TransferMutationService extends TransferBaseService {
   }
 
   patchTransferMutation(body: TransferMutationDTO) {
-    let transferMutation: TransferMutation;
     return new Promise((resolve, reject) => {
-      /**
-       * Todo:
-       *    If you get transferMutation first, then can validate using new TransferMutationDTO()
-       *    Add function to TransferMutationDTO that checks for editable differences
-       *    Get category if category.id is different to patched transferMutationDTO
-       */
-      validate(body).then((errors) => {
-        if (errors.length > 0) {
-          this.badRequest('Invalid transferMutationDTO params');
-        }
-        return;
+      if (!body.mutationId) {
+        throw new HttpException('Missing TransferMutation id', HttpStatus.BAD_REQUEST);
+      }
+      let category: Category;
+      let ocMutation: TransferMutation;
 
-      }).then(() => {
-        this.transferMutationRepository.getOne(body.mutationId, true, false)
-          .then((_transferMutation) => {
-            transferMutation = _transferMutation;
+      this.transferMutationRepository.getOne(body.mutationId, true, false).then((foundMutation) => {
 
-            if (this.checkForPatchDifferences(body, transferMutation)) {
-              return this.transferMutationRepository.updateMutation({ ...transferMutation, active: false });
-            } else {
-              this.badRequest('No changes found');
-            }
+        ocMutation = foundMutation;
+        return this.getNewMutationCategory(body, ocMutation);
 
-          }).then(() => {
-          if (body.category) {
-            return this.categoryRepositoryService.getCategoryById(body.category.id).then((category) => {
-              return this.createNewTransferMutation(body, transferMutation, category);
-            });
-          } else {
-            return this.createNewTransferMutation(body, transferMutation);
-          }
-        }).then((newTransferMutation) => resolve(new TransferMutationDTO(newTransferMutation.transfer, newTransferMutation)))
-          .catch(reject);
-      }).catch(reject);
+      }).then((categoryResponse) => {
+
+        category = categoryResponse;
+        this.validatePatchMutation(ocMutation, category, body);
+        return this.transferMutationRepository.updateMutation(({ ...ocMutation, active: false }));
+
+      }).then(() => this.createNewTransferMutation(body, ocMutation, category)
+        .then((response) => resolve(new TransferMutationDTO(response.transfer, response))))
+        .catch(reject);
     });
+  }
+
+  private validatePatchMutation(ocMutation: TransferMutation, category: Category, patchMutation: TransferMutationDTO) {
+    new TransferMutationDTO(ocMutation.transfer, {
+      ...ocMutation,
+      category,
+      comment: patchMutation.comment,
+      description: patchMutation.description,
+      amount: patchMutation.amount,
+    }, true);
+    if (!this.checkForPatchDifferences(patchMutation, ocMutation)) {
+      throw new HttpException(`No differences found between patch object and existing object`, HttpStatus.BAD_REQUEST);
+    }
   }
 
   getTransferMutationHistory(id: number): Promise<Transfer> {

@@ -14,7 +14,7 @@ export class TransferSplitService extends TransferBaseService {
       this.transferMutationRepository.getOne(body.patch.mutationId, true, false).then((original: TransferMutation) => {
         this.validateSplitSum(original.amount, body.new.amount, body.patch.amount);
 
-        this.getNewMutationCategory(body, original).then((category) => {
+        this.getNewMutationCategory(body.new, original).then((category) => {
           const patchMutation = this.createNewTransferMutationsToSave(original, body.patch, original.category);
           const splitMutation = this.createNewTransferMutationsToSave(original, body.new, category);
 
@@ -57,15 +57,15 @@ export class TransferSplitService extends TransferBaseService {
     }
   }
 
-  private getNewMutationCategory(body: SplitTransferMutationDto, originalMutation: TransferMutation): Promise<Category> {
-    return new Promise((resolve, reject) => {
-      if (body.new.category) {
-        this.categoryRepositoryService.getCategoryById(body.new.category.id).then((category: Category) => {
-          resolve(category);
-        }).catch(reject);
-      } else {
-        resolve(originalMutation.category || null);
-      }
-    })
-  }
+  // private getNewMutationCategory(newMutation: TransferMutationDTO, originalMutation: TransferMutation): Promise<Category> {
+  //   return new Promise((resolve, reject) => {
+  //     if (newMutation.category) {
+  //       this.categoryRepositoryService.getCategoryById(newMutation.category.id).then((category: Category) => {
+  //         resolve(category);
+  //       }).catch(reject);
+  //     } else {
+  //       resolve(originalMutation.category || null);
+  //     }
+  //   })
+  // }
 }
