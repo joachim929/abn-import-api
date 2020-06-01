@@ -47,6 +47,11 @@ export class CategoryService {
 
   deleteCategory(id: number) {
     return new Promise((resolve, reject) => {
+
+      /**
+       * Todo: Get all transfers with category same category and patch all of them
+       *  Then delete
+       */
       this.repositoryService.deleteCategory(id).then((response: DeleteResult) => {
         if (response.raw.length === 0) {
           resolve();

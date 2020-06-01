@@ -23,14 +23,6 @@ export class TransferMutationService extends TransferBaseService {
     });
   }
 
-  /**
-   * todo:
-   *  Test it.
-   *  Validation:
-   *    - Check that at least amount || description || comment are different
-   *      otherwise it shouldn't be allowed to be patched
-   *  Make sure the relationships are done correctly
-   */
   patchTransferMutation(body: TransferMutationDTO) {
     let transferMutation: TransferMutation;
     return new Promise((resolve, reject) => {
@@ -122,7 +114,7 @@ export class TransferMutationService extends TransferBaseService {
         const orderedMutations = orderBy(response[0].map(mutation => new TransferMutationDTO(mutation.transfer, mutation)), 'transactionDate', 'ASC');
         resolve({
           count: response[1],
-          transferMutations: orderedMutations.splice(listParams.skip ? listParams.skip : 0, listParams.limit),
+          transferMutations: typeof listParams.limit === 'number' ? orderedMutations.splice(listParams.skip ? listParams.skip : 0, listParams.limit) : orderedMutations,
         });
 
       }).catch(reject);

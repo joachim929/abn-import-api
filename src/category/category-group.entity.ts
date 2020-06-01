@@ -25,6 +25,6 @@ export class CategoryGroup {
   @UpdateDateColumn()
   editedAt: Date;
 
-  @OneToMany(type => Category, category => category.categoryGroup)
+  @OneToMany(type => Category, category => category.categoryGroup, {onDelete: 'CASCADE'})
   categories: Category[];
 }

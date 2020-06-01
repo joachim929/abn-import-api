@@ -30,13 +30,12 @@ export class Category {
   @UpdateDateColumn()
   editedAt: Date;
 
-  @Column({default: 0})
+  @Column({ default: 0 })
   order: number;
 
-  @ManyToOne(type => CategoryGroup)
-  @JoinColumn({name: 'categoryGroupId', referencedColumnName: 'id'})
+  @ManyToOne(type => CategoryGroup, categoryGroup => categoryGroup.categories, { onDelete: 'CASCADE' })
   categoryGroup: CategoryGroup;
 
-  @OneToMany(type => TransferMutation, mutation => mutation.category)
+  @OneToMany(type => TransferMutation, mutation => mutation.category, { cascade: ['update'], onDelete: 'SET NULL' })
   mutations: TransferMutation[];
 }

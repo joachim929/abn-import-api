@@ -27,7 +27,7 @@ export class TransferMutation {
   @Column({ default: true })
   active: boolean;
 
-  @ManyToOne(type => Category, category => category.mutations)
+  @ManyToOne(type => Category, category => category.mutations, {cascade: ['insert'], onDelete: 'SET NULL'})
   category: Category;
 
   @ManyToOne(type => Transfer, transfer => transfer.mutations)
