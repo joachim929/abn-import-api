@@ -19,7 +19,7 @@ export function DatabaseOrmModule(): DynamicModule {
   imports: [
     TypeOrmModule.forRoot({
       type: 'sqlite',
-      database: 'db',
+      database: 'assets/db',
       entities: [__dirname + '/**/*.entity{.ts,.js}'],
       migrations: [__dirname + '/migrations/**/*{.ts,.js}'],
       cli: {

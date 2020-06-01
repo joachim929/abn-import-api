@@ -11,7 +11,7 @@ import {orderBy} from 'lodash';
 @Injectable()
 export class TransferMutationService extends TransferBaseService {
 
-  deleteMutation(id: number): Promise<void> {
+  setMutationInactive(id: number): Promise<void> {
     return new Promise((resolve, reject) => {
       this.transferMutationRepository.getOne(id, true, false).then((response) => {
         return { ...response, active: false } as TransferMutation;
@@ -26,6 +26,12 @@ export class TransferMutationService extends TransferBaseService {
   patchTransferMutation(body: TransferMutationDTO) {
     let transferMutation: TransferMutation;
     return new Promise((resolve, reject) => {
+      /**
+       * Todo:
+       *    If you get transferMutation first, then can validate using new TransferMutationDTO()
+       *    Add function to TransferMutationDTO that checks for editable differences
+       *    Get category if category.id is different to patched transferMutationDTO
+       */
       validate(body).then((errors) => {
         if (errors.length > 0) {
           this.badRequest('Invalid transferMutationDTO params');

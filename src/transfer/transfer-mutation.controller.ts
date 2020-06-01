@@ -96,7 +96,7 @@ export class TransferMutationController {
     status: 401, description: 'Unauthorized', // Not logged in
   })
   delete(@Param('id', new ParseIntPipe()) id: number) {
-    return this.transferMutationService.deleteMutation(id);
+    return this.transferMutationService.setMutationInactive(id);
   }
 
   @Patch()
