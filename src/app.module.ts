@@ -4,9 +4,8 @@ import { AppService } from './app.service';
 import { CategoryModule } from './category/category.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Connection } from 'typeorm';
-import { AmountModule } from './amount/amount.module';
-import { DescriptionModule } from './description/description.module';
 import { TransferModule } from './transfer/transfer.module';
+import { RulesModule } from './rules/rules.module';
 import * as ormconfig from './ormconfig';
 
 export function DatabaseOrmModule(): DynamicModule {
@@ -28,9 +27,8 @@ export function DatabaseOrmModule(): DynamicModule {
       synchronize: true,
     }),
     CategoryModule,
-    AmountModule,
-    DescriptionModule,
     TransferModule,
+    RulesModule,
   ],
   controllers: [AppController],
   providers: [AppService],

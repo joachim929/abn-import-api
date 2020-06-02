@@ -1,6 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import * as hash from 'object-hash';
-import { RawInvoiceJsonDTO, RawTransferSerializerDTO } from '../../../invoice/dtos/raw-invoice-json.dto';
+import { RawInvoiceJsonDTO, RawTransferSerializerDTO } from '../../../shared/dtos/raw-invoice-json.dto';
 import { Transfer } from '../../entities/transfer.entity';
 import { TransferMutation } from '../../entities/transfer-mutation.entity';
 import { validate } from 'class-validator';
