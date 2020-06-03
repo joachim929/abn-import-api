@@ -3,14 +3,14 @@ import { RulesController } from './rules.controller';
 import { RulesService } from './services/rules.service';
 import { RulesRepositoryService } from './repositories/rules-repository.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Rule } from './entities/rules.entity';
+import { TransferCondition } from './entities/transfer-condition.entity';
 import { Logic } from './entities/logic.entity';
 import { CategoryModule } from '../category/category.module';
 
 @Module({
   imports: [
     CategoryModule,
-    TypeOrmModule.forFeature([ Rule, Logic]),
+    TypeOrmModule.forFeature([ TransferCondition, Logic]),
   ],
   controllers: [RulesController],
   providers: [RulesService, RulesRepositoryService],

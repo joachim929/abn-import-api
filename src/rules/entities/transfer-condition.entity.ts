@@ -9,11 +9,13 @@ import {
 } from 'typeorm';
 import { Category } from '../../category/category.entity';
 import { Logic } from './logic.entity';
+import { LogicType } from '../interfaces/logic.type';
+import { TransferKeyType } from '../interfaces/transfer-key.type';
 
 @Entity()
-export class Rule {
+export class TransferCondition {
   @PrimaryGeneratedColumn('uuid')
-  id: 'string';
+  id: string;
 
   @Column()
   name: string;
@@ -30,17 +32,18 @@ export class Rule {
   @ManyToOne(type => Category, category => category.rules, {onDelete: 'SET NULL'})
   category: Category;
 
+  @Column()
+  type: LogicType;
+
+  @Column()
+  transferKey: TransferKeyType;
+
   @Column({default: false})
   autoAssign: boolean;
 
-  @OneToMany(type => Logic, logic => logic.orRule, {onDelete: 'CASCADE'})
+  @OneToMany(type => Logic, logic => logic.orConditions, {onDelete: 'CASCADE'})
   orLogic: Logic[];
 
-  @OneToMany(type => Logic, logic => logic.andRule, {onDelete: 'CASCADE'})
+  @OneToMany(type => Logic, logic => logic.andConditions, {onDelete: 'CASCADE'})
   andLogic: Logic[];
-
-  /**
-   * Rule @ManyToOne
-   *
-   */
 }

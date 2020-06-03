@@ -9,7 +9,7 @@ import {
 } from 'typeorm';
 import { CategoryGroup } from './category-group.entity';
 import { TransferMutation } from '../transfer/entities/transfer-mutation.entity';
-import { Rule } from '../rules/entities/rules.entity';
+import { TransferCondition } from '../rules/entities/transfer-condition.entity';
 
 @Entity()
 export class Category {
@@ -37,6 +37,6 @@ export class Category {
   @OneToMany(type => TransferMutation, mutation => mutation.category, { cascade: ['update'], onDelete: 'SET NULL' })
   mutations: TransferMutation[];
 
-  @OneToMany(type => Rule, rules => rules.category, {onDelete: 'SET NULL'})
-  rules: Rule[];
+  @OneToMany(type => TransferCondition, rules => rules.category, {onDelete: 'SET NULL'})
+  rules: TransferCondition[];
 }

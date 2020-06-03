@@ -1,11 +1,13 @@
 import {
   Column,
   CreateDateColumn,
-  Entity, ManyToOne,
+  Entity, ManyToOne, OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { Rule } from './rules.entity';
+import { TransferCondition } from './transfer-condition.entity';
+import { ConditionOperatorType } from '../interfaces/condition-operator.type';
+import { LogicValue } from './logic-value.entity';
 
 @Entity()
 export class Logic {
@@ -21,11 +23,17 @@ export class Logic {
   @UpdateDateColumn()
   editedAt: Date;
 
-  @ManyToOne(() => Rule, rule => rule.andLogic, {onDelete: 'CASCADE'})
-  andRule: Rule;
+  @ManyToOne(() => TransferCondition, rule => rule.andLogic, {onDelete: 'CASCADE'})
+  andConditions: TransferCondition;
 
-  @ManyToOne(() => Rule, rule => rule.orLogic, {onDelete: 'CASCADE'})
-  orRule: Rule;
+  @ManyToOne(() => TransferCondition, rule => rule.orLogic, {onDelete: 'CASCADE'})
+  orConditions: TransferCondition;
+
+  @OneToMany(() => LogicValue, logicValue => logicValue.logic, {onDelete: 'CASCADE'})
+  values: LogicValue[];
+
+  @Column()
+  conditionOperator: ConditionOperatorType;
 
   /**
    * Used to track preformance, to save on time, can break on the hardest on auto-complete
