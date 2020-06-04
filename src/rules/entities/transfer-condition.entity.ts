@@ -41,9 +41,9 @@ export class TransferCondition {
   @Column({default: false})
   autoAssign: boolean;
 
-  @OneToMany(type => Logic, logic => logic.orConditions, {onDelete: 'CASCADE'})
+  @OneToMany(type => Logic, logic => logic.orCondition, {onDelete: 'CASCADE'})
   orLogic: Logic[];
 
-  @OneToMany(type => Logic, logic => logic.andConditions, {onDelete: 'CASCADE'})
+  @OneToMany(type => Logic, logic => logic.andCondition, {onDelete: 'CASCADE'})
   andLogic: Logic[];
 }

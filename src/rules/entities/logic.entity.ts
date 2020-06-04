@@ -12,7 +12,7 @@ import { LogicValue } from './logic-value.entity';
 @Entity()
 export class Logic {
   @PrimaryGeneratedColumn('uuid')
-  id: number;
+  id: string;
 
   @Column({nullable: true})
   name: string;
@@ -24,10 +24,10 @@ export class Logic {
   editedAt: Date;
 
   @ManyToOne(() => TransferCondition, rule => rule.andLogic, {onDelete: 'CASCADE'})
-  andConditions: TransferCondition;
+  andCondition: TransferCondition;
 
   @ManyToOne(() => TransferCondition, rule => rule.orLogic, {onDelete: 'CASCADE'})
-  orConditions: TransferCondition;
+  orCondition: TransferCondition;
 
   @OneToMany(() => LogicValue, logicValue => logicValue.logic, {onDelete: 'CASCADE'})
   values: LogicValue[];
@@ -37,28 +37,22 @@ export class Logic {
 
   /**
    * Used to track preformance, to save on time, can break on the hardest on auto-complete
+   * Nice to have
    */
   @Column({default: 0})
   passDifficulty: number;
 
   /**
    * Used to calculate passDifficulty
+   * Nice to have
    */
   @Column({default: 0})
   amountUsed: number;
 
   /**
    * Used to calculate passDifficulty
+   * Nice to have
    */
   @Column({default: 0})
   amountPassed: number;
-
-  /**
-   * todo:
-   *  And relationship self referencing
-   *  OR relationship self referencing
-   *  Rule relationship
-   *  Logic (needs to be an enum)
-   *  Values (needs to be an array)
-   */
 }
