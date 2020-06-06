@@ -5,7 +5,6 @@ import {
   IsString,
 } from 'class-validator';
 import { Type } from 'class-transformer';
-import { ConditionOperatorType } from '../interfaces/condition-operator.type';
 import { ConditionOperatorEnum } from '../interfaces/condition-operator.enum';
 import { Logic } from '../entities/logic.entity';
 import { LogicValueDTO } from './logic-value.dto';
@@ -30,7 +29,7 @@ export class LogicDTO extends CreateLogicDTO {
 
   @ApiProperty()
   @IsEnum(ConditionOperatorEnum)
-  conditionOperator: ConditionOperatorType;
+  conditionOperator: ConditionOperatorEnum;
 
   constructor(logic: Logic | LogicDTO, validate = false) {
     super(logic as LogicDTO);

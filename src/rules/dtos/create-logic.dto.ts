@@ -3,11 +3,9 @@ import { IsArray, IsEnum, IsNotEmpty, IsString } from 'class-validator';
 import { Type } from 'class-transformer';
 import { LogicValue } from '../entities/logic-value.entity';
 import { ConditionOperatorEnum } from '../interfaces/condition-operator.enum';
-import { ConditionOperatorType } from '../interfaces/condition-operator.type';
 import { BaseValidateDTO } from '../../shared/dtos/base-validate.dto';
 import { LogicValueDTO } from './logic-value.dto';
 import { TransferKeyEnum } from '../interfaces/transfer-key.enum';
-import { TransferKeyType } from '../interfaces/transfer-key.type';
 
 export class CreateLogicDTO extends BaseValidateDTO {
   @ApiProperty()
@@ -20,13 +18,13 @@ export class CreateLogicDTO extends BaseValidateDTO {
   @Type(() => LogicValue)
   values: LogicValueDTO[];
 
-  @ApiProperty()
+  @ApiProperty({enum: ConditionOperatorEnum, enumName: 'ConditionOperatorEnum'})
   @IsEnum(ConditionOperatorEnum)
-  conditionOperator: ConditionOperatorType;
+  conditionOperator: ConditionOperatorEnum;
 
-  @ApiProperty()
+  @ApiProperty({enum: TransferKeyEnum, enumName: 'TransferKeyEnum'})
   @IsEnum(TransferKeyEnum)
-  transferKey: TransferKeyType;
+  transferKey: TransferKeyEnum;
 
   constructor(logic: CreateLogicDTO, validate = false) {
     super();

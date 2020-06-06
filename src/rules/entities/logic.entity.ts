@@ -6,17 +6,14 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { TransferCondition } from './transfer-condition.entity';
-import { ConditionOperatorType } from '../interfaces/condition-operator.type';
 import { LogicValue } from './logic-value.entity';
-import { TransferKeyType } from '../interfaces/transfer-key.type';
+import { TransferKeyEnum } from '../interfaces/transfer-key.enum';
+import { ConditionOperatorEnum } from '../interfaces/condition-operator.enum';
 
 @Entity()
 export class Logic {
   @PrimaryGeneratedColumn('uuid')
   id: string;
-
-  @Column({nullable: true})
-  name: string;
 
   @CreateDateColumn()
   createdAt: Date;
@@ -25,7 +22,7 @@ export class Logic {
   editedAt: Date;
 
   @Column()
-  transferKey: TransferKeyType;
+  transferKey: TransferKeyEnum;
 
   @ManyToOne(() => TransferCondition, rule => rule.andLogic, {cascade: ['insert'], onDelete: 'CASCADE'})
   andCondition: TransferCondition;
@@ -37,7 +34,7 @@ export class Logic {
   values: LogicValue[];
 
   @Column()
-  conditionOperator: ConditionOperatorType;
+  conditionOperator: ConditionOperatorEnum;
 
   /**
    * Used to track performance, to save on time, can break on the hardest on auto-complete

@@ -1,9 +1,9 @@
 export enum TransferKeyEnum  {
-  amount = 'amount',
-  description = 'description',
-  transactionDate = 'transactionDate',
-  currencyCode = 'currencyCode',
-  accountNumber = 'accountNumber',
-  startBalance = 'startBalance',
-  endBalance = 'endBalance'
+  Amount = 'Amount',
+  Description = 'Description',
+  TransactionDate = 'TransactionDate',
+  CurrencyCode = 'CurrencyCode',
+  AccountNumber = 'AccountNumber',
+  StartBalance = 'StartBalance',
+  EndBalance = 'EndBalance'
 }
