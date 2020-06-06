@@ -1,56 +1,42 @@
-import { TransferCondition } from '../entities/transfer-condition.entity';
 import { ApiProperty } from '@nestjs/swagger';
 import {
   IsArray,
   IsEnum,
-  IsNotEmpty,
-  IsNotEmptyObject,
   IsString,
-  ValidateIf,
 } from 'class-validator';
 import { Type } from 'class-transformer';
-import { LogicValue } from '../entities/logic-value.entity';
 import { ConditionOperatorType } from '../interfaces/condition-operator.type';
 import { ConditionOperatorEnum } from '../interfaces/condition-operator.enum';
 import { Logic } from '../entities/logic.entity';
+import { LogicValueDTO } from './logic-value.dto';
+import { CreateLogicDTO } from './create-logic.dto';
 
-export class LogicDTO {
+export class LogicDTO extends CreateLogicDTO {
   @ApiProperty()
   @IsString()
-  @IsNotEmpty()
   id: string;
 
   @ApiProperty()
   @IsString()
-  @IsNotEmpty()
   name: string;
 
-  @ApiProperty()
-  @Type(() => TransferCondition)
-  @ValidateIf(logic => !logic.orCondition)
-  @IsNotEmptyObject()
-  andCondition?: TransferCondition;
-
-  @ApiProperty()
-  @Type(() => TransferCondition)
-  @ValidateIf(logic => !logic.andCondition)
-  @IsNotEmptyObject()
-  orCondition?: TransferCondition;
-
-  @ApiProperty()
+  @ApiProperty({
+    type: LogicValueDTO,
+    isArray: true
+  })
   @IsArray()
-  @Type(() => LogicValue)
-  values: LogicValue[];
+  @Type(() => LogicValueDTO)
+  values: LogicValueDTO[];
 
   @ApiProperty()
   @IsEnum(ConditionOperatorEnum)
   conditionOperator: ConditionOperatorType;
 
-  constructor(logic: Logic | LogicDTO) {
+  constructor(logic: Logic | LogicDTO, validate = false) {
+    super(logic as LogicDTO);
     this.id = logic.id;
-    this.name = logic.name;
-    this.andCondition = logic?.andCondition;
-    this.orCondition = logic?.orCondition;
-    this.values = logic.values;
+    if (validate) {
+      this.validate();
+    }
   }
 }

@@ -4,7 +4,7 @@ import { Logic } from './logic.entity';
 @Entity()
 export class LogicValue {
   @PrimaryGeneratedColumn('uuid')
-  id: number;
+  id: string;
 
   @ManyToOne(() => Logic, logic => logic.values, {onDelete: 'CASCADE'})
   logic: Logic;

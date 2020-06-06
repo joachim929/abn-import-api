@@ -23,13 +23,13 @@ export class Logic {
   @UpdateDateColumn()
   editedAt: Date;
 
-  @ManyToOne(() => TransferCondition, rule => rule.andLogic, {onDelete: 'CASCADE'})
+  @ManyToOne(() => TransferCondition, rule => rule.andLogic, {cascade: ['insert'], onDelete: 'CASCADE'})
   andCondition: TransferCondition;
 
-  @ManyToOne(() => TransferCondition, rule => rule.orLogic, {onDelete: 'CASCADE'})
+  @ManyToOne(() => TransferCondition, rule => rule.orLogic, {cascade: ['insert'], onDelete: 'CASCADE'})
   orCondition: TransferCondition;
 
-  @OneToMany(() => LogicValue, logicValue => logicValue.logic, {onDelete: 'CASCADE'})
+  @OneToMany(() => LogicValue, logicValue => logicValue.logic, {cascade: ['insert'], onDelete: 'CASCADE'})
   values: LogicValue[];
 
   @Column()

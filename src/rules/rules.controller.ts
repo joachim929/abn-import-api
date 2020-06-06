@@ -1,32 +1,36 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
-import { TransferCondition } from './entities/transfer-condition.entity';
+import { RulesService } from './services/rules.service';
+import { CreateTransferConditionDto } from './dtos/create-transfer-condition.dto';
+import { TransferConditionDTO } from './dtos/transfer-condition.dto';
 
 @ApiTags('RulesApi')
 @Controller('rules')
 export class RulesController {
+  constructor(private service: RulesService) {
+  }
 
-  @Get()
+  @Get(':id')
   @ApiResponse({
-    status: 200, type: [TransferCondition],
+    status: 200, type: [TransferConditionDTO],
   })
-  get() {
-    return 'WIP';
+  get(@Param('id') id: string) {
+    return this.service.getWithRelationsShips(id);
   }
 
   @Post()
   @ApiResponse({
-    status: 201, type: TransferCondition,
+    status: 201, type: TransferConditionDTO,
   })
-  post(@Body() transferCondition: TransferCondition) {
-    return 'WIP';
+  post(@Body() transferCondition: CreateTransferConditionDto) {
+    return this.service.post(transferCondition);
   }
 
   @Patch('id')
   @ApiResponse({
-    status: 201, type: TransferCondition,
+    status: 201, type: TransferConditionDTO,
   })
-  patch(@Param('id') id: string, @Body() transferCondition: TransferCondition) {
+  patch(@Param('id') id: string, @Body() transferCondition: TransferConditionDTO) {
     return 'WIP';
   }
 

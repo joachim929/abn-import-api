@@ -29,7 +29,7 @@ export class TransferCondition {
   @UpdateDateColumn()
   editedAt: Date;
 
-  @ManyToOne(type => Category, category => category.rules, {onDelete: 'SET NULL'})
+  @ManyToOne(type => Category, category => category.rules, {cascade: ['insert'], onDelete: 'SET NULL'})
   category: Category;
 
   @Column()
@@ -41,9 +41,9 @@ export class TransferCondition {
   @Column({default: false})
   autoAssign: boolean;
 
-  @OneToMany(type => Logic, logic => logic.orCondition, {onDelete: 'CASCADE'})
+  @OneToMany(type => Logic, logic => logic.orCondition, {cascade: ['insert'], onDelete: 'CASCADE'})
   orLogic: Logic[];
 
-  @OneToMany(type => Logic, logic => logic.andCondition, {onDelete: 'CASCADE'})
+  @OneToMany(type => Logic, logic => logic.andCondition, {cascade: ['insert'], onDelete: 'CASCADE'})
   andLogic: Logic[];
 }

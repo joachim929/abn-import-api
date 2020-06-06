@@ -8,6 +8,7 @@ import { Logic } from './entities/logic.entity';
 import { CategoryModule } from '../category/category.module';
 import { LogicService } from './services/logic.service';
 import { LogicController } from './logic.controller';
+import { TransferConditionRepositoryService } from './repositories/transfer-condition-repository.service';
 
 @Module({
   imports: [
@@ -15,7 +16,7 @@ import { LogicController } from './logic.controller';
     TypeOrmModule.forFeature([ TransferCondition, Logic]),
   ],
   controllers: [RulesController, LogicController],
-  providers: [RulesService, LogicRepositoryService, LogicService],
+  providers: [RulesService, LogicRepositoryService, LogicService, TransferConditionRepositoryService],
 })
 export class RulesModule {
 }

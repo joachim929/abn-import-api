@@ -18,6 +18,12 @@ export class LogicRepositoryService {
     });
   }
 
+  async getAll(): Promise<Logic[]> {
+    return await this.repository.find({
+      relations: ['values', 'andCondition', 'orCondition']
+    })
+  }
+
   async getLogicByIds(ids: string[]): Promise<Logic[]> {
     return await this.repository.findByIds(ids);
   }

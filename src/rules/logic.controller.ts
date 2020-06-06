@@ -1,6 +1,5 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
-import { Logic } from './entities/logic.entity';
 import { LogicService } from './services/logic.service';
 import { LogicDTO } from './dtos/logic.dto';
 
@@ -11,9 +10,17 @@ export class LogicController {
 
   }
 
+  @Get()
+  @ApiResponse({
+    status: 200, type: [LogicDTO]
+  })
+  getAll() {
+    return this.service.getAll();
+  }
+
   @Get(':id')
   @ApiResponse({
-    status: 200, type: [LogicDTO],
+    status: 200, type: LogicDTO,
   })
   get(@Param('id') id: string) {
     return this.service.get(id);
