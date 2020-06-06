@@ -36,9 +36,6 @@ export class TransferCondition {
   @Column()
   type: LogicType;
 
-  @Column()
-  transferKey: TransferKeyType;
-
   @Column({default: false})
   autoAssign: boolean;
 

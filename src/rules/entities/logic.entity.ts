@@ -8,6 +8,7 @@ import {
 import { TransferCondition } from './transfer-condition.entity';
 import { ConditionOperatorType } from '../interfaces/condition-operator.type';
 import { LogicValue } from './logic-value.entity';
+import { TransferKeyType } from '../interfaces/transfer-key.type';
 
 @Entity()
 export class Logic {
@@ -22,6 +23,9 @@ export class Logic {
 
   @UpdateDateColumn()
   editedAt: Date;
+
+  @Column()
+  transferKey: TransferKeyType;
 
   @ManyToOne(() => TransferCondition, rule => rule.andLogic, {cascade: ['insert'], onDelete: 'CASCADE'})
   andCondition: TransferCondition;

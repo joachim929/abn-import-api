@@ -40,10 +40,6 @@ export class CreateTransferConditionDto extends BaseValidateDTO {
   type: LogicType;
 
   @ApiProperty()
-  @IsEnum(TransferKeyEnum)
-  transferKey: TransferKeyType;
-
-  @ApiProperty()
   @IsBoolean()
   autoAssign?: boolean = false;
 
@@ -73,7 +69,6 @@ export class CreateTransferConditionDto extends BaseValidateDTO {
     this.description = transferCondition?.description;
     this.category = transferCondition?.category as CategoryDTO;
     this.type = transferCondition.type;
-    this.transferKey = transferCondition.transferKey;
     this.autoAssign = transferCondition.autoAssign;
     this.orLogic = this.mapLogic(transferCondition?.orLogic as CreateLogicDTO[]);
     this.andLogic = this.mapLogic(transferCondition?.andLogic as CreateLogicDTO[]);
