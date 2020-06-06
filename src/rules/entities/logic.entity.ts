@@ -29,14 +29,14 @@ export class Logic {
   @ManyToOne(() => TransferCondition, rule => rule.orLogic, {cascade: ['insert'], onDelete: 'CASCADE'})
   orCondition: TransferCondition;
 
-  @OneToMany(() => LogicValue, logicValue => logicValue.logic, {cascade: ['insert'], onDelete: 'CASCADE'})
+  @OneToMany(() => LogicValue, logicValue => logicValue.logic, {cascade: ['insert', 'update'], onDelete: 'CASCADE'})
   values: LogicValue[];
 
   @Column()
   conditionOperator: ConditionOperatorType;
 
   /**
-   * Used to track preformance, to save on time, can break on the hardest on auto-complete
+   * Used to track performance, to save on time, can break on the hardest on auto-complete
    * Nice to have
    */
   @Column({default: 0})

@@ -5,6 +5,13 @@ import { DeepPartial, DeleteResult, Repository, SaveOptions } from 'typeorm';
 
 @Injectable()
 export class TransferConditionRepositoryService {
+  relationships = [
+    'category',
+    'orLogic',
+    'andLogic',
+    'andLogic.values',
+    'orLogic.values',
+  ];
   constructor(@InjectRepository(TransferCondition) private repository: Repository<TransferCondition>) {
 
   }
@@ -19,6 +26,12 @@ export class TransferConditionRepositoryService {
     return await this.repository.findOneOrFail(options).catch(() => {
       throw new HttpException(`No TransferCondition found with ${id}`, HttpStatus.NOT_FOUND);
     })
+  }
+
+  async getAll(): Promise<TransferCondition[]> {
+    return await this.repository.find({
+      relations: this.relationships
+    });
   }
 
   async getByIds(ids: string[]): Promise<TransferCondition[]> {

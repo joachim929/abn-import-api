@@ -1,7 +1,7 @@
 import {
   Column,
   CreateDateColumn,
-  Entity,
+  Entity, Index,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
@@ -17,6 +17,7 @@ export class TransferCondition {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
+  @Index({unique: true})
   @Column()
   name: string;
 

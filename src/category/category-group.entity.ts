@@ -4,7 +4,7 @@ import {
   PrimaryGeneratedColumn,
   CreateDateColumn,
   UpdateDateColumn,
-  OneToMany,
+  OneToMany, Index,
 } from 'typeorm';
 import { Category } from './category.entity';
 
@@ -13,6 +13,7 @@ export class CategoryGroup {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
+  @Index({unique: true})
   @Column()
   name: string;
 
@@ -25,6 +26,6 @@ export class CategoryGroup {
   @UpdateDateColumn()
   editedAt: Date;
 
-  @OneToMany(type => Category, category => category.categoryGroup, {onDelete: 'CASCADE'})
+  @OneToMany(() => Category, category => category.categoryGroup, {onDelete: 'CASCADE'})
   categories: Category[];
 }

@@ -11,29 +11,37 @@ export class RulesService {
   ) {
   }
 
-  post(rule: CreateTransferConditionDto) {
-    return this.transferConditionRepository.post(new CreateTransferConditionDto(rule, true));
+  post(rule: CreateTransferConditionDto): Promise<TransferConditionDTO> {
+    return this.transferConditionRepository
+      .post(new CreateTransferConditionDto(rule, true))
+      .then((response) => new TransferConditionDTO(response));
   }
 
-  get(id: string) {
-    return new Promise((resolve, reject) => {
-      this.transferConditionRepository.getById(id).then((response) => {
-        resolve(new TransferConditionDTO(response));
-      }).catch(reject);
-    });
+  get(id: string): Promise<TransferConditionDTO> {
+    return this.transferConditionRepository.getById(id).then((response) => new TransferConditionDTO(response));
   }
 
-  getWithRelationsShips(id: string) {
-    return new Promise((resolve, reject) => {
-      this.transferConditionRepository.getById(id, [
-        'category',
-        'orLogic',
-        'andLogic',
-        'andLogic.values',
-        'orLogic.values'
-      ]).then((response) => {
-        resolve(new TransferConditionDTO(response))
-      }).catch(reject);
-    })
+  getAll(): Promise<TransferConditionDTO[]> {
+    return this.transferConditionRepository.getAll()
+      .then((response) => response.map((condition) => new TransferConditionDTO(condition)));
+  }
+
+  getWithRelationsShips(id: string): Promise<TransferConditionDTO> {
+    return this.transferConditionRepository.getById(id, [
+      'category',
+      'orLogic',
+      'andLogic',
+      'andLogic.values',
+      'orLogic.values',
+    ]).then((response) => new TransferConditionDTO(response));
+  }
+
+  patch(rule: TransferConditionDTO): Promise<TransferConditionDTO> {
+    return this.transferConditionRepository.patch(rule.id, new TransferConditionDTO(rule))
+      .then((response) => new TransferConditionDTO(response));
+  }
+
+  delete(id: string): Promise<void> {
+    return this.transferConditionRepository.delete(id).then();
   }
 }

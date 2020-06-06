@@ -2,6 +2,7 @@ import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/commo
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
 import { LogicService } from './services/logic.service';
 import { LogicDTO } from './dtos/logic.dto';
+import { CreateLogicDTO } from './dtos/create-logic.dto';
 
 @ApiTags('LogicApi')
 @Controller('logic')
@@ -30,7 +31,7 @@ export class LogicController {
   @ApiResponse({
     status: 201, type: LogicDTO,
   })
-  post(@Body() logic: LogicDTO) {
+  post(@Body() logic: CreateLogicDTO) {
     return this.service.post(logic);
   }
 

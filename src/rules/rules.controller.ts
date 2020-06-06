@@ -10,9 +10,25 @@ export class RulesController {
   constructor(private service: RulesService) {
   }
 
+  @Get()
+  @ApiResponse({
+    status: 200, type: [TransferConditionDTO]
+  })
+  getAll() {
+    return this.service.getAll();
+  }
+
+  @Patch()
+  @ApiResponse({
+    status: 201, type: TransferConditionDTO,
+  })
+  patch(@Body() transferCondition: TransferConditionDTO) {
+    return this.service.patch(transferCondition);
+  }
+
   @Get(':id')
   @ApiResponse({
-    status: 200, type: [TransferConditionDTO],
+    status: 200, type: TransferConditionDTO,
   })
   get(@Param('id') id: string) {
     return this.service.getWithRelationsShips(id);
@@ -26,19 +42,11 @@ export class RulesController {
     return this.service.post(transferCondition);
   }
 
-  @Patch('id')
-  @ApiResponse({
-    status: 201, type: TransferConditionDTO,
-  })
-  patch(@Param('id') id: string, @Body() transferCondition: TransferConditionDTO) {
-    return 'WIP';
-  }
-
   @Delete('id')
   @ApiResponse({
     status: 204
   })
   delete(@Param('id') id: string) {
-    return 'WIP';
+    return this.service.delete(id);
   }
 }
