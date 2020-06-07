@@ -1,7 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsArray, IsEnum, IsNotEmpty, IsString } from 'class-validator';
-import { Type } from 'class-transformer';
-import { LogicValue } from '../entities/logic-value.entity';
+import { IsEnum, IsNotEmpty, IsString } from 'class-validator';
 import { ConditionOperatorEnum } from '../interfaces/condition-operator.enum';
 import { BaseValidateDTO } from '../../shared/dtos/base-validate.dto';
 import { LogicValueDTO } from './logic-value.dto';
@@ -14,9 +12,8 @@ export class CreateLogicDTO extends BaseValidateDTO {
   name: string;
 
   @ApiProperty()
-  @IsArray()
-  @Type(() => LogicValue)
-  values: LogicValueDTO[];
+  @IsString()
+  value: string;
 
   @ApiProperty({enum: ConditionOperatorEnum, enumName: 'ConditionOperatorEnum'})
   @IsEnum(ConditionOperatorEnum)
@@ -29,7 +26,7 @@ export class CreateLogicDTO extends BaseValidateDTO {
   constructor(logic: CreateLogicDTO, validate = false) {
     super();
     this.name = logic.name;
-    this.values = logic.values;
+    this.value = logic.value;
     this.conditionOperator = logic.conditionOperator;
     this.transferKey = logic.transferKey;
 

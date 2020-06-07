@@ -31,8 +31,6 @@ export class RulesService {
       'category',
       'orLogic',
       'andLogic',
-      'andLogic.values',
-      'orLogic.values',
     ]).then((response) => new TransferConditionDTO(response));
   }
 

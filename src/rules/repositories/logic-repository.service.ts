@@ -20,7 +20,7 @@ export class LogicRepositoryService {
 
   async getAll(): Promise<Logic[]> {
     return await this.repository.find({
-      relations: ['values', 'andCondition', 'orCondition']
+      relations: ['andCondition', 'orCondition']
     })
   }
 

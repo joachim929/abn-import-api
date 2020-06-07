@@ -7,3 +7,13 @@ export type DateOperatorType =
   ConditionOperatorEnum.LessThan |
   ConditionOperatorEnum.LessOrEqualThan |
   ConditionOperatorEnum.Not
+
+
+export enum DateOperators {
+  Equals = ConditionOperatorEnum.Equals,
+  GreaterThan = ConditionOperatorEnum.GreaterThan,
+  GreaterOrEqualThan = ConditionOperatorEnum.GreaterOrEqualThan,
+  LessThan = ConditionOperatorEnum.LessThan,
+  LessOrEqualThan = ConditionOperatorEnum.LessOrEqualThan,
+  Not = ConditionOperatorEnum.Not
+}

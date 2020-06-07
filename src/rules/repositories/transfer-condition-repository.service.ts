@@ -9,8 +9,6 @@ export class TransferConditionRepositoryService {
     'category',
     'orLogic',
     'andLogic',
-    'andLogic.values',
-    'orLogic.values',
   ];
   constructor(@InjectRepository(TransferCondition) private repository: Repository<TransferCondition>) {
 

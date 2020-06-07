@@ -6,7 +6,6 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { TransferCondition } from './transfer-condition.entity';
-import { LogicValue } from './logic-value.entity';
 import { TransferKeyEnum } from '../interfaces/transfer-key.enum';
 import { ConditionOperatorEnum } from '../interfaces/condition-operator.enum';
 
@@ -30,8 +29,8 @@ export class Logic {
   @ManyToOne(() => TransferCondition, rule => rule.orLogic, {cascade: ['insert'], onDelete: 'CASCADE'})
   orCondition: TransferCondition;
 
-  @OneToMany(() => LogicValue, logicValue => logicValue.logic, {cascade: ['insert', 'update'], onDelete: 'CASCADE'})
-  values: LogicValue[];
+  @Column()
+  values: string;
 
   @Column()
   conditionOperator: ConditionOperatorEnum;

@@ -15,8 +15,16 @@ import { TransferConditionRepositoryService } from './repositories/transfer-cond
     CategoryModule,
     TypeOrmModule.forFeature([ TransferCondition, Logic]),
   ],
-  controllers: [RulesController, LogicController],
-  providers: [RulesService, LogicRepositoryService, LogicService, TransferConditionRepositoryService],
+  controllers: [
+    RulesController,
+    LogicController
+  ],
+  providers: [
+    RulesService,
+    LogicRepositoryService,
+    LogicService,
+    TransferConditionRepositoryService
+  ],
 })
 export class RulesModule {
 }
