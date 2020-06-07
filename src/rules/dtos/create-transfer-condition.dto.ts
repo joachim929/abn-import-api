@@ -13,9 +13,6 @@ import {
 import { CategoryDTO } from '../../category/dtos/category.dto';
 import { Type } from 'class-transformer';
 import { LogicEnum } from '../interfaces/logic.enum';
-import { LogicType } from '../interfaces/logic.type';
-import { TransferKeyEnum } from '../interfaces/transfer-key.enum';
-import { TransferKeyType } from '../interfaces/transfer-key.type';
 import { LogicDTO } from './logic.dto';
 import { CreateLogicDTO } from './create-logic.dto';
 import { TransferCondition } from '../entities/transfer-condition.entity';
@@ -35,9 +32,9 @@ export class CreateTransferConditionDto extends BaseValidateDTO {
   @IsOptional()
   category: CategoryDTO;
 
-  @ApiProperty()
+  @ApiProperty({enum: LogicEnum, enumName: 'LogicEnum'})
   @IsEnum(LogicEnum)
-  type: LogicType;
+  type: LogicEnum;
 
   @ApiProperty()
   @IsBoolean()
