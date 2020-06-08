@@ -4,10 +4,8 @@ import { ConditionOperatorEnum } from '../interfaces/condition-operator.enum';
 import { BaseValidateDTO } from '../../shared/dtos/base-validate.dto';
 import { TransferKeyEnum } from '../interfaces/transfer-key.enum';
 import { LogicTypeEnum } from '../interfaces/logic-type.enum';
-import { CreateTransferConditionDTO } from './create-transfer-condition.dto';
-import { TransferConditionDTO } from './transfer-condition.dto';
 
-export class CreateLogicValidate extends BaseValidateDTO {
+export class CreateLogicDTO extends BaseValidateDTO {
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
@@ -29,10 +27,11 @@ export class CreateLogicValidate extends BaseValidateDTO {
   @IsNotEmpty()
   type: LogicTypeEnum;
 
+  // todo: see if you can get strong typing on this
   andCondition: any = null;
   orCondition: any = null;
 
-  constructor(logic: CreateLogicValidate, validate = false) {
+  constructor(logic: CreateLogicDTO, validate = false) {
     super();
     this.name = logic.name;
     this.value = logic.value;

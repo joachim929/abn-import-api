@@ -1,23 +1,13 @@
 import { BaseValidateDTO } from '../../shared/dtos/base-validate.dto';
 import { ApiProperty } from '@nestjs/swagger';
-import {
-  IsArray,
-  IsBoolean,
-  IsEnum,
-  IsNotEmpty,
-  IsNotEmptyObject,
-  IsOptional,
-  IsString,
-  ValidateIf,
-} from 'class-validator';
+import { IsArray, IsBoolean, IsNotEmpty, IsOptional, IsString, ValidateIf } from 'class-validator';
 import { CategoryDTO } from '../../category/dtos/category.dto';
 import { Type } from 'class-transformer';
-import { LogicEnum } from '../interfaces/logic.enum';
 import { LogicDTO } from './logic.dto';
 import { CreateLogicDTO } from './create-logic.dto';
 import { TransferCondition } from '../entities/transfer-condition.entity';
 
-export class CreateTransferConditionDto extends BaseValidateDTO {
+export class CreateTransferConditionDTO extends BaseValidateDTO {
   @ApiProperty()
   @IsString()
   name: string;
@@ -32,17 +22,13 @@ export class CreateTransferConditionDto extends BaseValidateDTO {
   @IsOptional()
   category: CategoryDTO;
 
-  @ApiProperty({enum: LogicEnum, enumName: 'LogicEnum'})
-  @IsEnum(LogicEnum)
-  type: LogicEnum;
-
   @ApiProperty()
   @IsBoolean()
   autoAssign?: boolean = false;
 
   @ApiProperty({
     type: LogicDTO,
-    isArray: true
+    isArray: true,
   })
   @IsArray()
   @Type(() => LogicDTO)
@@ -52,7 +38,7 @@ export class CreateTransferConditionDto extends BaseValidateDTO {
 
   @ApiProperty({
     type: LogicDTO,
-    isArray: true
+    isArray: true,
   })
   @IsArray()
   @Type(() => LogicDTO)
@@ -60,12 +46,11 @@ export class CreateTransferConditionDto extends BaseValidateDTO {
   @IsNotEmpty()
   andLogic: CreateLogicDTO[];
 
-  constructor(transferCondition: CreateTransferConditionDto | TransferCondition, validate = false) {
+  constructor(transferCondition: CreateTransferConditionDTO | TransferCondition, validate = false) {
     super();
     this.name = transferCondition.name;
     this.description = transferCondition?.description;
     this.category = transferCondition?.category as CategoryDTO;
-    this.type = transferCondition.type;
     this.autoAssign = transferCondition.autoAssign;
     this.orLogic = this.mapLogic(transferCondition?.orLogic as CreateLogicDTO[]);
     this.andLogic = this.mapLogic(transferCondition?.andLogic as CreateLogicDTO[]);

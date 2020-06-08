@@ -33,7 +33,7 @@ export class LogicRepositoryService {
     return await this.repository.save(logic);
   }
 
-  async postMultipleLogic<T extends DeepPartial<Logic>>(entity: T, options?: SaveOptions): Promise<Logic[]>
+  async postMultipleLogic<T extends DeepPartial<Logic[]>>(entity: T, options?: SaveOptions): Promise<Logic[]>
   async postMultipleLogic(logic: any[]): Promise<Logic[]> {
     return await this.repository.save(logic);
   }

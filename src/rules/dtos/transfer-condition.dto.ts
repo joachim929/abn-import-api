@@ -1,11 +1,11 @@
-import { CreateTransferConditionDto } from './create-transfer-condition.dto';
+import { CreateTransferConditionDTO } from './create-transfer-condition.dto';
 import { ApiProperty } from '@nestjs/swagger';
 import { IsArray, IsNotEmpty, IsString, Length, ValidateIf } from 'class-validator';
 import { LogicDTO } from './logic.dto';
 import { Type } from 'class-transformer';
 import { TransferCondition } from '../entities/transfer-condition.entity';
 
-export class TransferConditionDTO extends CreateTransferConditionDto {
+export class TransferConditionDTO extends CreateTransferConditionDTO {
   @ApiProperty()
   @IsString()
   @Length(36, 36)

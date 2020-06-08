@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { LogicRepositoryService } from '../repositories/logic-repository.service';
 import { LogicDTO } from '../dtos/logic.dto';
 import { CreateLogicDTO } from '../dtos/create-logic.dto';
+import { Logic } from '../entities/logic.entity';
 
 @Injectable()
 export class LogicService {
@@ -33,5 +34,9 @@ export class LogicService {
 
   delete(id: string): Promise<void> {
       return this.logicRepo.deleteLogic(id).then();
+  }
+
+  postMultiple(logic: CreateLogicDTO[]): Promise<Logic[]> {
+    return this.logicRepo.postMultipleLogic(logic);
   }
 }

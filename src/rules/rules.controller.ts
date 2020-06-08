@@ -1,7 +1,7 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
 import { RulesService } from './services/rules.service';
-import { CreateTransferConditionDto } from './dtos/create-transfer-condition.dto';
+import { CreateTransferConditionDTO } from './dtos/create-transfer-condition.dto';
 import { TransferConditionDTO } from './dtos/transfer-condition.dto';
 
 @ApiTags('RulesApi')
@@ -38,7 +38,7 @@ export class RulesController {
   @ApiResponse({
     status: 201, type: TransferConditionDTO,
   })
-  post(@Body() transferCondition: CreateTransferConditionDto) {
+  post(@Body() transferCondition: CreateTransferConditionDTO) {
     return this.service.post(transferCondition);
   }
 

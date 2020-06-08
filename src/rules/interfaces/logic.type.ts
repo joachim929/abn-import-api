@@ -1,3 +1,3 @@
-import { LogicEnum } from './logic.enum';
+import { LogicTypeEnum } from './logic-type.enum';
 
-export type LogicType = LogicEnum.Date | LogicEnum.Number | LogicEnum.String
+export type LogicType = LogicTypeEnum.Date | LogicTypeEnum.Number | LogicTypeEnum.String
