@@ -9,8 +9,6 @@ import {
 } from 'typeorm';
 import { Category } from '../../category/category.entity';
 import { Logic } from './logic.entity';
-import { LogicType } from '../interfaces/logic.type';
-import { TransferKeyType } from '../interfaces/transfer-key.type';
 
 @Entity()
 export class TransferCondition {
@@ -32,9 +30,6 @@ export class TransferCondition {
 
   @ManyToOne(type => Category, category => category.rules, {cascade: ['insert'], onDelete: 'SET NULL'})
   category: Category;
-
-  @Column()
-  type: LogicType;
 
   @Column({default: false})
   autoAssign: boolean;
