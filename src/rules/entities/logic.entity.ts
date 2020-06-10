@@ -24,10 +24,10 @@ export class Logic {
   @Column()
   transferKey: TransferKeyEnum;
 
-  @ManyToOne(() => TransferCondition, rule => rule.andLogic, {cascade: ['insert'], onDelete: 'CASCADE'})
+  @ManyToOne(() => TransferCondition, rule => rule.andLogic, {cascade: ['insert', 'update'], onDelete: 'CASCADE'})
   andCondition: TransferCondition;
 
-  @ManyToOne(() => TransferCondition, rule => rule.orLogic, {cascade: ['insert'], onDelete: 'CASCADE'})
+  @ManyToOne(() => TransferCondition, rule => rule.orLogic, {cascade: ['insert', 'update'], onDelete: 'CASCADE'})
   orCondition: TransferCondition;
 
   @Column()

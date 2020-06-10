@@ -42,7 +42,7 @@ export class RulesController {
     return this.service.post(transferCondition);
   }
 
-  @Delete('id')
+  @Delete(':id')
   @ApiResponse({
     status: 204
   })

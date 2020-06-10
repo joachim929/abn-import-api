@@ -71,6 +71,11 @@ export class RulesService {
   }
 
   patch(rule: TransferConditionDTO): Promise<TransferConditionDTO> {
+    rule = {
+      ...rule,
+      andLogic: [...rule.andLogic].map((logic) => !logic.id ? new CreateLogicDTO(logic) as LogicDTO : logic),
+      orLogic: [...rule.orLogic].map((logic) => !logic.id ? new CreateLogicDTO(logic) as LogicDTO : logic)
+    } as TransferConditionDTO;
     return this.transferConditionRepository.patch(rule.id, new TransferConditionDTO(rule))
       .then((response) => new TransferConditionDTO(response));
   }
