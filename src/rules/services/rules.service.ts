@@ -7,6 +7,7 @@ import { Logic } from '../entities/logic.entity';
 import { LogicDTO } from '../dtos/logic.dto';
 import { LogicService } from './logic.service';
 import { CreateLogicDTO } from '../dtos/create-logic.dto';
+import { TransferCondition } from '../entities/transfer-condition.entity';
 
 @Injectable()
 export class RulesService {
@@ -40,12 +41,17 @@ export class RulesService {
             andCondition: transferCondition,
           } as CreateLogicDTO));
 
-          Promise.all([this.logicService.postMultiple(newOrLogic), this.logicService.postMultiple(newAndLogic)]).then(([andLogic, orLogic]) => {
-            resolve({
-              ...temp,
-              orLogic: orLogic.map((item) => new LogicDTO(item)),
-              andLogic: andLogic.map((item) => new LogicDTO(item)),
-            } as TransferConditionDTO);
+          Promise.all([this.logicService.postMultiple(newOrLogic), this.logicService.postMultiple(newAndLogic)]).then(([orLogic, andLogic]) => {
+            resolve(new TransferConditionDTO({
+              ...transferCondition,
+              orLogic,
+              andLogic,
+            }));
+            // resolve({
+            //   ...temp,
+            //   orLogic: orLogic.map((item) => new LogicDTO(item)),
+            //   andLogic: andLogic.map((item) => new LogicDTO(item)),
+            // } as TransferConditionDTO);
           });
 
         }).catch(reject);
@@ -73,8 +79,8 @@ export class RulesService {
   patch(rule: TransferConditionDTO): Promise<TransferConditionDTO> {
     rule = {
       ...rule,
-      andLogic: [...rule.andLogic].map((logic) => !logic.id ? new CreateLogicDTO(logic) as LogicDTO : logic),
-      orLogic: [...rule.orLogic].map((logic) => !logic.id ? new CreateLogicDTO(logic) as LogicDTO : logic)
+      andLogic: [...rule.andLogic].map((logic) => !logic.id ? new CreateLogicDTO(logic as unknown as CreateLogicDTO, true) : new LogicDTO(logic, true)),
+      orLogic: [...rule.orLogic].map((logic) => !logic.id ? new CreateLogicDTO(logic as unknown as CreateLogicDTO, true) : new LogicDTO(logic, true))
     } as TransferConditionDTO;
     return this.transferConditionRepository.patch(rule.id, new TransferConditionDTO(rule))
       .then((response) => new TransferConditionDTO(response));

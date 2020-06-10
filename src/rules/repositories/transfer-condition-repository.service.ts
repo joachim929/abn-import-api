@@ -28,7 +28,10 @@ export class TransferConditionRepositoryService {
 
   async getAll(): Promise<TransferCondition[]> {
     return await this.repository.find({
-      relations: this.relationships
+      relations: this.relationships,
+      order: {
+        name: 'ASC'
+      }
     });
   }
 
