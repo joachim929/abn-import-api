@@ -1,10 +1,12 @@
 export enum ConditionOperatorEnum {
   Equals = 'Equals',
+  NotEqual = 'NotEqual',
   GreaterThan = 'GreaterThan',
   GreaterOrEqualThan = 'GreaterOrEqualThan',
   LessThan = 'LessThan',
   LessOrEqualThan = 'LessOrEqualThan',
   Contains = 'Contains',
-  Not = 'Not',
-  Like = 'Like'
+  NotContain = 'NotContain',
+  Like = 'Like',
+  NotLike = 'NotLike'
 }

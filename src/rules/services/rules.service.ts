@@ -3,11 +3,9 @@ import { CreateTransferConditionDTO } from '../dtos/create-transfer-condition.dt
 import { TransferConditionRepositoryService } from '../repositories/transfer-condition-repository.service';
 import { TransferConditionDTO } from '../dtos/transfer-condition.dto';
 import { LogicRepositoryService } from '../repositories/logic-repository.service';
-import { Logic } from '../entities/logic.entity';
 import { LogicDTO } from '../dtos/logic.dto';
 import { LogicService } from './logic.service';
 import { CreateLogicDTO } from '../dtos/create-logic.dto';
-import { TransferCondition } from '../entities/transfer-condition.entity';
 
 @Injectable()
 export class RulesService {
