@@ -1,13 +1,12 @@
 import {
   Body,
   Controller,
-  Delete,
   Get,
   Param,
   Post,
 } from '@nestjs/common';
 import { TransferService } from './services/transfer.service';
-import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { RawInvoiceJsonDTO } from '../shared/dtos/raw-invoice-json.dto';
 import { TransferImportService } from './services/transfer-import/transfer-import.service';
 import { TransferBatchImportDto } from './dtos/transfer-batch-import.dto';
@@ -28,9 +27,6 @@ export class TransferController {
    * Debug/Admin route to get all data
    */
   @Get()
-  @ApiOperation({
-    operationId: 'adminGetTransfer',
-  })
   @ApiResponse({
     status: 200, description: 'Get all transfers', type: [Transfer],
   })
@@ -45,14 +41,8 @@ export class TransferController {
   }
 
   @Get(':id')
-  @ApiOperation({
-    operationId: 'getTransfer',
-  })
   @ApiResponse({
     status: 200, description: 'Got records', type: TransferMutation,
-  })
-  @ApiResponse({
-    status: 400, description: 'Bad request',
   })
   @ApiResponse({
     status: 401, description: 'Unauthorized', // Not logged in
@@ -62,9 +52,6 @@ export class TransferController {
   }
 
   @Post('/filtered')
-  @ApiOperation({
-    operationId: 'filteredTransfers',
-  })
   @ApiResponse({
     status: 201, description: 'Got records', type: TransferListParams
   })
@@ -79,9 +66,6 @@ export class TransferController {
   }
 
   @Post('upload/excel')
-  @ApiOperation({
-    operationId: 'postExcelTransfer',
-  })
   @ApiResponse({
     status: 201, description: 'Records created', type: TransferBatchImportDto,
   })

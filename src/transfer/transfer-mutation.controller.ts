@@ -19,9 +19,6 @@ export class TransferMutationController {
   }
 
   @Post('/category')
-  @ApiOperation({
-    operationId: 'getByCategoryId'
-  })
   @ApiResponse({
     status: 200, type: TransferListParams
   })
@@ -30,9 +27,6 @@ export class TransferMutationController {
   }
 
   @Get('/history/:id')
-  @ApiOperation({
-    operationId: 'getTransferMutationHistory'
-  })
   @ApiResponse({
     status: 200, description: 'Transfer Mutation history found', type: Transfer
   })
@@ -47,9 +41,6 @@ export class TransferMutationController {
   }
 
   @Patch('/undo')
-  @ApiOperation({
-    operationId: 'undoTransferMutationPatch'
-  })
   @ApiResponse({
     status: 200, description: 'Record patched', type: TransferMutationDTO
   })
@@ -65,9 +56,6 @@ export class TransferMutationController {
 
 
   @Post('/split')
-  @ApiOperation({
-    operationId: 'splitTransferMutation',
-  })
   @ApiResponse({
     status: 201, description: 'Record created and patched', type: [TransferMutationDTO],
   })
@@ -83,9 +71,6 @@ export class TransferMutationController {
 
 
   @Delete(':id')
-  @ApiOperation({
-    operationId: 'deleteTransferMutation',
-  })
   @ApiResponse({
     status: 204, description: 'Record deleted',
   })
@@ -100,9 +85,6 @@ export class TransferMutationController {
   }
 
   @Patch()
-  @ApiOperation({
-    operationId: 'patchTransferMutation'
-  })
   @ApiResponse({
     status: 200, description: 'Record patched', type: TransferMutationDTO
   })
