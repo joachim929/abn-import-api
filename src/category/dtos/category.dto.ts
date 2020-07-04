@@ -2,8 +2,9 @@ import { Category } from '../category.entity';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsNumber, IsOptional, IsString, MaxLength, MinLength, validateSync } from 'class-validator';
 import { HttpException, HttpStatus } from '@nestjs/common';
+import { BaseValidateDTO } from '../../shared/dtos/base-validate.dto';
 
-export class CategoryDTO {
+export class CategoryDTO extends BaseValidateDTO {
   @ApiProperty()
   @IsNumber()
   id: number;
@@ -23,18 +24,16 @@ export class CategoryDTO {
   @IsNumber()
   order: number;
 
-  constructor(category: Category) {
+  constructor(category: Category, validate?: boolean) {
+    super();
     this.id = category.id;
     this.name = category.name;
     this.order = category.order;
     this.description = category?.description || null;
     this.validate();
-  }
 
-  validate() {
-    const errors = validateSync(this);
-    if (errors.length > 0) {
-      throw new HttpException(errors, HttpStatus.BAD_REQUEST);
+    if (validate) {
+      this.validate();
     }
   }
 }

@@ -5,14 +5,12 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   ManyToOne,
-  JoinColumn, OneToMany,
+  OneToMany,
 } from 'typeorm';
 import { CategoryGroup } from './category-group.entity';
 import { TransferMutation } from '../transfer/entities/transfer-mutation.entity';
+import { TransferCondition } from '../rules/entities/transfer-condition.entity';
 
-/**
- * Need to add ordering to this
- */
 @Entity()
 export class Category {
   @PrimaryGeneratedColumn()
@@ -38,4 +36,7 @@ export class Category {
 
   @OneToMany(type => TransferMutation, mutation => mutation.category, { cascade: ['update'], onDelete: 'SET NULL' })
   mutations: TransferMutation[];
+
+  @OneToMany(type => TransferCondition, rules => rules.category, {onDelete: 'SET NULL'})
+  rules: TransferCondition[];
 }

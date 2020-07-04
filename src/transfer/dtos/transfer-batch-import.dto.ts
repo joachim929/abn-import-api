@@ -1,6 +1,6 @@
 import { Transform, Type } from 'class-transformer';
 import { IsDate, IsNumber, IsOptional, IsString, validateSync } from 'class-validator';
-import { RawTransferSerializerDTO } from '../../invoice/dtos/raw-invoice-json.dto';
+import { RawTransferSerializerDTO } from '../../shared/dtos/raw-invoice-json.dto';
 import { Transfer } from '../entities/transfer.entity';
 import { ApiModelProperty } from '@nestjs/swagger/dist/decorators/api-model-property.decorator';
 import { TransferMutation } from '../entities/transfer-mutation.entity';
