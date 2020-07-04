@@ -22,24 +22,3 @@ export class LogicValueDTO extends BaseValidateDTO {
     }
   }
 }
-
-const t = {
-  "name": "Swagger test",
-  "type": "Number",
-  "transferKey": "amount",
-  "autoAssign": false,
-  "orLogic": [
-    {
-      "name": "Swagger number test",
-      "values": [
-        {
-          "value": "1",
-        },
-      ],
-      "conditionOperator": "greaterThan",
-    },
-    {
-      "name": "Swagger number test 2", "values": [{ "value": "2" }], "conditionOperator": "lessThan",
-    },
-  ],
-};

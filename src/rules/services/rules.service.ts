@@ -32,13 +32,12 @@ export class RulesService {
           // todo: Move this section to LogicService
           const newOrLogic = temp.orLogic.map((logic) => new CreateLogicDTO({
             ...logic,
-            orCondition: transferCondition,
+            orCondition: new TransferConditionDTO(transferCondition),
           } as CreateLogicDTO));
           const newAndLogic = temp.andLogic.map((logic) => new CreateLogicDTO({
             ...logic,
-            andCondition: transferCondition,
+            andCondition: new TransferConditionDTO(transferCondition),
           } as CreateLogicDTO));
-
           Promise.all([this.logicService.postMultiple(newOrLogic), this.logicService.postMultiple(newAndLogic)]).then(([orLogic, andLogic]) => {
             resolve(new TransferConditionDTO({
               ...transferCondition,

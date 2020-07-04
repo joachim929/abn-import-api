@@ -1,4 +1,3 @@
-import { CreateTransferConditionDTO } from './create-transfer-condition.dto';
 import { ApiProperty } from '@nestjs/swagger';
 import {
   IsArray,
@@ -8,15 +7,14 @@ import {
   IsString,
   Length,
   ValidateIf,
-  validateSync,
 } from 'class-validator';
 import { LogicDTO } from './logic.dto';
 import { Type } from 'class-transformer';
 import { TransferCondition } from '../entities/transfer-condition.entity';
-import { HttpException, HttpStatus } from '@nestjs/common';
 import { CategoryDTO } from '../../category/dtos/category.dto';
+import { BaseValidateDTO } from '../../shared/dtos/base-validate.dto';
 
-export class TransferConditionDTO {
+export class TransferConditionDTO extends BaseValidateDTO {
   @ApiProperty()
   @IsString()
   name: string;
@@ -60,6 +58,7 @@ export class TransferConditionDTO {
   andLogic: LogicDTO[];
 
   constructor(transferCondition: TransferConditionDTO | TransferCondition, validate = false) {
+    super();
     this.id = transferCondition.id;
     this.name = transferCondition.name;
     this.description = transferCondition?.description;
@@ -74,12 +73,5 @@ export class TransferConditionDTO {
 
   mapLogic(logic: LogicDTO[]) {
     return logic?.map((item) => new LogicDTO(item));
-  }
-
-  validate() {
-    const errors = validateSync(this);
-    if (errors.length > 0) {
-      throw new HttpException(errors, HttpStatus.BAD_REQUEST);
-    }
   }
 }

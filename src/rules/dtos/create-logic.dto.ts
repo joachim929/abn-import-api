@@ -1,9 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsEnum, IsNotEmpty, IsString } from 'class-validator';
+import { IsEnum, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 import { ConditionOperatorEnum } from '../interfaces/condition-operator.enum';
 import { BaseValidateDTO } from '../../shared/dtos/base-validate.dto';
 import { TransferKeyEnum } from '../interfaces/transfer-key.enum';
 import { LogicTypeEnum } from '../interfaces/logic-type.enum';
+import { TransferCondition } from '../entities/transfer-condition.entity';
+import { CreateTransferConditionDTO } from './create-transfer-condition.dto';
+import { TransferConditionDTO } from './transfer-condition.dto';
 
 export class CreateLogicDTO extends BaseValidateDTO {
   @ApiProperty()
@@ -27,9 +30,13 @@ export class CreateLogicDTO extends BaseValidateDTO {
   @IsNotEmpty()
   type: LogicTypeEnum;
 
-  // todo: see if you can get strong typing on this
-  andCondition: any = null;
-  orCondition: any = null;
+  @ApiProperty()
+  @IsOptional()
+  andCondition?: CreateTransferConditionDTO | TransferConditionDTO;
+
+  @ApiProperty()
+  @IsOptional()
+  orCondition?: CreateTransferConditionDTO | TransferConditionDTO;
 
   constructor(logic: CreateLogicDTO, validate = false) {
     super();
@@ -37,8 +44,16 @@ export class CreateLogicDTO extends BaseValidateDTO {
     this.value = logic.value;
     this.conditionOperator = logic.conditionOperator;
     this.transferKey = logic.transferKey;
-    this.andCondition = logic.andCondition;
-    this.orCondition = logic.orCondition;
+    if ((logic.andCondition as TransferConditionDTO)?.id) {
+      this.andCondition = new TransferConditionDTO(logic.andCondition as TransferConditionDTO);
+    } else {
+      this.andCondition = new CreateTransferConditionDTO(logic.andCondition as CreateTransferConditionDTO);
+    }
+    if ((logic.orCondition as TransferConditionDTO)?.id) {
+      this.orCondition = new TransferConditionDTO(logic.orCondition as TransferConditionDTO);
+    } else {
+      this.orCondition = new CreateTransferConditionDTO(logic.orCondition as CreateTransferConditionDTO);
+    }
     this.type = logic.type;
 
     if (validate) {
