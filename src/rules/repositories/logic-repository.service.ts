@@ -46,7 +46,6 @@ export class LogicRepositoryService {
           ...updateLogic,
         });
       }).then((updatedLogic) => {
-        // todo: Check whats getting returned
         resolve(updatedLogic)
       }).catch(reject);
     });

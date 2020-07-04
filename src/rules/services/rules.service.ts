@@ -29,7 +29,6 @@ export class RulesService {
       this.transferConditionRepository
         .post(validated)
         .then((transferCondition) => {
-          // todo: Move this section to LogicService
           const newOrLogic = temp.orLogic.map((logic) => new CreateLogicDTO({
             ...logic,
             orCondition: new TransferConditionDTO(transferCondition),
@@ -44,11 +43,6 @@ export class RulesService {
               orLogic,
               andLogic,
             }));
-            // resolve({
-            //   ...temp,
-            //   orLogic: orLogic.map((item) => new LogicDTO(item)),
-            //   andLogic: andLogic.map((item) => new LogicDTO(item)),
-            // } as TransferConditionDTO);
           });
 
         }).catch(reject);
