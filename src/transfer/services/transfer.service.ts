@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Transfer } from '../entities/transfer.entity';
 import { TransferMutationDTO } from '../dtos/transfer-batch-import.dto';
-import { TransferBaseService } from './transfer-base/transfer-base.service';
+import { TransferBaseService } from './transfer-base.service';
 import { TransferListParams } from '../dtos/transfer-list-params.dto';
 import { validate } from 'class-validator';
 

@@ -27,16 +27,16 @@ export class TransferMutation {
   @Column({ default: true })
   active: boolean;
 
-  @ManyToOne(type => Category, category => category.mutations, {cascade: ['insert'], onDelete: 'SET NULL'})
+  @ManyToOne(() => Category, category => category.mutations, {cascade: ['insert'], onDelete: 'SET NULL'})
   category: Category;
 
-  @ManyToOne(type => Transfer, transfer => transfer.mutations)
+  @ManyToOne(() => Transfer, transfer => transfer.mutations)
   transfer: Transfer;
 
-  @ManyToOne(type => TransferMutation, mutation => mutation.children, {cascade: ['insert']})
+  @ManyToOne(() => TransferMutation, mutation => mutation.children, {cascade: ['insert']})
   parent: TransferMutation;
 
-  @OneToMany(type => TransferMutation, mutation => mutation.parent, {cascade: ['insert']})
+  @OneToMany(() => TransferMutation, mutation => mutation.parent, {cascade: ['insert']})
   children: TransferMutation[];
 
   @CreateDateColumn()

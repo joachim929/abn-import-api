@@ -30,7 +30,7 @@ export class Transfer {
   @Column({default: true})
   active: boolean;
 
-  @OneToMany(type => TransferMutation, mutation => mutation.transfer)
+  @OneToMany(() => TransferMutation, mutation => mutation.transfer)
   mutations: TransferMutation[];
 
   @CreateDateColumn()

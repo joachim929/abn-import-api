@@ -1,16 +1,16 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import * as hash from 'object-hash';
-import { RawInvoiceJsonDTO, RawTransferSerializerDTO } from '../../../shared/dtos/raw-invoice-json.dto';
-import { Transfer } from '../../entities/transfer.entity';
-import { TransferMutation } from '../../entities/transfer-mutation.entity';
+import { RawInvoiceJsonDTO, RawTransferSerializerDTO } from '../../shared/dtos/raw-invoice-json.dto';
+import { Transfer } from '../entities/transfer.entity';
+import { TransferMutation } from '../entities/transfer-mutation.entity';
 import { validate } from 'class-validator';
 import {
   PreSaveDTO,
   PreSaveTransferDTO,
   TransferBatchImportDto, TransferMutationDTO,
   ValidatedRawTransfersDTO,
-} from '../../dtos/transfer-batch-import.dto';
-import { TransferBaseService } from '../transfer-base/transfer-base.service';
+} from '../dtos/transfer-batch-import.dto';
+import { TransferBaseService } from './transfer-base.service';
 
 @Injectable()
 export class TransferImportService extends TransferBaseService {

@@ -4,7 +4,6 @@ import { ConditionOperatorEnum } from '../interfaces/condition-operator.enum';
 import { BaseValidateDTO } from '../../shared/dtos/base-validate.dto';
 import { TransferKeyEnum } from '../interfaces/transfer-key.enum';
 import { LogicTypeEnum } from '../interfaces/logic-type.enum';
-import { TransferCondition } from '../entities/transfer-condition.entity';
 import { CreateTransferConditionDTO } from './create-transfer-condition.dto';
 import { TransferConditionDTO } from './transfer-condition.dto';
 

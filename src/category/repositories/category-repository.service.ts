@@ -1,6 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Category } from '../../category.entity';
+import { Category } from '../category.entity';
 import { DeepPartial, DeleteResult, Repository, SaveOptions, UpdateResult } from 'typeorm';
 
 @Injectable()

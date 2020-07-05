@@ -1,10 +1,10 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { TransferMutation } from '../../entities/transfer-mutation.entity';
-import { TransferMutationDTO } from '../../dtos/transfer-batch-import.dto';
-import { TransferBaseService } from '../transfer-base/transfer-base.service';
-import { Transfer } from '../../entities/transfer.entity';
-import { TransferListParams } from '../../dtos/transfer-list-params.dto';
-import { Category } from '../../../category/category.entity';
+import { TransferMutation } from '../entities/transfer-mutation.entity';
+import { TransferMutationDTO } from '../dtos/transfer-batch-import.dto';
+import { TransferBaseService } from './transfer-base.service';
+import { Transfer } from '../entities/transfer.entity';
+import { TransferListParams } from '../dtos/transfer-list-params.dto';
+import { Category } from '../../category/category.entity';
 import { orderBy } from 'lodash';
 
 @Injectable()

@@ -8,7 +8,7 @@ import {
 import { TransferService } from './services/transfer.service';
 import { ApiBody, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { RawInvoiceJsonDTO, RawTransferSerializerDTO } from '../shared/dtos/raw-invoice-json.dto';
-import { TransferImportService } from './services/transfer-import/transfer-import.service';
+import { TransferImportService } from './services/transfer-import.service';
 import { TransferBatchImportDto, TransferMutationDTO } from './dtos/transfer-batch-import.dto';
 import { TransferMutation } from './entities/transfer-mutation.entity';
 import { TransferListParams } from './dtos/transfer-list-params.dto';

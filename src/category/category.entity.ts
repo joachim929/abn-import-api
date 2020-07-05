@@ -31,12 +31,12 @@ export class Category {
   @Column({ default: 0 })
   order: number;
 
-  @ManyToOne(type => CategoryGroup, categoryGroup => categoryGroup.categories, { onDelete: 'CASCADE' })
+  @ManyToOne(() => CategoryGroup, categoryGroup => categoryGroup.categories, { onDelete: 'CASCADE' })
   categoryGroup: CategoryGroup;
 
-  @OneToMany(type => TransferMutation, mutation => mutation.category, { cascade: ['update'], onDelete: 'SET NULL' })
+  @OneToMany(() => TransferMutation, mutation => mutation.category, { cascade: ['update'], onDelete: 'SET NULL' })
   mutations: TransferMutation[];
 
-  @OneToMany(type => TransferCondition, rules => rules.category, {onDelete: 'SET NULL'})
+  @OneToMany(() => TransferCondition, rules => rules.category, {onDelete: 'SET NULL'})
   rules: TransferCondition[];
 }

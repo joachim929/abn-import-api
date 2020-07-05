@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { CategoryGroup } from '../category-group.entity';
-import { CategoryGroupRepositoryService } from '../repositories/category-group-repository/category-group-repository.service';
+import { CategoryGroupRepositoryService } from '../repositories/category-group-repository.service';
 import { CategoryGroupDTO, CreateCategoryGroupDTO } from '../dtos/category-group.dto';
 import { CategoryDTO } from '../dtos/category.dto';
-import { CategoryRepositoryService } from '../repositories/category-repository/category-repository.service';
+import { CategoryRepositoryService } from '../repositories/category-repository.service';
 import { Category } from '../category.entity';
 
 @Injectable()

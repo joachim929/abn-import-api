@@ -1,8 +1,8 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Transfer } from '../../entities/transfer.entity';
-import { TransferListParams } from '../../dtos/transfer-list-params.dto';
+import { Transfer } from '../entities/transfer.entity';
+import { TransferListParams } from '../dtos/transfer-list-params.dto';
 
 @Injectable()
 export class TransferRepositoryService {

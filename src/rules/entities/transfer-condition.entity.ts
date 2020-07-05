@@ -28,15 +28,15 @@ export class TransferCondition {
   @UpdateDateColumn()
   editedAt: Date;
 
-  @ManyToOne(type => Category, category => category.rules, {cascade: ['insert'], onDelete: 'SET NULL'})
+  @ManyToOne(() => Category, category => category.rules, {cascade: ['insert'], onDelete: 'SET NULL'})
   category: Category;
 
   @Column({default: false})
   autoAssign: boolean;
 
-  @OneToMany(type => Logic, logic => logic.orCondition, {cascade: ['insert', 'update'], onDelete: 'CASCADE'})
+  @OneToMany(() => Logic, logic => logic.orCondition, {cascade: ['insert', 'update'], onDelete: 'CASCADE'})
   orLogic: Logic[];
 
-  @OneToMany(type => Logic, logic => logic.andCondition, {cascade: ['insert', 'update'], onDelete: 'CASCADE'})
+  @OneToMany(() => Logic, logic => logic.andCondition, {cascade: ['insert', 'update'], onDelete: 'CASCADE'})
   andLogic: Logic[];
 }

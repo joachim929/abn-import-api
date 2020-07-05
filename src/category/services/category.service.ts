@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { CategoryRepositoryService } from '../repositories/category-repository/category-repository.service';
+import { CategoryRepositoryService } from '../repositories/category-repository.service';
 import { Category } from '../category.entity';
-import { DeleteResult, UpdateResult } from 'typeorm';
+import { DeleteResult } from 'typeorm';
 import { CategoryDTO, CreateCategoryDTO } from '../dtos/category.dto';
-import { CategoryGroupRepositoryService } from '../repositories/category-group-repository/category-group-repository.service';
+import { CategoryGroupRepositoryService } from '../repositories/category-group-repository.service';
 
 @Injectable()
 export class CategoryService {
@@ -38,7 +38,7 @@ export class CategoryService {
       const validatedCategory = new CategoryDTO((category as unknown) as Category);
       this.repositoryService.getCategoryById(category.id).then((ocCategory) => {
         ocCategory = {...ocCategory, description: validatedCategory.description, name: validatedCategory.name, order: validatedCategory.order};
-        this.repositoryService.updateCategory(ocCategory.id, ocCategory).then((response: UpdateResult) => {
+        this.repositoryService.updateCategory(ocCategory.id, ocCategory).then(() => {
           resolve(new CategoryDTO(ocCategory));
         }).catch(reason => reject(reason));
       });
