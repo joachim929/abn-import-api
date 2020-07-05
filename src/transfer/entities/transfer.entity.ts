@@ -38,4 +38,7 @@ export class Transfer {
 
   @UpdateDateColumn()
   updatedAt: Date;
+
+  @Column({default: false})
+  forced: boolean;
 }

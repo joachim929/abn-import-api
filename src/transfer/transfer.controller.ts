@@ -7,9 +7,9 @@ import {
 } from '@nestjs/common';
 import { TransferService } from './services/transfer.service';
 import { ApiBody, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { RawInvoiceJsonDTO } from '../shared/dtos/raw-invoice-json.dto';
+import { RawInvoiceJsonDTO, RawTransferSerializerDTO } from '../shared/dtos/raw-invoice-json.dto';
 import { TransferImportService } from './services/transfer-import/transfer-import.service';
-import { TransferBatchImportDto } from './dtos/transfer-batch-import.dto';
+import { TransferBatchImportDto, TransferMutationDTO } from './dtos/transfer-batch-import.dto';
 import { TransferMutation } from './entities/transfer-mutation.entity';
 import { TransferListParams } from './dtos/transfer-list-params.dto';
 import { Transfer } from './entities/transfer.entity';
@@ -53,7 +53,7 @@ export class TransferController {
 
   @Post('/filtered')
   @ApiResponse({
-    status: 201, description: 'Got records', type: TransferListParams
+    status: 201, description: 'Got records', type: TransferListParams,
   })
   @ApiResponse({
     status: 400, description: 'Bad request',
@@ -78,5 +78,20 @@ export class TransferController {
   @ApiBody({ type: [RawInvoiceJsonDTO] })
   postExcelImport(@Body() transfer: [RawInvoiceJsonDTO]) {
     return this.importService.postExcelImport(transfer);
+  }
+
+  @Post('upload/existing')
+  @ApiResponse({
+    status: 201, type: [TransferMutationDTO],
+  })
+  @ApiResponse({
+    status: 400,
+  })
+  @ApiResponse({
+    status: 401,
+  })
+  @ApiBody({ type: [RawTransferSerializerDTO] })
+  postExisting(@Body() existing: [RawTransferSerializerDTO]) {
+    return this.importService.postExisting(existing);
   }
 }

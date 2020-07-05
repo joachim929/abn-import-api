@@ -2,7 +2,7 @@ import { ConnectionOptions } from 'typeorm';
 
 const config: ConnectionOptions = {
   type: 'sqlite',
-  database: 'db',
+  database: '/assets/db',
   entities: [__dirname + '/**/*.entity{.ts,.js}'],
 
   // We are using migrations, synchronize should be set to false.

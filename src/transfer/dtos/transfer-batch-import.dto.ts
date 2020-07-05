@@ -83,6 +83,7 @@ export class PreSaveTransferDTO {
   transactionDate: Date;
   startBalance: number;
   endBalance: number;
+  forced?: boolean = false;
 }
 
 export class PreSaveTransferMutationDTO {

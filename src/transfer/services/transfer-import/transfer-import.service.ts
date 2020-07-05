@@ -49,6 +49,17 @@ export class TransferImportService extends TransferBaseService {
     });
   }
 
+  postExisting(existing: RawTransferSerializerDTO[]): Promise<TransferMutationDTO[]> {
+    return new Promise((resolve, reject) => {
+      const items: PreSaveDTO[] = existing.map((transfer) => this.buildPreSavedTransfers(transfer, hash(transfer), true));
+      this.savedTransfers(items)
+        .then((result) => result.map((transferMutation) =>
+        new TransferMutationDTO(transferMutation.transfer, transferMutation)))
+        .then((response) => resolve(response))
+        .catch(reject)
+    });
+  }
+
   private savedTransfers(preSaveDTOS: PreSaveDTO[]): Promise<TransferMutation[]> {
     return new Promise((resolve) => {
       const savedTransfers: Promise<TransferMutation>[] = [];
@@ -102,7 +113,7 @@ export class TransferImportService extends TransferBaseService {
     });
   }
 
-  private buildPreSavedTransfers(item: RawTransferSerializerDTO, hash): PreSaveDTO {
+  private buildPreSavedTransfers(item: RawTransferSerializerDTO, hash, forced = false): PreSaveDTO {
     const transfer: PreSaveTransferDTO = {
       hash,
       accountNumber: item.accountNumber,
@@ -111,6 +122,7 @@ export class TransferImportService extends TransferBaseService {
       transactionDate: item.transactionDate,
       startBalance: item.startBalance,
       endBalance: item.endBalance,
+      forced
     };
     return {
       transfer: transfer,
