@@ -11,24 +11,49 @@ import {
   ValidatedRawTransfersDTO,
 } from '../dtos/transfer-batch-import.dto';
 import { TransferBaseService } from './transfer-base.service';
+import { TransferRepositoryService } from '../repositories/transfer-repository.service';
+import { TransferMutationRepositoryService } from '../repositories/transfer-mutation-repository.service';
+import { CategoryRepositoryService } from '../../category/repositories/category-repository.service';
+import { RulesService } from '../../rules/services/rules.service';
+import { AssignService } from './assign.service';
 
 @Injectable()
 export class TransferImportService extends TransferBaseService {
+  constructor(
+    transferRepository: TransferRepositoryService,
+    transferMutationRepository: TransferMutationRepositoryService,
+    categoryRepositoryService: CategoryRepositoryService,
+    private rulesService: RulesService,
+    private assignService: AssignService
+  ) {
+    super(
+      transferRepository,
+      transferMutationRepository,
+      categoryRepositoryService,
+    );
+  }
 
   postExcelImport(file: RawInvoiceJsonDTO[]): Promise<TransferBatchImportDto> {
     return new Promise((resolve) => {
       // Serialize
       let existingHash = [];
-      this.serializationValidation(file).then((serializedTransfers) => {
-
+      Promise.all([this.rulesService.getAll(), this.serializationValidation(file)]).then(([rules, serializedTransfers]) => {
         return this.validateHash(serializedTransfers)
           .then((next) => {
             existingHash = next.existingHash;
-            return next.preSavedTransferItems;
+            return { preSavedTransfers: next.preSavedTransferItems, rules };
           });
 
+      }).then(({preSavedTransfers, rules}) => {
+        return preSavedTransfers.map((transfer) => {
+          // todo: Make sure category gets autoAssigned
+          const category = this.assignService.autoAssignTransfer(transfer, rules);
+          if (category) {
+            transfer.mutation.category = category;
+          }
+          return transfer;
+        });
       }).then((preSaved) => {
-
         return this.savedTransfers(preSaved).then((savedTransferMutations) => {
 
           const transferMutations: TransferMutationDTO[] = [];
@@ -54,9 +79,9 @@ export class TransferImportService extends TransferBaseService {
       const items: PreSaveDTO[] = existing.map((transfer) => this.buildPreSavedTransfers(transfer, hash(transfer), true));
       this.savedTransfers(items)
         .then((result) => result.map((transferMutation) =>
-        new TransferMutationDTO(transferMutation.transfer, transferMutation)))
+          new TransferMutationDTO(transferMutation.transfer, transferMutation)))
         .then((response) => resolve(response))
-        .catch(reject)
+        .catch(reject);
     });
   }
 
@@ -65,6 +90,7 @@ export class TransferImportService extends TransferBaseService {
       const savedTransfers: Promise<TransferMutation>[] = [];
       for (let i = 0; i < preSaveDTOS.length; i++) {
         savedTransfers.push(this.transferRepository.save(preSaveDTOS[i].transfer as Transfer)
+          // Todo: Create separate interfaces
           .then(() => this.transferMutationRepository.save(preSaveDTOS[i].mutation as TransferMutation)));
       }
 
@@ -122,7 +148,7 @@ export class TransferImportService extends TransferBaseService {
       transactionDate: item.transactionDate,
       startBalance: item.startBalance,
       endBalance: item.endBalance,
-      forced
+      forced,
     };
     return {
       transfer: transfer,

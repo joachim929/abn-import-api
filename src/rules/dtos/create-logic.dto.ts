@@ -10,11 +10,6 @@ import { TransferConditionDTO } from './transfer-condition.dto';
 export class CreateLogicDTO extends BaseValidateDTO {
   @ApiProperty()
   @IsString()
-  @IsNotEmpty()
-  name: string;
-
-  @ApiProperty()
-  @IsString()
   value: string;
 
   @ApiProperty({enum: ConditionOperatorEnum, enumName: 'ConditionOperatorEnum'})
@@ -39,7 +34,6 @@ export class CreateLogicDTO extends BaseValidateDTO {
 
   constructor(logic: CreateLogicDTO, validate = false) {
     super();
-    this.name = logic.name;
     this.value = logic.value;
     this.conditionOperator = logic.conditionOperator;
     this.transferKey = logic.transferKey;

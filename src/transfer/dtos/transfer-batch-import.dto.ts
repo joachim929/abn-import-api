@@ -90,6 +90,7 @@ export class PreSaveTransferMutationDTO {
   amount: number;
   description: string;
   transfer?: PreSaveTransferDTO;
+  category?: CategoryDTO;
 }
 
 export class PreSaveDTO {

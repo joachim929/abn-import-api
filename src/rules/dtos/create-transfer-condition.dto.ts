@@ -48,10 +48,10 @@ export class CreateTransferConditionDTO extends BaseValidateDTO {
 
   constructor(transferCondition: CreateTransferConditionDTO | TransferCondition, validate = false) {
     super();
-    this.name = transferCondition.name;
+    this.name = transferCondition?.name;
     this.description = transferCondition?.description;
     this.category = transferCondition?.category as CategoryDTO;
-    this.autoAssign = transferCondition.autoAssign;
+    this.autoAssign = transferCondition?.autoAssign;
     this.orLogic = this.mapLogic(transferCondition?.orLogic as CreateLogicDTO[]);
     this.andLogic = this.mapLogic(transferCondition?.andLogic as CreateLogicDTO[]);
 

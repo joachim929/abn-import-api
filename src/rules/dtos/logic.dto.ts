@@ -22,7 +22,6 @@ export class LogicDTO {
   @IsEnum(ConditionOperatorEnum)
   conditionOperator: ConditionOperatorEnum;
 
-
   @ApiProperty({enum: TransferKeyEnum, enumName: 'TransferKeyEnum'})
   @IsEnum(TransferKeyEnum)
   transferKey: TransferKeyEnum;

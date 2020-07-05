@@ -25,6 +25,9 @@ import { TransferConditionRepositoryService } from './repositories/transfer-cond
     LogicService,
     TransferConditionRepositoryService
   ],
+  exports: [
+    RulesService
+  ]
 })
 export class RulesModule {
 }

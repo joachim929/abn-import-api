@@ -12,10 +12,13 @@ import { TransferMutationService } from './services/transfer-mutation.service';
 import { TransferMutationController } from './transfer-mutation.controller';
 import { TransferBaseService } from './services/transfer-base.service';
 import { CategoryModule } from '../category/category.module';
+import { RulesModule } from '../rules/rules.module';
+import { AssignService } from './services/assign.service';
 
 @Module({
   imports: [
     CategoryModule,
+    RulesModule,
     TypeOrmModule.forFeature([Transfer, TransferMutation])
   ],
   controllers: [
@@ -29,7 +32,8 @@ import { CategoryModule } from '../category/category.module';
     TransferImportService,
     TransferSplitService,
     TransferMutationService,
-    TransferBaseService
+    TransferBaseService,
+    AssignService
   ],
 })
 export class TransferModule {
