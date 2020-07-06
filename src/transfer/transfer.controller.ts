@@ -13,6 +13,7 @@ import { TransferBatchImportDto, TransferMutationDTO } from './dtos/transfer-bat
 import { TransferMutation } from './entities/transfer-mutation.entity';
 import { TransferListParams } from './dtos/transfer-list-params.dto';
 import { Transfer } from './entities/transfer.entity';
+import { CategoryDTO } from '../category/dtos/category.dto';
 
 @ApiTags('TransferApi')
 @Controller('transfer')
@@ -49,6 +50,18 @@ export class TransferController {
   })
   getTransfer(@Param('id') id: string) {
     return this.service.getTransfer(id);
+  }
+
+  // todo: Implement hints
+  @Get('/hint/:id')
+  @ApiResponse({
+    status: 200, type: [CategoryDTO]
+  })
+  @ApiResponse({
+    status: 401
+  })
+  getTransferHints(@Param('id') id: string) {
+    return 'WIP';
   }
 
   @Post('/filtered')
