@@ -13,7 +13,7 @@ import { TransferMutationController } from './transfer-mutation.controller';
 import { TransferBaseService } from './services/transfer-base.service';
 import { CategoryModule } from '../category/category.module';
 import { RulesModule } from '../rules/rules.module';
-import { AssignService } from './services/assign.service';
+import { AssignTransferService } from './services/assign-transfer.service';
 
 @Module({
   imports: [
@@ -33,7 +33,7 @@ import { AssignService } from './services/assign.service';
     TransferSplitService,
     TransferMutationService,
     TransferBaseService,
-    AssignService
+    AssignTransferService
   ],
 })
 export class TransferModule {

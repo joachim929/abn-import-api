@@ -14,8 +14,9 @@ import { TransferBaseService } from './transfer-base.service';
 import { TransferRepositoryService } from '../repositories/transfer-repository.service';
 import { TransferMutationRepositoryService } from '../repositories/transfer-mutation-repository.service';
 import { CategoryRepositoryService } from '../../category/repositories/category-repository.service';
-import { AssignService } from './assign.service';
+import { AssignTransferService } from './assign-transfer.service';
 import { RulesService } from '../../rules/services/rules.service';
+import { CategoryDTO } from '../../category/dtos/category.dto';
 
 @Injectable()
 export class TransferImportService extends TransferBaseService {
@@ -24,7 +25,7 @@ export class TransferImportService extends TransferBaseService {
     transferMutationRepository: TransferMutationRepositoryService,
     categoryRepositoryService: CategoryRepositoryService,
     private ruleService: RulesService,
-    private assignService: AssignService,
+    private assignService: AssignTransferService,
   ) {
     super(
       transferRepository,
@@ -46,10 +47,11 @@ export class TransferImportService extends TransferBaseService {
 
       }).then(({ preSavedTransfers, rules }) => {
         return preSavedTransfers.map((transfer) => {
-          // todo: Make sure category gets autoAssigned
-          const category = this.assignService.autoAssignTransfer(transfer, rules);
-          if (category) {
-            transfer.mutation.category = category;
+          const categoryContenders = this.assignService.autoAssignTransfer(transfer, rules);
+          if (categoryContenders?.length === 1) {
+            transfer.mutation.category = categoryContenders[0];
+          } else {
+            transfer.categoryHints = categoryContenders.map((category) => new CategoryDTO(category, false))
           }
           return transfer;
         });
@@ -57,7 +59,7 @@ export class TransferImportService extends TransferBaseService {
         return this.savedTransfers(preSaved).then((savedTransferMutations) => {
 
           const transferMutations: TransferMutationDTO[] = [];
-
+          // todo: Add category hints
           for (const transferMutation of savedTransferMutations) {
             transferMutations.push(new TransferMutationDTO(transferMutation.transfer, transferMutation));
           }

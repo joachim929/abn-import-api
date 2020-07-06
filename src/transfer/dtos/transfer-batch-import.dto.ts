@@ -33,7 +33,6 @@ export class TransferMutationDTO {
   startBalance: number;
   @IsNumber()
   endBalance: number;
-
   @IsOptional()
   @Type(() => CategoryDTO)
   category: CategoryDTO;
@@ -97,4 +96,5 @@ export class PreSaveTransferMutationDTO {
 export class PreSaveDTO {
   transfer: PreSaveTransferDTO;
   mutation: PreSaveTransferMutationDTO;
+  categoryHints?: CategoryDTO[];
 }

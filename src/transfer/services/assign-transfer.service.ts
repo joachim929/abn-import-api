@@ -16,8 +16,8 @@ interface TransferLogicInterface {
 }
 
 @Injectable()
-export class AssignService {
-  autoAssignTransfer(transfer: PreSaveDTO, rules: TransferCondition[]): Category | undefined {
+export class AssignTransferService {
+  autoAssignTransfer(transfer: PreSaveDTO, rules: TransferCondition[]): Category[] {
     const formattedTransfer = {
       Amount: transfer.mutation.amount,
       Description: transfer.mutation.description,
@@ -35,17 +35,11 @@ export class AssignService {
       if (rule.autoAssign) {
         categoryContenders.push(this.checkAutoAssignParams(formattedTransfer, rule));
       }
-      // todo: hintCase
     }
-    let category;
-    if (categoryContenders.length > 0 ) {
-      const filteredCategories = categoryContenders.filter((category) => !!category);
-      category = filteredCategories.length === 1 ? filteredCategories[0] : undefined;
-    }
-    return category;
+    return categoryContenders.filter((category) => !!category);
   }
 
-  private checkAutoAssignParams(transfer: TransferLogicInterface, rule: TransferCondition): Category {
+  checkAutoAssignParams(transfer: TransferLogicInterface, rule: TransferCondition): Category {
     let andLogicCheck = false;
     let orLogicCheck = false;
     if (rule?.orLogic?.length > 0 && rule?.andLogic?.length > 0) {
@@ -124,35 +118,50 @@ export class AssignService {
     }
   }
 
-  private testEquals(testValue, compareValue): boolean {
-    return testValue === compareValue;
+  testEquals(testValue, compareValue): boolean {
+    if (testValue instanceof Date && compareValue instanceof Date) {
+      return testValue.toString() === compareValue.toString();
+    } else {
+      return testValue === compareValue;
+    }
   }
-  private testNotEqual(testValue, compareValue): boolean {
-    return testValue !== compareValue;
+  testNotEqual(testValue, compareValue): boolean {
+    if (testValue instanceof Date && compareValue instanceof Date) {
+      return testValue.toString() !== compareValue.toString();
+    } else {
+      return testValue !== compareValue;
+    }
   }
-  private testGreaterThan(testValue, compareValue): boolean {
+  testGreaterThan(testValue, compareValue): boolean {
     return testValue > compareValue;
   }
-  private testGreaterOrEqualThan(testValue, compareValue): boolean {
+  testGreaterOrEqualThan(testValue, compareValue): boolean {
     return testValue >= compareValue;
   }
-  private testLessThan(testValue, compareValue): boolean {
+  testLessThan(testValue, compareValue): boolean {
     return testValue < compareValue;
   }
-  private testLessOrEqualThan(testValue, compareValue): boolean {
+  testLessOrEqualThan(testValue, compareValue): boolean {
     return testValue <= compareValue;
   }
-  private testContains(testValue, compareValue): boolean {
-    return compareValue.indexOf(testValue) > -1;
+  testContains(testValue, compareValue): boolean {
+    return testValue.indexOf(compareValue) > -1;
   }
-  private testNotContain(testValue, compareValue): boolean {
-    return compareValue.indexOf(testValue) < 0;
+  testNotContain(testValue, compareValue): boolean {
+    return testValue.indexOf(compareValue) < 0;
   }
-  private testLike(testValue, compareValue): boolean {
-    return compareValue.includes(testValue);
+
+  /**
+   * todo: Need to figure how like is going to work as now it works like contains
+   *  ideas: have the compare string require min length of ~4 and then check for indexOf substrings of said compare value
+   *  Alternatively, just leave it out as its more "complex" that the layman might not understand
+   * https://www.sqlservertutorial.net/sql-server-basics/sql-server-like/
+   */
+  testLike(testValue, compareValue): boolean {
+    return testValue.includes(compareValue);
   }
-  private testNotLike(testValue, compareValue): boolean {
-    return !compareValue.includes(testValue);
+  testNotLike(testValue, compareValue): boolean {
+    return !testValue.includes(compareValue);
   }
 
 
