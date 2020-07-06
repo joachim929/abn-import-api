@@ -6,6 +6,7 @@ import { LogicRepositoryService } from '../repositories/logic-repository.service
 import { LogicDTO } from '../dtos/logic.dto';
 import { LogicService } from './logic.service';
 import { CreateLogicDTO } from '../dtos/create-logic.dto';
+import { TransferCondition } from '../entities/transfer-condition.entity';
 
 @Injectable()
 export class RulesService {
@@ -57,6 +58,10 @@ export class RulesService {
   getAll(): Promise<TransferConditionDTO[]> {
     return this.transferConditionRepository.getAll()
       .then((response) => response.map((condition) => new TransferConditionDTO(condition)));
+  }
+
+  getAllPure(): Promise<TransferCondition[]> {
+    return this.transferConditionRepository.getAll();
   }
 
   getWithRelationsShips(id: string): Promise<TransferConditionDTO> {

@@ -1,6 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { DeepPartial, Repository, SaveOptions } from 'typeorm';
 import { Transfer } from '../entities/transfer.entity';
 import { TransferListParams } from '../dtos/transfer-list-params.dto';
 
@@ -11,6 +11,8 @@ export class TransferRepositoryService {
   ) {
   }
 
+
+  async save<T extends DeepPartial<Transfer>>(entity: T, options?: SaveOptions): Promise<Transfer>
   async save(transfer: Transfer): Promise<Transfer> {
     return await this.repository.save(transfer);
   }

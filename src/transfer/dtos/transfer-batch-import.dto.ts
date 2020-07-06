@@ -6,6 +6,7 @@ import { ApiModelProperty } from '@nestjs/swagger/dist/decorators/api-model-prop
 import { TransferMutation } from '../entities/transfer-mutation.entity';
 import { HttpException, HttpStatus } from '@nestjs/common';
 import { CategoryDTO } from '../../category/dtos/category.dto';
+import { Category } from '../../category/category.entity';
 
 export class TransferMutationDTO {
   @Transform(id => Number(id))
@@ -90,7 +91,7 @@ export class PreSaveTransferMutationDTO {
   amount: number;
   description: string;
   transfer?: PreSaveTransferDTO;
-  category?: CategoryDTO;
+  category?: Category;
 }
 
 export class PreSaveDTO {

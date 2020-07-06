@@ -1,6 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, UpdateResult } from 'typeorm';
+import { DeepPartial, Repository, SaveOptions, UpdateResult } from 'typeorm';
 import { TransferMutation } from '../entities/transfer-mutation.entity';
 import { TransferListParams } from '../dtos/transfer-list-params.dto';
 
@@ -52,6 +52,7 @@ export class TransferMutationRepositoryService {
     return await query.getRawOne();
   }
 
+  async save<T extends DeepPartial<TransferMutation>>(entity: T, options?: SaveOptions): Promise<TransferMutation>
   async save(mutation: TransferMutation): Promise<TransferMutation> {
     return await this.repository.save(mutation)
       .catch(reason => {

@@ -14,8 +14,8 @@ import { TransferBaseService } from './transfer-base.service';
 import { TransferRepositoryService } from '../repositories/transfer-repository.service';
 import { TransferMutationRepositoryService } from '../repositories/transfer-mutation-repository.service';
 import { CategoryRepositoryService } from '../../category/repositories/category-repository.service';
-import { RulesService } from '../../rules/services/rules.service';
 import { AssignService } from './assign.service';
+import { RulesService } from '../../rules/services/rules.service';
 
 @Injectable()
 export class TransferImportService extends TransferBaseService {
@@ -23,8 +23,8 @@ export class TransferImportService extends TransferBaseService {
     transferRepository: TransferRepositoryService,
     transferMutationRepository: TransferMutationRepositoryService,
     categoryRepositoryService: CategoryRepositoryService,
-    private rulesService: RulesService,
-    private assignService: AssignService
+    private ruleService: RulesService,
+    private assignService: AssignService,
   ) {
     super(
       transferRepository,
@@ -37,14 +37,14 @@ export class TransferImportService extends TransferBaseService {
     return new Promise((resolve) => {
       // Serialize
       let existingHash = [];
-      Promise.all([this.rulesService.getAll(), this.serializationValidation(file)]).then(([rules, serializedTransfers]) => {
+      Promise.all([this.ruleService.getAllPure(), this.serializationValidation(file)]).then(([rules, serializedTransfers]) => {
         return this.validateHash(serializedTransfers)
           .then((next) => {
             existingHash = next.existingHash;
             return { preSavedTransfers: next.preSavedTransferItems, rules };
           });
 
-      }).then(({preSavedTransfers, rules}) => {
+      }).then(({ preSavedTransfers, rules }) => {
         return preSavedTransfers.map((transfer) => {
           // todo: Make sure category gets autoAssigned
           const category = this.assignService.autoAssignTransfer(transfer, rules);
@@ -90,8 +90,11 @@ export class TransferImportService extends TransferBaseService {
       const savedTransfers: Promise<TransferMutation>[] = [];
       for (let i = 0; i < preSaveDTOS.length; i++) {
         savedTransfers.push(this.transferRepository.save(preSaveDTOS[i].transfer as Transfer)
-          // Todo: Create separate interfaces
-          .then(() => this.transferMutationRepository.save(preSaveDTOS[i].mutation as TransferMutation)));
+          .then((transfer) => this.transferMutationRepository.save({
+              ...preSaveDTOS[i].mutation,
+              transfer,
+            }),
+          ));
       }
 
       Promise.all(savedTransfers).then((response) => {

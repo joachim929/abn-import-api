@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { TransferConditionDTO } from '../../rules/dtos/transfer-condition.dto';
 import { PreSaveDTO } from '../dtos/transfer-batch-import.dto';
-import { LogicDTO } from '../../rules/dtos/logic.dto';
 import { ConditionOperatorEnum } from '../../rules/interfaces/condition-operator.enum';
-import { CategoryDTO } from '../../category/dtos/category.dto';
+import { Category } from '../../category/category.entity';
+import { TransferCondition } from '../../rules/entities/transfer-condition.entity';
+import { Logic } from '../../rules/entities/logic.entity';
 
 interface TransferLogicInterface {
   Amount: number;
@@ -17,7 +17,7 @@ interface TransferLogicInterface {
 
 @Injectable()
 export class AssignService {
-  autoAssignTransfer(transfer: PreSaveDTO, rules: TransferConditionDTO[]): CategoryDTO | undefined {
+  autoAssignTransfer(transfer: PreSaveDTO, rules: TransferCondition[]): Category | undefined {
     const formattedTransfer = {
       Amount: transfer.mutation.amount,
       Description: transfer.mutation.description,
@@ -45,7 +45,7 @@ export class AssignService {
     return category;
   }
 
-  private checkAutoAssignParams(transfer: TransferLogicInterface, rule: TransferConditionDTO): CategoryDTO {
+  private checkAutoAssignParams(transfer: TransferLogicInterface, rule: TransferCondition): Category {
     let andLogicCheck = false;
     let orLogicCheck = false;
     if (rule?.orLogic?.length > 0 && rule?.andLogic?.length > 0) {
@@ -62,7 +62,7 @@ export class AssignService {
     return null;
   }
 
-  private checkAndLogic(transfer: TransferLogicInterface, rule: TransferConditionDTO): boolean {
+  private checkAndLogic(transfer: TransferLogicInterface, rule: TransferCondition): boolean {
     let canAutoAssign = true;
     for (const logic of rule.andLogic) {
       if (!this.testLogic(transfer[logic.transferKey], logic)) {
@@ -74,7 +74,7 @@ export class AssignService {
     return canAutoAssign && rule.andLogic?.length > 0;
   }
 
-  private checkOrLogic(transfer: TransferLogicInterface, rule: TransferConditionDTO): boolean {
+  private checkOrLogic(transfer: TransferLogicInterface, rule: TransferCondition): boolean {
     let canAutoAssign = false;
     for (const logic of rule.orLogic) {
       if (this.testLogic(transfer[logic.transferKey], logic)) {
@@ -86,7 +86,7 @@ export class AssignService {
     return canAutoAssign;
   }
 
-  private testLogic(testValue, logic: LogicDTO): boolean {
+  private testLogic(testValue, logic: Logic): boolean {
     switch(logic.conditionOperator) {
       case ConditionOperatorEnum.Equals: {
         return this.testEquals(testValue, logic.value);
