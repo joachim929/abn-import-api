@@ -34,7 +34,8 @@ export class TransferImportService extends TransferBaseService {
     );
   }
 
-  postExcelImport(file: RawInvoiceJsonDTO[]): Promise<TransferBatchImportDto> {
+  // todo: Combine postExisting() & postExcelImport() using extra parameter: force = false and ImportTransferDTO
+  postExcelImport(file: RawInvoiceJsonDTO[], force = false): Promise<TransferBatchImportDto> {
     return new Promise((resolve) => {
       // Serialize
       let existingHash = [];
@@ -76,7 +77,7 @@ export class TransferImportService extends TransferBaseService {
     });
   }
 
-  postExisting(existing: RawTransferSerializerDTO[]): Promise<TransferMutationDTO[]> {
+  postExisting(existing: RawTransferSerializerDTO[], force = false): Promise<TransferMutationDTO[]> {
     return new Promise((resolve, reject) => {
       const items: PreSaveDTO[] = existing.map((transfer) => this.buildPreSavedTransfers(transfer, hash(transfer), true));
       this.savedTransfers(items)
