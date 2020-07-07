@@ -2,6 +2,13 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { AssignTransferService } from './assign-transfer.service';
 import { PreSaveDTO } from '../dtos/pre-save.dto';
 import { PreSaveTransferDTO } from '../dtos/pre-save-transfer.dto';
+import { PreSaveTransferMutationDTO } from '../dtos/pre-save-transfer-mutation.dto';
+import { TransferCondition } from '../../rules/entities/transfer-condition.entity';
+import { Logic } from '../../rules/entities/logic.entity';
+import { TransferKeyEnum } from '../../rules/interfaces/transfer-key.enum';
+import { ConditionOperatorEnum } from '../../rules/interfaces/condition-operator.enum';
+import { LogicTypeEnum } from '../../rules/interfaces/logic-type.enum';
+import { Category } from '../../category/category.entity';
 
 fdescribe('AssignService', () => {
   let now;
@@ -183,29 +190,63 @@ fdescribe('AssignService', () => {
       expect(service.testNotContain('some string', 'trin')).toEqual(false);
     });
   });
-  // todo: Need to figure how like is going to work as now it works like contains
-  // describe('testLike', () => {
-  // })
   describe('autoAssignTransfer', () => {
-    it('should return no categories', () => {
-      // todo: Finish writing test
-      // const transfer: PreSaveTransferDTO = {
-      //   hash: 'a',
-      //     accountNumber: 1,
-      //     currencyCode: '$',
-      //     valueDate: dateOne,
-      //     transactionDate: dateOne,
-      //     startBalance: 5,
-      //     endBalance: 0
-      // };
-      // const transfer: PreSaveDTO = {
-      //   transfer,
-      //   mutation: {
-      //     amount: 2,
-      //     description: 'some description',
-      //
-      //   }
-      // }
+    it('should return a category', () => {
+      const logic: Logic = {
+        id: '',
+        createdAt: dateOne,
+        editedAt: dateOne,
+        transferKey: TransferKeyEnum.Amount,
+        andCondition: {} as any,
+        orCondition: {} as any,
+        value: '5',
+        conditionOperator: ConditionOperatorEnum.Equals,
+        type: LogicTypeEnum.Number,
+        passDifficulty: 0,
+        amountUsed: 0,
+        amountPassed: 0
+      }
+      const category: Category = {
+        id: 1,
+        name: 'category',
+        description: '',
+        createdAt: dateOne,
+        editedAt: dateOne,
+        order: 0,
+        categoryGroup: {} as any,
+        mutations: [],
+        rules: []
+      };
+      const transferCondition: TransferCondition = {
+        id: '',
+        name: '',
+        description: '',
+        createdAt: dateOne,
+        editedAt: dateOne,
+        category,
+        autoAssign: true,
+        orLogic: [],
+        andLogic: [logic]
+      }
+      const transfer: PreSaveTransferDTO = {
+        hash: 'a',
+          accountNumber: 1,
+          currencyCode: '$',
+          valueDate: dateOne,
+          transactionDate: dateOne,
+          startBalance: 5,
+          endBalance: 0
+      };
+      const mutation: PreSaveTransferMutationDTO = {
+        amount: 5,
+        description: 'some description',
+        transfer,
+      }
+      const preSaved: PreSaveDTO = {
+        transfer,
+        mutation
+      }
+      expect(service.autoAssignTransfer(preSaved, [transferCondition])).toEqual([category])
     })
   });
 });

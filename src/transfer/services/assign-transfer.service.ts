@@ -124,6 +124,8 @@ export class AssignTransferService {
   testEquals(testValue, compareValue): boolean {
     if (testValue instanceof Date && compareValue instanceof Date) {
       return testValue.toString() === compareValue.toString();
+    } else if (typeof testValue === 'number' ) {
+      return testValue === Number(compareValue);
     } else {
       return testValue === compareValue;
     }
