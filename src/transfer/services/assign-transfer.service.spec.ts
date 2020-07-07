@@ -1,5 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { AssignTransferService } from './assign-transfer.service';
+import { PreSaveDTO } from '../dtos/pre-save.dto';
+import { PreSaveTransferDTO } from '../dtos/pre-save-transfer.dto';
 
 fdescribe('AssignService', () => {
   let now;
@@ -184,4 +186,26 @@ fdescribe('AssignService', () => {
   // todo: Need to figure how like is going to work as now it works like contains
   // describe('testLike', () => {
   // })
+  describe('autoAssignTransfer', () => {
+    it('should return no categories', () => {
+      // todo: Finish writing test
+      // const transfer: PreSaveTransferDTO = {
+      //   hash: 'a',
+      //     accountNumber: 1,
+      //     currencyCode: '$',
+      //     valueDate: dateOne,
+      //     transactionDate: dateOne,
+      //     startBalance: 5,
+      //     endBalance: 0
+      // };
+      // const transfer: PreSaveDTO = {
+      //   transfer,
+      //   mutation: {
+      //     amount: 2,
+      //     description: 'some description',
+      //
+      //   }
+      // }
+    })
+  });
 });

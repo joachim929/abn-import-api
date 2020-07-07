@@ -58,10 +58,12 @@ export class AssignTransferService {
 
   private checkAndLogic(transfer: TransferLogicInterface, rule: TransferCondition): boolean {
     let canAutoAssign = true;
+    let score = 0;
     for (const logic of rule.andLogic) {
-      if (!this.testLogic(transfer[logic.transferKey], logic)) {
+      if (this.testLogic(transfer[logic.transferKey], logic)) {
+        score += 2;
+      } else {
         canAutoAssign = false;
-        break;
       }
     }
 
@@ -70,10 +72,11 @@ export class AssignTransferService {
 
   private checkOrLogic(transfer: TransferLogicInterface, rule: TransferCondition): boolean {
     let canAutoAssign = false;
+    let score = 0;
     for (const logic of rule.orLogic) {
       if (this.testLogic(transfer[logic.transferKey], logic)) {
         canAutoAssign = true;
-        break;
+        score++;
       }
     }
 
