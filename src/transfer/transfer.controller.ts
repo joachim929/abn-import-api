@@ -9,11 +9,12 @@ import { TransferService } from './services/transfer.service';
 import { ApiBody, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { RawInvoiceJsonDTO, RawTransferSerializerDTO } from '../shared/dtos/raw-invoice-json.dto';
 import { TransferImportService } from './services/transfer-import.service';
-import { TransferBatchImportDto, TransferMutationDTO } from './dtos/transfer-batch-import.dto';
+import { TransferBatchImportDto } from './dtos/transfer-batch-import.dto';
 import { TransferMutation } from './entities/transfer-mutation.entity';
 import { TransferListParams } from './dtos/transfer-list-params.dto';
 import { Transfer } from './entities/transfer.entity';
 import { CategoryDTO } from '../category/dtos/category.dto';
+import { TransferMutationDTO } from './dtos/transfer-mutation.dto';
 
 @ApiTags('TransferApi')
 @Controller('transfer')

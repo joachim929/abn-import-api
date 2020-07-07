@@ -4,12 +4,7 @@ import { RawInvoiceJsonDTO, RawTransferSerializerDTO } from '../../shared/dtos/r
 import { Transfer } from '../entities/transfer.entity';
 import { TransferMutation } from '../entities/transfer-mutation.entity';
 import { validate } from 'class-validator';
-import {
-  PreSaveDTO,
-  PreSaveTransferDTO,
-  TransferBatchImportDto, TransferMutationDTO,
-  ValidatedRawTransfersDTO,
-} from '../dtos/transfer-batch-import.dto';
+import { TransferBatchImportDto } from '../dtos/transfer-batch-import.dto';
 import { TransferBaseService } from './transfer-base.service';
 import { TransferRepositoryService } from '../repositories/transfer-repository.service';
 import { TransferMutationRepositoryService } from '../repositories/transfer-mutation-repository.service';
@@ -17,6 +12,10 @@ import { CategoryRepositoryService } from '../../category/repositories/category-
 import { AssignTransferService } from './assign-transfer.service';
 import { RulesService } from '../../rules/services/rules.service';
 import { CategoryDTO } from '../../category/dtos/category.dto';
+import { TransferMutationDTO } from '../dtos/transfer-mutation.dto';
+import { PreSaveDTO } from '../dtos/pre-save.dto';
+import { ValidatedRawTransfersDTO } from '../dtos/validated-raw-transfers.dto';
+import { PreSaveTransferDTO } from '../dtos/pre-save-transfer.dto';
 
 @Injectable()
 export class TransferImportService extends TransferBaseService {

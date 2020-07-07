@@ -4,9 +4,9 @@ import { TransferImportService } from './services/transfer-import.service';
 import { TransferSplitService } from './services/transfer-split.service';
 import { TransferMutationService } from './services/transfer-mutation.service';
 import { SplitTransferMutationDto } from './dtos/split-transfer-mutation.dto';
-import { TransferMutationDTO } from './dtos/transfer-batch-import.dto';
 import { Transfer } from './entities/transfer.entity';
 import { TransferListParams } from './dtos/transfer-list-params.dto';
+import { TransferMutationDTO } from './dtos/transfer-mutation.dto';
 
 @ApiTags('TransferMutationApi')
 @Controller('transfer-mutation')

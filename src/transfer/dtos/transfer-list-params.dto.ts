@@ -1,6 +1,6 @@
 import { ListParams } from '../../shared/dtos/list-params.dto';
 import { IsArray, IsBoolean, IsDate, IsDateString, IsNumber, IsOptional } from 'class-validator';
-import { TransferMutationDTO } from './transfer-batch-import.dto';
+import { TransferMutationDTO } from './transfer-mutation.dto';
 
 export class TransferListParams extends ListParams {
   @IsOptional()

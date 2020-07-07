@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { PreSaveDTO } from '../dtos/transfer-batch-import.dto';
 import { ConditionOperatorEnum } from '../../rules/interfaces/condition-operator.enum';
 import { Category } from '../../category/category.entity';
 import { TransferCondition } from '../../rules/entities/transfer-condition.entity';
 import { Logic } from '../../rules/entities/logic.entity';
+import { PreSaveDTO } from '../dtos/pre-save.dto';
 
 interface TransferLogicInterface {
   Amount: number;

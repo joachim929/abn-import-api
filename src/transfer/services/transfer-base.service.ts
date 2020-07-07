@@ -2,9 +2,9 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { TransferRepositoryService } from '../repositories/transfer-repository.service';
 import { TransferMutationRepositoryService } from '../repositories/transfer-mutation-repository.service';
 import { CategoryRepositoryService } from '../../category/repositories/category-repository.service';
-import { TransferMutationDTO } from '../dtos/transfer-batch-import.dto';
 import { TransferMutation } from '../entities/transfer-mutation.entity';
 import { Category } from '../../category/category.entity';
+import { TransferMutationDTO } from '../dtos/transfer-mutation.dto';
 
 @Injectable()
 export class TransferBaseService {

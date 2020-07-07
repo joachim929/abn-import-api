@@ -1,4 +1,4 @@
-import { TransferMutationDTO } from './transfer-batch-import.dto';
+import { TransferMutationDTO } from './transfer-mutation.dto';
 
 export class SplitTransferMutationDto {
   patch: TransferMutationDTO;
