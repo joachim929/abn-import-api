@@ -133,21 +133,39 @@ export class AssignTransferService {
   testNotEqual(testValue, compareValue): boolean {
     if (testValue instanceof Date && compareValue instanceof Date) {
       return testValue.toString() !== compareValue.toString();
+    } else if (typeof testValue === 'number') {
+      return testValue === Number(compareValue);
     } else {
       return testValue !== compareValue;
     }
   }
   testGreaterThan(testValue, compareValue): boolean {
-    return testValue > compareValue;
+    if (typeof testValue === 'number') {
+      return testValue > Number(compareValue);
+    } else {
+      return testValue > compareValue;
+    }
   }
   testGreaterOrEqualThan(testValue, compareValue): boolean {
-    return testValue >= compareValue;
+    if (typeof testValue === 'number') {
+      return testValue >= Number(compareValue);
+    } else {
+      return testValue >= compareValue;
+    }
   }
   testLessThan(testValue, compareValue): boolean {
-    return testValue < compareValue;
+    if (typeof testValue === 'number') {
+      return testValue < Number(compareValue);
+    } else {
+      return testValue < compareValue;
+    }
   }
   testLessOrEqualThan(testValue, compareValue): boolean {
-    return testValue <= compareValue;
+    if (typeof testValue === 'number') {
+      return testValue <= Number(compareValue);
+    } else {
+      return testValue <= compareValue;
+    }
   }
   testContains(testValue, compareValue): boolean {
     return testValue.indexOf(compareValue) > -1;
