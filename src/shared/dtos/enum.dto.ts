@@ -2,8 +2,9 @@ import { ApiProperty, getSchemaPath } from '@nestjs/swagger';
 import { ConditionOperatorEnum } from '../../rules/interfaces/condition-operator.enum';
 import { LogicTypeEnum } from '../../rules/interfaces/logic-type.enum';
 import { TransferKeyEnum } from '../../rules/interfaces/transfer-key.enum';
-
-export type UserRole = 'Admin' | 'Moderator' | 'User';
+import { DateOperatorsEnum } from '../../rules/interfaces/date-operators.enum';
+import { StringOperatorsEnum } from '../../rules/interfaces/string-operators.enum';
+import { NumberOperatorsEnum } from '../../rules/interfaces/number-operators.enum';
 
 export class Cat {
   type: string;
@@ -20,16 +21,20 @@ type Pet = Cat | Dog;
 export class EnumDTO {
 
   @ApiProperty({enum: ConditionOperatorEnum, enumName: 'ConditionOperatorEnum'})
-  conditionOperatorEnum: ConditionOperatorEnum
+  conditionOperatorEnum: ConditionOperatorEnum;
+
+  @ApiProperty({ enum: DateOperatorsEnum, enumName: 'DateOperatorsEnum', type: () => DateOperatorsEnum})
+  dateOperatorsEnum: DateOperatorsEnum;
+  @ApiProperty({enum: StringOperatorsEnum, enumName: 'StringOperatorsEnum', type: () => StringOperatorsEnum})
+  stringOperatorsEnum: StringOperatorsEnum;
+  @ApiProperty({ enum: NumberOperatorsEnum, enumName: 'NumberOperatorsEnum', type: () => NumberOperatorsEnum})
+  numberOperatorsEnum: NumberOperatorsEnum;
 
   @ApiProperty({enum: LogicTypeEnum, enumName: 'LogicTypeEnum'})
   logicTypeEnum: LogicTypeEnum
 
   @ApiProperty({enum: TransferKeyEnum, enumName: 'TransferKeyEnum'})
-  transferKeyEnum: TransferKeyEnum
-
-  @ApiProperty({ enum: ['Admin', 'Moderator', 'User']})
-  role: UserRole;
+  transferKeyEnum: TransferKeyEnum;
 
   @ApiProperty()
   cat: Cat;
