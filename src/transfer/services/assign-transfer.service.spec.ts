@@ -191,8 +191,14 @@ fdescribe('AssignService', () => {
     });
   });
   describe('autoAssignTransfer', () => {
-    it('should return a category', () => {
-      const logic: Logic = {
+    let preSaved: PreSaveDTO;
+    let mutation: PreSaveTransferMutationDTO;
+    let transfer: PreSaveTransferDTO;
+    let transferCondition: TransferCondition;
+    let category: Category;
+    let logic: Logic
+    beforeEach(() => {
+      logic = {
         id: '',
         createdAt: dateOne,
         editedAt: dateOne,
@@ -206,7 +212,7 @@ fdescribe('AssignService', () => {
         amountUsed: 0,
         amountPassed: 0
       }
-      const category: Category = {
+      category = {
         id: 1,
         name: 'category',
         description: '',
@@ -217,7 +223,7 @@ fdescribe('AssignService', () => {
         mutations: [],
         rules: []
       };
-      const transferCondition: TransferCondition = {
+      transferCondition = {
         id: '',
         name: '',
         description: '',
@@ -228,25 +234,37 @@ fdescribe('AssignService', () => {
         orLogic: [],
         andLogic: [logic]
       }
-      const transfer: PreSaveTransferDTO = {
+      transfer = {
         hash: 'a',
-          accountNumber: 1,
-          currencyCode: '$',
-          valueDate: dateOne,
-          transactionDate: dateOne,
-          startBalance: 5,
-          endBalance: 0
+        accountNumber: 1,
+        currencyCode: '$',
+        valueDate: dateOne,
+        transactionDate: dateOne,
+        startBalance: 5,
+        endBalance: 0
       };
-      const mutation: PreSaveTransferMutationDTO = {
+      mutation = {
         amount: 5,
         description: 'some description',
         transfer,
       }
-      const preSaved: PreSaveDTO = {
+      preSaved = {
         transfer,
         mutation
       }
+    })
+    it('should return a category', () => {
       expect(service.autoAssignTransfer(preSaved, [transferCondition])).toEqual([category])
+    });
+    it('shouldn\'t return a category', () => {
+      mutation.amount = 2
+      expect(service.autoAssignTransfer(preSaved, [transferCondition])).toEqual([]);
+    });
+    it('should return multiple categories', () => {
+      const otherLogc = {...logic, conditionOperator: ConditionOperatorEnum.GreaterThan, value: '0'};
+      const otherCategory = {...category, id: 2}
+      const otherTransferCondition = {...transferCondition, orLogic: [otherLogc], category: otherCategory}
+      expect(service.autoAssignTransfer(preSaved, [transferCondition, otherTransferCondition])).toEqual([category, otherCategory])
     })
   });
 });
