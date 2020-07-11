@@ -1,4 +1,5 @@
 import { IsDate, IsNumber, IsString } from 'class-validator';
+import { ApiProperty } from '@nestjs/swagger';
 
 export class RawInvoiceJsonDTO {
   Beginsaldo: number;
@@ -12,20 +13,28 @@ export class RawInvoiceJsonDTO {
 }
 
 export class RawTransferSerializerDTO {
+  @ApiProperty()
   @IsNumber()
   startBalance: number;
+  @ApiProperty()
   @IsNumber()
   endBalance: number;
+  @ApiProperty()
   @IsString()
   currencyCode: string;
+  @ApiProperty()
   @IsString()
   description: string;
+  @ApiProperty()
   @IsNumber()
   accountNumber: number;
+  @ApiProperty()
   @IsDate()
   valueDate: Date;
+  @ApiProperty()
   @IsNumber()
   amount: number;
+  @ApiProperty()
   @IsDate()
   transactionDate: Date;
 

@@ -109,12 +109,6 @@ export class AssignTransferService {
       case ConditionOperatorEnum.NotContain: {
         return this.testNotContain(testValue, logic.value);
       }
-      case ConditionOperatorEnum.Like: {
-        return this.testLike(testValue, logic.value);
-      }
-      case ConditionOperatorEnum.NotLike: {
-        return this.testNotLike(testValue, logic.value);
-      }
       default: {
         return false;
       }

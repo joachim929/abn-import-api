@@ -6,7 +6,5 @@ export enum ConditionOperatorEnum {
   LessThan = 'LessThan',
   LessOrEqualThan = 'LessOrEqualThan',
   Contains = 'Contains',
-  NotContain = 'NotContain',
-  Like = 'Like',
-  NotLike = 'NotLike'
+  NotContain = 'NotContain'
 }

@@ -104,6 +104,7 @@ export class TransferController {
   @ApiResponse({
     status: 401,
   })
+  @ApiBody({type: [RawTransferSerializerDTO]})
   postExisting(@Body() existing: [RawTransferSerializerDTO]) {
     return this.importService.postExisting(existing);
   }

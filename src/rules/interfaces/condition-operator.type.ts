@@ -8,6 +8,4 @@ export type ConditionOperatorType =
   ConditionOperatorEnum.LessOrEqualThan |
   ConditionOperatorEnum.LessThan |
   ConditionOperatorEnum.Contains |
-  ConditionOperatorEnum.NotContain |
-  ConditionOperatorEnum.Like |
-  ConditionOperatorEnum.NotLike
+  ConditionOperatorEnum.NotContain;
