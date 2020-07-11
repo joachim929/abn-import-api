@@ -47,7 +47,6 @@ export class CategoryService {
 
   deleteCategory(id: number) {
     return new Promise((resolve, reject) => {
-
       /**
        * Todo: Get all transfers with category same category and patch all of them
        *  Then delete
@@ -62,7 +61,6 @@ export class CategoryService {
     });
   }
 
-  // todo: Get parent first, then set parent
   createCategory(category: CreateCategoryDTO, parentId: string): Promise<CategoryDTO> {
     return new Promise((resolve, reject) => {
       category = new CreateCategoryDTO(category);

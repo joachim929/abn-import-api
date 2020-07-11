@@ -16,10 +16,13 @@ export class CategoryGroupRepositoryService {
     });
   }
 
-  async findOneById(id: string): Promise<CategoryGroup> {
-    return await this.repository.findOneOrFail({where: {id}}).catch((reason) => {
+  async findOneById(id: string, relations?: string[]): Promise<CategoryGroup> {
+    return await this.repository.findOneOrFail({
+      where: { id },
+      ...(relations ? {relations} : {})
+    }).catch((reason) => {
       throw new HttpException(reason.message, HttpStatus.NOT_FOUND);
-    })
+    });
   }
 
   async getGroupsWithCategories(): Promise<CategoryGroup[]> {

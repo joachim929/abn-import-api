@@ -15,8 +15,7 @@ export class Dog {
 }
 
 
-type Pet = Cat | Dog;
-
+export type Pet = Cat | Dog;
 
 export class EnumDTO {
 

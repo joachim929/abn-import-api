@@ -10,7 +10,7 @@ import { ConditionOperatorEnum } from '../../rules/interfaces/condition-operator
 import { LogicTypeEnum } from '../../rules/interfaces/logic-type.enum';
 import { Category } from '../../category/category.entity';
 
-fdescribe('AssignService', () => {
+describe('AssignService', () => {
   let now;
   let dateOne: Date;
   let dateTwo: Date;
@@ -60,10 +60,10 @@ fdescribe('AssignService', () => {
       dateTwo = new Date(now);
     });
     it('should return true when two numbers do not equal each other', () => {
-      expect(service.testNotEqual(1, 2)).toEqual(true);
+      expect(service.testNotEqual(1, '2')).toEqual(true);
     });
     it('should return false when two numbers do equal each other', () => {
-      expect(service.testNotEqual(1, 1)).toEqual(false);
+      expect(service.testNotEqual(1, '1')).toEqual(false);
     });
     it('should return true when two strings do not equal each other', () => {
       expect(service.testNotEqual('1', '2')).toEqual(true);

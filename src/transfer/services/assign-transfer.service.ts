@@ -134,7 +134,7 @@ export class AssignTransferService {
     if (testValue instanceof Date && compareValue instanceof Date) {
       return testValue.toString() !== compareValue.toString();
     } else if (typeof testValue === 'number') {
-      return testValue === Number(compareValue);
+      return testValue !== Number(compareValue);
     } else {
       return testValue !== compareValue;
     }
